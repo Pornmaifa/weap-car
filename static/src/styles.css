@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --color-warp-blue: #47B3C4;
+  --color-warp-blue-dark: #3a9faa;
+}
+
+/* นี่คือโค้ดที่จะเข้าไปจัดสไตล์ให้
+  {{ form.username }} และ {{ form.password }} 
+  ในไฟล์ login.html โดยอัตโนมัติ
+*/
+form input[type="text"],
+form input[type="email"],
+form input[type="password"] {
+  @apply w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+@layer components {
+  /* เอฟเฟกต์พื้นหลังค่อยๆ ปรากฏ */
+  .fade-in {
+    animation: fadeIn 0.3s ease forwards;
+  }
+
+  /* เอฟเฟกต์กล่องเด้งขึ้น */
+  .popup-slide {
+    animation: slideUp 0.3s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+}

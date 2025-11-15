@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ขั้นตอนที่ 8: ดูตัวอย่างก่อนลงประกาศ - WarpCar</title>
+    
+    <link href="{% static 'dist/styles.css' %}?v=4" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+    <div class="bg-yellow-100 border-b-4 border-yellow-400 text-yellow-800 p-4 text-center font-semibold">
+        นี่คือตัวอย่างหน้าประกาศของคุณ (ยังไม่แสดงต่อสาธารณะ)
+    </div>
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-8 rounded-lg overflow-hidden shadow-lg">
+            {% for img in car.images.all %}
+                <div class="aspect-w-3 aspect-h-2">
+                    <img src="{{ img.image.url }}" alt="รูปตัวอย่างรถ" class="w-full h-full object-cover">
+                </div>
+            {% empty %}
+                <p>ไม่มีรูปภาพ</p>
+            {% endfor %}
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-lg">
+                <h1 class="text-3xl font-bold mb-4">{{ car.brand }} {{ car.model }}</h1>
+                <hr class="my-4">
+                
+                <h2 class="text-2xl font-semibold mb-4">รายละเอียดรถ</h2>
+                <div class="grid grid-cols-2 gap-4 text-lg">
+                    <div><strong>ระบบเชื้อเพลิง:</strong> {{ car.get_fuel_system_display  }}</div>
+                    <div><strong>จำนวนประตู:</strong> {{ car.num_doors }}</div>
+                    <div><strong>จำนวนสัมภาระ:</strong> {{ car.num_luggage }}</div>
+                    <div><strong>ป้ายทะเบียน:</strong> {{ car.license_plate }}</div>
+                </div>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">จุดเด่น</h2>
+                <p class="text-gray-700 text-lg">
+                    {{ car.description|linebreaks }}
+                </p>
+
+                <h2 class="text-2xl font-semibold mt-8 mb-4">อุปกรณ์เสริมที่มีจำหน่าย</h2>
+                {% if car.has_child_seat %}
+                <div class="flex items-center p-4 border rounded-lg">
+                    <img src="{% static 'images/child_seat_icon.png' %}" alt="ที่นั่งเด็ก" class="w-16 h-16 mr-4">
+                    <div>
+                        <strong class="text-lg">ที่นั่งเด็ก</strong>
+                        <p class="text-gray-600">สำหรับเด็กอายุ 1-3 ปี</p>
+                        <p class="text-lg font-semibold text-green-600">{{ car.accessory_price|floatformat:0 }} บ./วัน</p>
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-gray-500">ไม่มีอุปกรณ์เสริม</p>
+                {% endif %}
+            </div>
+
+            <div class="lg:col-span-1 space-y-6">
+                
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h2 class="text-2xl font-semibold mb-4">การรับรถและคืนรถ</h2>
+                    <p class="text-gray-700 text-lg">
+                        {{ car.street_address }}<br>
+                        {{ car.building_name|default_if_none:'' }}<br>
+                        ต.{{ car.sub_district }}, อ.{{ car.city }}<br>
+                        จ.{{ car.state }} {{ car.zip_code }}
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-lg sticky top-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">
+                        {{ car.price_per_day|floatformat:0 }} THB <span class="text-lg font-normal text-gray-600">/วัน</span>
+                    </h2>
+                    
+                    {% if car.discount_type == 'FIRST_TIMER_20' %}
+                    <div class="p-2 bg-green-100 text-green-700 rounded-lg text-center font-medium">
+                        ส่วนลด 20% สำหรับผู้เช่าครั้งแรก
+                    </div>
+                    {% endif %}
+                    
+                    <button type="button" class="w-full bg-gray-400 text-white p-4 rounded-lg mt-4 font-bold cursor-not-allowed" disabled>
+                        จอง (ตัวอย่าง)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 py-6 border-t bg-white shadow-inner fixed bottom-0 left-0 w-full">
+            <div class="container mx-auto flex justify-between items-center px-8">
+                <a href="{% url 'add_car_step7' %}" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">
+                    ถอยกลับ (แก้ไข)
+                </a>
+                
+                <form method="POST" action="{% url 'publish_car' car.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">
+                        ยืนยันและลงประกาศ
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+    </div>
+    <div class="h-32"></div>
+
+</body>
+</html>

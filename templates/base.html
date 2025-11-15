@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warp Car Rental</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css?v=1">
+    <link href="{% static 'dist/styles.css' %}" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+    <header class="absolute top-0 left-0 right-0 z-20 p-4">
+        <nav class="container mx-auto flex justify-between items-center">
+            
+            <a href="{% url 'car_list' %}">
+                <img src="{% static 'images/logo.png' %}" alt="WARPCAR" class="h-25">
+            </a>
+
+            <div class="flex items-center space-x-4">
+                <div>
+                    <a href="#" class="font-bold text-white">ไทย</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="#" class="text-gray-300 hover:text-white">EN</a>
+                </div>
+
+                {% if user.is_authenticated %}
+        
+                        <a href="{% url 'become_owner' %}" class="bg-white text-blue-600 px-4 py-2 rounded-full font-semibold shadow hover:bg-gray-100">
+                            เป็นเจ้าของรถ
+                        </a>
+                        
+                        <a href="{% url 'profile' %}" class="block">
+                            <img src="{{ user.profile.image.url }}" alt="Profile" class="h-10 w-10 rounded-full object-cover border-2 border-white shadow-sm">
+                        </a>
+
+                    {% else %}
+                        <a href="{% url 'login' %}" class="bg-white text-blue-600 px-4 py-2 rounded-full font-semibold shadow hover:bg-gray-100">
+                            เข้าสู่ระบบ
+                        </a>
+                    {% endif %}
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr?v=1"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js?v=1"></script>
+
+{% block scripts %}
+{% endblock %}
+</body>
+</html>

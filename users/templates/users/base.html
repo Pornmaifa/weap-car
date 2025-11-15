@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warp Car Rental</title>
+
+    <link href="{% static 'dist/styles.css' %}" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body class="bg-gray-100"> 
+    
+        <nav class="container mx-auto">
+            <a href="{% url 'car_list' %}">
+                <img src="{% static 'images/logo.png' %}" alt="WARPCAR - กลับหน้าหลัก" class="h-25">
+            </a>
+        </nav>
+    
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
+    {% block scripts %}
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,167 @@
+/* car_rental/static/car_rental/css/style.css */
+
+/* --- General Styles & Background --- */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif; /* ฟอนต์ที่ต้องการ */
+    height: 100%;
+    color: #333;
+}
+
+.main-container {
+    background-image:url('../images/background.jpeg'); /* **สำคัญ** แก้ชื่อไฟล์รูปภาพให้ตรง */
+    background-size: 100% auto;
+    background-position: top center;
+
+    background-repeat: no-repeat; /* <-- เพิ่มบรรทัดนี้ */
+    background-color: #47B3C4; 
+
+    height: 100vh; /* ทำให้พื้นหลังเต็มความสูงของจอ */
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-login {
+    display: flex;         /* <-- ทำให้ของข้างในเรียงตัวกันในแนวนอน */
+    align-items: center;   /* <-- ทำให้ของข้างในอยู่ตรงกลางแนวตั้ง (สำคัญที่สุด) */
+    gap: 15px;             /* <-- กำหนดระยะห่างระหว่างปุ่มกับไอคอน */
+}
+
+
+.owner-btn, .login-btn {
+    background-color: white;
+    color: #000000;
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: bold;
+    border: none; /* เอาขอบเดิมออก */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เพิ่มเงา */
+    transition: transform 0.2s, box-shadow 0.2s; /* เพิ่ม animation */
+}
+
+.owner-btn:hover, .login-btn:hover {
+    transform: translateY(-4px); /* ทำให้ปุ่มลอยขึ้นเล็กน้อย */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* เพิ่มเงาให้เข้มขึ้น */
+}
+
+
+.profile-icon-link img {
+    height: 60px; /* **ปรับค่านี้ตามขนาดที่คุณต้องการ** */
+    width: 60px;  /* **ปรับค่านี้ตามขนาดที่คุณต้องการ** */
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+    
+}
+
+/* --- Navigation Bar --- */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+    color: white;
+}
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+.logo img {
+    height: 40px;
+    margin-right: 10px;
+}
+.lang-btn, .login-btn {
+    background-color: transparent;
+    border: 1px solid white;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-left: 10px;
+    text-decoration: none;
+}
+.lang-btn.inactive {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+.login-btn {
+    background-color: white;
+    color: #007BFF;
+    font-weight: bold;
+}
+
+/* --- Search Box --- */
+.search-box-container {
+    margin: auto;
+    width: 80%;
+    max-width: 900px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+}
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 15px 25px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #888;
+}
+.tab-btn.active {
+    color: #007BFF;
+    border-bottom: 3px solid #007BFF;
+    font-weight: bold;
+}
+
+/* --- Search Form --- */
+.search-form {
+    padding-top: 20px;
+}
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    gap: 20px; /* สร้างช่องว่างระหว่างกล่อง */
+}
+.form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.form-group label {
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #555;
+}
+.form-group input[type="text"], .form-group input[type="date"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+.date-group {
+    flex-direction: row;
+    align-items: center;
+}
+.date-group span {
+    margin: 0 10px;
+}
+.search-btn {
+    background-color: #47B3C4; /* สี */
+    color: white;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    align-self: flex-end; /* จัดให้อยู่ล่างสุดของ flex container */
+}
+

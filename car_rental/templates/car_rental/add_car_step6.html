@@ -1,0 +1,160 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ขั้นตอนที่ 6: รายละเอียดรถ - WarpCar</title>
+
+    <link href="{% static 'dist/styles.css' %}?v=3" rel="stylesheet">
+    </head>
+<body class="bg-white text-gray-800">
+
+    <form method="POST" action="{% url 'add_car_step6' %}" class="container mx-auto p-8 flex flex-col min-h-screen justify-center">
+        {% csrf_token %}
+
+        <div class="max-w-xl mx-auto w-full">
+
+            <h1 class="text-4xl font-bold text-center mb-12">
+                รายละเอียดรถ
+            </h1>
+
+            <div class="space-y-6">
+
+                <div>
+                    <label for="license_plate" class="text-lg font-semibold mb-2 block">
+                        ป้ายทะเบียนรถ <span class="text-sm text-gray-500">(ตัวอย่าง กก 0000 อุบลราชธานี)</span>
+                    </label>
+                    <input type="text" id="license_plate" name="license_plate"
+                            value="{{ car.license_plate }}"
+                            placeholder="กรอกป้ายทะเบียน" required
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label class="text-lg font-semibold mb-2 block">จำนวนประตู</label>
+                    <div class="flex items-center border border-gray-300 rounded-lg p-3">
+                        <button type="button" class="decrement-btn text-xl font-bold text-gray-500 hover:text-black w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100" data-target="num_doors">-</button>
+                        <input type="number" id="num_doors" name="num_doors"
+                                value="{{ car.num_doors|default:4 }}" min="1" max="8" required readonly
+                                class="flex-grow text-center text-lg font-semibold border-none focus:outline-none focus:ring-0 appearance-none [-moz-appearance:textfield]">
+                        <button type="button" class="increment-btn text-xl font-bold text-gray-500 hover:text-black w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100" data-target="num_doors">+</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-lg font-semibold mb-2 block">จำนวนสัมภาระ</label>
+                    <div class="flex items-center border border-gray-300 rounded-lg p-3">
+                        <button type="button" class="decrement-btn text-xl font-bold text-gray-500 hover:text-black w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100" data-target="num_luggage">-</button>
+                        <input type="number" id="num_luggage" name="num_luggage"
+                                value="{{ car.num_luggage|default:2 }}" min="0" max="10" required readonly
+                                class="flex-grow text-center text-lg font-semibold border-none focus:outline-none focus:ring-0 appearance-none [-moz-appearance:textfield]">
+                        <button type="button" class="increment-btn text-xl font-bold text-gray-500 hover:text-black w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100" data-target="num_luggage">+</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="fuel_system" class="text-lg font-semibold mb-2 block">ระบบเชื้อเพลิง</label>
+                    <select id="fuel_system" name="fuel_system" required
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                        <option value="" disabled {% if not car.fuel_system %}selected{% endif %}>เลือกประเภทเชื้อเพลิง</option>
+                        <option value="GASOLINE" {% if car.fuel_system == 'GASOLINE' %}selected{% endif %}>เบนซิน</option>
+                        <option value="DIESEL" {% if car.fuel_system == 'DIESEL' %}selected{% endif %}>ดีเซล</option>
+                        <option value="LPG" {% if car.fuel_system == 'LPG' %}selected{% endif %}>LPG</option>
+                        <option value="NGV" {% if car.fuel_system == 'NGV' %}selected{% endif %}>NGV</option>
+                        <option value="ELECTRIC" {% if car.fuel_system == 'ELECTRIC' %}selected{% endif %}>ไฟฟ้า (EV)</option>
+                        <option value="HYBRID" {% if car.fuel_system == 'HYBRID' %}selected{% endif %}>ไฮบริด</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center justify-between border border-gray-300 rounded-lg p-3">
+                    <label for="child_seat" class="text-lg font-semibold">อุปกรณ์เสริม (ที่นั่งเด็ก)</label>
+                    <input type="checkbox" id="child_seat" name="has_child_seat" value="true"
+                            {% if car.has_child_seat %}checked{% endif %}
+                            class="h-6 w-6 text-warp-blue border-gray-300 rounded focus:ring-warp-blue">
+                </div>
+
+                <div>
+                    <label for="accessory_price" class="text-sm text-gray-500 mb-1 block">เพิ่มราคาสำหรับอุปกรณ์เสริม</label>
+                    <input type="number" id="accessory_price" name="accessory_price"
+                            value="{{ car.accessory_price|default:0 }}" min="0" step="10"
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <h3 class="text-xl font-bold text-center mt-10 mb-4">ผู้เช่าสามารถเช่าได้นานเท่าใด</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-lg font-semibold mb-2 block">ต่ำสุด: วัน</label>
+                        <div class="flex items-center border border-gray-300 rounded-lg p-3">
+                            <button type="button" class="decrement-btn text-xl font-bold text-gray-500 hover:text-black w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100" data-target="min_days">-</button>
+                            <input type="number" id="min_days" name="min_rental_days"
+                                    value="{{ car.min_rental_days|default:1 }}" min="1" max="30" required readonly
+                                    class="flex-grow text-center text-lg font-semibold border-none focus:outline-none focus:ring-0 appearance-none [-moz-appearance:textfield]">
+                            <button type="button" class="increment-btn text-xl font-bold text-gray-500 hover:text-black w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100" data-target="min_days">+</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-lg font-semibold mb-2 block">สูงสุด: วัน</label>
+                        <div class="flex items-center border border-gray-300 rounded-lg p-3">
+                            <button type="button" class="decrement-btn text-xl font-bold text-gray-500 hover:text-black w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100" data-target="max_days">-</button>
+                            <input type="number" id="max_days" name="max_rental_days"
+                                    value="{{ car.max_rental_days|default:30 }}" min="1" max="90" required readonly
+                                    class="flex-grow text-center text-lg font-semibold border-none focus:outline-none focus:ring-0 appearance-none [-moz-appearance:textfield]">
+                            <button type="button" class="increment-btn text-xl font-bold text-gray-500 hover:text-black w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100" data-target="max_days">+</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div> </div> <div class="fixed bottom-8 left-8">
+            <a href="{% url 'add_car_step5' %}" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">
+                ถอยกลับ
+            </a>
+        </div>
+        <div class="fixed bottom-8 right-8">
+            <button type="submit" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">
+                ถัดไป
+            </button>
+        </div>
+
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // ฟังก์ชันสำหรับเพิ่มค่า
+            function incrementValue(targetId) {
+                const input = document.getElementById(targetId);
+                const max = parseInt(input.max);
+                let currentValue = parseInt(input.value);
+                if (currentValue < max) {
+                    input.value = currentValue + 1;
+                }
+            }
+
+            // ฟังก์ชันสำหรับลดค่า
+            function decrementValue(targetId) {
+                const input = document.getElementById(targetId);
+                const min = parseInt(input.min);
+                let currentValue = parseInt(input.value);
+                if (currentValue > min) {
+                    input.value = currentValue - 1;
+                }
+            }
+
+            // หาปุ่ม '+' ทั้งหมดแล้วใส่ Event Listener
+            document.querySelectorAll('.increment-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    incrementValue(this.dataset.target);
+                });
+            });
+
+            // หาปุ่ม '-' ทั้งหมดแล้วใส่ Event Listener
+            document.querySelectorAll('.decrement-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    decrementValue(this.dataset.target);
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

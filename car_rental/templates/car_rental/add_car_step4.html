@@ -1,0 +1,226 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ขั้นตอนที่ 4: เพิ่มรูปภาพ - WarpCar</title>
+
+    <link href="{% static 'dist/styles.css' %}?v=4" rel="stylesheet">
+</head>
+<body class="bg-white text-gray-800">
+
+    <form method="POST" enctype="multipart/form-data" class="container mx-auto p-8 flex flex-col min-h-screen">
+        {% csrf_token %}
+
+        <div class="flex-grow flex flex-col justify-center">
+
+            <h1 class="text-4xl font-bold text-center mb-4">เพิ่มรูปรถ</h1>
+            <p class="text-xl text-gray-500 text-center mb-8">คุณจะต้องแสดงรูปถ่าย 5 รูปเพื่อเริ่มต้น</p>
+
+            <div class="max-w-4xl mx-auto w-full border-2 border-dashed border-gray-300 rounded-lg p-8 min-h-[300px] flex flex-col">
+                
+                
+                {% if car.images.all %}
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                        {% for img in car.images.all %}
+                            <img src="{{ img.image.url }}" alt="Car Photo" class="w-full h-40 object-cover rounded-lg shadow">
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div id="placeholder" class="text-center flex flex-col items-center justify-center h-full flex-grow">
+                    <img src="{% static 'car_rental/images/camera_icon.png' %}" alt="Camera Icon" class="mx-auto h-24 w-24 mb-4">
+                    <button type="button" id="initial-add-button" class="bg-warp-blue text-white px-6 py-3 rounded-lg font-semibold hover:bg-warp-blue-dark text-lg">
+                        เพิ่มรูปภาพ
+                    </button>
+                </div>
+
+                <div id="image-container" class="hidden flex-grow">
+                    <div id="image-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                        </div>
+                    <button type="button" id="add-more-button" class="mt-4 bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg w-full">
+                        + เพิ่มรูปภาพอีก
+                    </button>
+                </div>
+            </div>
+
+            <input type="file" name="images" id="file-input" multiple accept="image/*" class="hidden">
+
+        </div> <div class="flex justify-between items-center pt-8">
+            <a href="{% url 'add_car_step3' %}" class="bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">
+                ถอยกลับ
+            </a>
+            <button type="submit" id="next-button"
+                    class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark
+                           opacity-50 cursor-not-allowed"
+                    disabled>
+                ถัดไป
+            </button>
+        </div>
+
+    </form>
+
+    <div id="upload-modal" class="fixed inset-0 bg-black-100 bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-lg relative">
+            <button type="button" id="close-modal-btn" class="absolute top-4 right-4 text-gray-500 hover:text-black text-3xl">&times;</button>
+            <div id="drag-drop-area" class="border-2 border-dashed border-gray-300 rounded-lg p-16 text-center transition-all">
+                <p class="text-gray-500 text-lg mb-4">ลากแล้ววาง หรือค้นหารูป</p>
+                <button type="button" id="browse-btn" class="bg-warp-blue text-white px-6 py-3 rounded-lg font-semibold hover:bg-warp-blue-dark text-lg">
+                    เรียกดู
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // --- 1. เลือก Element ทั้งหมด ---
+        const initialAddButton = document.getElementById('initial-add-button');
+        const addMoreButton = document.getElementById('add-more-button');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const browseBtn = document.getElementById('browse-btn');
+        const nextButton = document.getElementById('next-button');
+
+        const uploadModal = document.getElementById('upload-modal');
+        const dragDropArea = document.getElementById('drag-drop-area');
+        const fileInput = document.getElementById('file-input'); // นี่คือ input หลักที่เราจะใช้
+
+        const placeholder = document.getElementById('placeholder');
+        const imageContainer = document.getElementById('image-container'); // กล่องหลักที่แสดงรูป
+        const imageGrid = document.getElementById('image-grid'); // ตารางรูป
+
+        // --- 2. เก็บรายการไฟล์ (สำคัญ!) ---
+        let currentFiles = []; // Array สำหรับเก็บ File object
+
+        // --- 3. การทำงานของ Modal ---
+        // (เปิด Modal ทั้งจากปุ่มแรก และปุ่ม 'เพิ่มอีก')
+        [initialAddButton, addMoreButton].forEach(btn => {
+            btn.addEventListener('click', () => {
+                uploadModal.classList.remove('hidden');
+            });
+        });
+        closeModalBtn.addEventListener('click', () => {
+            uploadModal.classList.add('hidden');
+        });
+
+        // --- 4. ปุ่ม "เรียกดู" (ใน Modal) ---
+        browseBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // --- 5. เมื่อเลือกไฟล์ (จาก "เรียกดู") ---
+        fileInput.addEventListener('change', (event) => {
+            // (สำคัญ!) เพิ่มไฟล์ใหม่เข้าไปใน Array `currentFiles`
+            appendFiles(event.target.files);
+            // (ต้อง reset input ไม่งั้นเลือกไฟล์เดิมซ้ำไม่ได้)
+            event.target.value = null;
+        });
+
+        // --- 6. การทำงานของ "ลากวาง" (Drag/Drop) ---
+        dragDropArea.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dragDropArea.classList.add('border-warp-blue', 'bg-blue-50');
+        });
+        dragDropArea.addEventListener('dragleave', () => {
+            dragDropArea.classList.remove('border-warp-blue', 'bg-blue-50');
+        });
+        dragDropArea.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dragDropArea.classList.remove('border-warp-blue', 'bg-blue-50');
+            // (สำคัญ!) เพิ่มไฟล์ใหม่เข้าไปใน Array `currentFiles`
+            appendFiles(event.dataTransfer.files);
+        });
+
+        // --- 7. ฟังก์ชันสำหรับ "เพิ่ม" ไฟล์ใหม่เข้าไปใน Array ---
+        function appendFiles(newFiles) {
+            // กรองเอาเฉพาะไฟล์รูปภาพ
+            const imageFiles = Array.from(newFiles).filter(file => file.type.startsWith('image/'));
+            currentFiles.push(...imageFiles); // เพิ่มไฟล์ใหม่ต่อท้าย Array เดิม
+
+            // (สำคัญ!) อัปเดต <input type="file"> ให้ตรงกับ Array ล่าสุด
+            // (นี่คือวิธีส่งไฟล์ทั้งหมดไปที่ Django)
+            const dataTransfer = new DataTransfer();
+            currentFiles.forEach(file => dataTransfer.items.add(file));
+            fileInput.files = dataTransfer.files;
+
+            renderImageGrid(); // แสดงผลรูปใหม่
+            uploadModal.classList.add('hidden'); // ปิด Modal
+        }
+
+        // --- 8. (หัวใจหลัก) ฟังก์ชันแสดง/อัปเดตรูปใน Grid ---
+        function renderImageGrid() {
+            // 1. ถ้ามีไฟล์, ซ่อน Placeholder แสดง Image Container
+            if (currentFiles.length > 0) {
+                placeholder.classList.add('hidden');
+                imageContainer.classList.remove('hidden');
+            } else {
+                placeholder.classList.remove('hidden');
+                imageContainer.classList.add('hidden');
+            }
+
+            // 2. ล้าง Grid เก่า
+            imageGrid.innerHTML = '';
+
+            // 3. วนลูปสร้าง <img> พร้อมปุ่มลบ
+            currentFiles.forEach((file, index) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'relative group'; // ใช้ group สำหรับ hover
+
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.className = 'w-full h-40 object-cover rounded-lg shadow-md';
+                wrapper.appendChild(img);
+
+                // สร้างปุ่มลบ (X)
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button'; // (สำคัญ!) ป้องกันไม่ให้ submit ฟอร์ม
+                deleteBtn.innerHTML = '&times;'; // เครื่องหมายกากบาท
+                deleteBtn.className = `
+                    absolute top-1 right-1 bg-red-500 text-white rounded-full
+                    w-6 h-6 flex items-center justify-center text-lg font-bold
+                    opacity-0 group-hover:opacity-100 transition-opacity
+                `;
+                // (เพิ่ม Event Listener ให้ปุ่มลบ)
+                deleteBtn.addEventListener('click', () => {
+                    removeFile(index); // เรียกฟังก์ชันลบไฟล์
+                });
+                wrapper.appendChild(deleteBtn);
+
+                imageGrid.appendChild(wrapper);
+            });
+
+            // 4. อัปเดตสถานะปุ่ม "ถัดไป"
+            updateNextButtonState();
+        }
+
+        // --- 9. ฟังก์ชันสำหรับ "ลบ" ไฟล์ออกจาก Array ---
+        function removeFile(indexToRemove) {
+            currentFiles.splice(indexToRemove, 1); // ลบไฟล์ออกจาก Array
+
+            // (สำคัญ!) อัปเดต <input type="file"> อีกครั้ง
+            const dataTransfer = new DataTransfer();
+            currentFiles.forEach(file => dataTransfer.items.add(file));
+            fileInput.files = dataTransfer.files;
+
+            renderImageGrid(); // แสดงผล Grid ใหม่ (ที่ไม่มีรูปที่ถูกลบ)
+        }
+
+        // --- 10. ฟังก์ชันอัปเดตปุ่ม "ถัดไป" ---
+        function updateNextButtonState() {
+            if (currentFiles.length >= 5) {
+                nextButton.disabled = false;
+                nextButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                nextButton.disabled = true;
+                nextButton.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // --- เริ่มต้น: แสดง Grid (เผื่อมีข้อมูลเก่าค้าง) ---
+        renderImageGrid(); // (ถ้าต้องการให้โหลดรูปเก่าตอนเปิดหน้า)
+
+    });
+    </script>
+</body>
+</html>

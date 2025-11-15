@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ขั้นตอนที่ 7: ตั้งราคาและส่วนลด - WarpCar</title>
+
+    <link href="{% static 'dist/styles.css' %}?v=3" rel="stylesheet">
+</head>
+<body class="bg-white text-gray-800">
+
+    <form method="POST" action="{% url 'add_car_step7' %}" class="container mx-auto p-8 flex flex-col min-h-screen justify-center">
+        {% csrf_token %}
+
+        <div class="max-w-xl mx-auto w-full">
+
+            <h1 class="text-4xl font-bold text-center mb-12">
+                ตั้งค่าราคารถ
+            </h1>
+
+            <div class="space-y-8">
+
+                <div>
+                    <label for="price" class="text-lg font-semibold mb-2 block">
+                        ตั้งค่าราคารถ /วัน
+                    </label>
+                    <div class="relative">
+                        <input type="number" id="price" name="price" min="0" step="10" required
+                               class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-16" placeholder="0">
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-lg font-semibold text-gray-500">
+                            THB
+                        </span>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <input type="radio" name="discount_option" value="FIRST_TIMER_20" id="discount_first_timer" required class="hidden peer">
+                        <label for="discount_first_timer"
+                               class="flex items-center justify-between p-4 border border-gray-300 rounded-lg cursor-pointer transition-all
+                                      peer-checked:border-warp-blue peer-checked:ring-2 peer-checked:ring-warp-blue">
+                            <span class="text-lg font-medium">เสนอส่วนลด 20% สำหรับผู้เช่ารถคันแรกเท่านั้น</span>
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center
+                                         peer-checked:border-warp-blue peer-checked:bg-warp-blue">
+                                <span class="w-3 h-3 bg-white rounded-full hidden peer-checked:block"></span>
+                            </span>
+                        </label>
+                    </div>
+
+                    <div>
+                        <input type="radio" name="discount_option" value="NONE" id="discount_none" required class="hidden peer">
+                        <label for="discount_none"
+                               class="flex items-center justify-between p-4 border border-gray-300 rounded-lg cursor-pointer transition-all
+                                      peer-checked:border-warp-blue peer-checked:ring-2 peer-checked:ring-warp-blue">
+                            <span class="text-lg font-medium">ไม่เพิ่มข้อเสนอ</span>
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center
+                                         peer-checked:border-warp-blue peer-checked:bg-warp-blue">
+                                <span class="w-3 h-3 bg-white rounded-full hidden peer-checked:block"></span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+             </div>
+             </div> 
+             <div class="fixed bottom-8 left-8">
+             <a href="{% url 'add_car_step6' %}" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">
+                ถอยกลับ
+            </a>
+        </div>
+        <div class="fixed bottom-8 right-8">
+            <button type="submit" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">
+                เสร็จสิ้น
+            </button>
+        </div>
+
+    </form>
+
+    </body>
+</html>
