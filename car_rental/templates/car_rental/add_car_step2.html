@@ -24,12 +24,15 @@
 
                 <div>
                     <input type="radio" name="service_type" value="SELF_DRIVE" id="service_self_drive" required class="hidden peer"
-                            {% if car.service_type == 'SELF_DRIVE' %}checked{% endif %}>
+                        {% if car.service_type == 'SELF_DRIVE' %}checked{% endif %}>
                     <label for="service_self_drive"
-                           class="flex flex-col items-center justify-center 
-                                  w-64 h-48 p-6 bg-warp-blue text-white rounded-xl shadow-lg cursor-pointer transition-all
-                                  hover:shadow-xl
-                                  peer-checked:ring-4 peer-checked:ring-offset-2 peer-checked:ring-warp-blue-dark ">
+                        class="flex flex-col items-center justify-center 
+                                w-64 h-48 p-6 
+                                bg-gray-100 text-gray-800 
+                                rounded-xl shadow-lg cursor-pointer transition-all
+                                hover:shadow-xl
+                                peer-checked:bg-warp-blue peer-checked:text-white
+                                peer-checked:ring-4 peer-checked:ring-offset-2 peer-checked:ring-warp-blue-dark">
                         <img src="{% static 'car_rental/images/self_drive.png' %}" alt="ขับเอง" class="w-24 h-24 object-contain mb-2">
                         <span class="font-semibold text-2xl">ขับเอง</span>
                     </label>
@@ -37,19 +40,20 @@
 
                 <div>
                     <input type="radio" name="service_type" value="WITH_DRIVER" id="service_with_driver" required class="hidden peer"
-                            {% if car.service_type == 'WITH_DRIVER' %}checked{% endif %}>
+                        {% if car.service_type == 'WITH_DRIVER' %}checked{% endif %}>
                     <label for="service_with_driver"
-                           class="flex flex-col items-center justify-center 
-                                  w-64 h-48 p-6 
-                                  bg-warp-blue text-white 
-                                  rounded-xl shadow-lg cursor-pointer transition-all
-                                  hover:shadow-xl
-                                  peer-checked:ring-4 peer-checked:ring-offset-2 peer-checked:ring-warp-blue-dark
-                                  ">
+                        class="flex flex-col items-center justify-center 
+                                w-64 h-48 p-6 
+                                bg-gray-100 text-gray-800 
+                                rounded-xl shadow-lg cursor-pointer transition-all
+                                hover:shadow-xl
+                                peer-checked:bg-warp-blue peer-checked:text-white
+                                peer-checked:ring-4 peer-checked:ring-offset-2 peer-checked:ring-warp-blue-dark">
                         <img src="{% static 'car_rental/images/with_driver.png' %}" alt="พร้อมคนขับ" class="w-24 h-24 object-contain mb-2">
                         <span class="font-semibold text-2xl">พร้อมคนขับ</span>
                     </label>
                 </div>
+
 
             <div class="fixed bottom-8 left-8">
                 <a href="{% url 'add_car_step1' %}" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">

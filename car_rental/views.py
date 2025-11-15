@@ -70,36 +70,34 @@ def add_car_step3(request):
 @login_required
 def add_car_step4(request):
     car_id = request.session.get('car_id')
-
-    # ✅ ถ้ายังไม่มี car_id ให้ย้อนกลับ step1
     if not car_id:
-        
         car = Car.objects.create(owner=request.user)
         request.session['car_id'] = car.id
     else:
-    # ✅ ดึงรถคันเดิมของ user
         car = get_object_or_404(Car, id=car_id, owner=request.user)
 
     if request.method == 'POST':
+        # ✅ ลบรูปเก่าที่เลือกให้ลบ
+        delete_ids = request.POST.get('delete_existing_ids', '').split(',')
+        if delete_ids and delete_ids[0] != '':
+            CarImage.objects.filter(car=car, id__in=delete_ids).delete()
+
+        # ✅ เพิ่มรูปใหม่
         images = request.FILES.getlist('images')
-
-        if not images:
-            messages.warning(request, "กรุณาเลือกรูปภาพอย่างน้อย 5 รูป")
-            return redirect('add_car_step4')
-
-        # ✅ ลบรูปเก่าทิ้งก่อน (กันซ้ำ)
-        car.images.all().delete()
-
-        # ✅ บันทึกรูปใหม่ลงในฐานข้อมูล
         for img in images:
             CarImage.objects.create(car=car, image=img)
 
-        messages.success(request, f"อัปโหลดรูปภาพสำเร็จ ({len(images)} รูป)")
+        # ✅ ตรวจสอบว่ารูปรวม >= 5
+        if car.images.count() < 5:
+            messages.warning(request, "กรุณาเลือกรูปอย่างน้อย 5 รูป")
+            return redirect('add_car_step4')
+
+        messages.success(request, f"อัปโหลดรูปภาพสำเร็จ ({car.images.count()} รูป)")
         return redirect('add_car_step5')
 
-    # ✅ โหลดหน้า พร้อมข้อมูลรูปเดิม
-    context = {'car': car, 'images': car.images.all()}
-    return render(request, 'car_rental/add_car_step4.html', context)
+    return render(request, 'car_rental/add_car_step4.html', {'car': car})
+
+
 
 @login_required
 def add_car_step5(request):

@@ -55,6 +55,15 @@ class Car(models.Model):
         ('FIRST_TIMER_20', 'ส่วนลด 20% สำหรับผู้เช่าครั้งแรก'),
     ]
 
+    FUEL_CHOICES = [
+        ('GASOLINE', 'เบนซิน'),
+        ('DIESEL', 'ดีเซล'),
+        ('LPG', 'LPG'),
+        ('NGV', 'NGV'),
+        ('ELECTRIC', 'ไฟฟ้า (EV)'),
+        ('HYBRID', 'ไฮบริด'),
+    ]
+
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     brand = models.CharField(max_length=50)
     model = models.CharField(max_length=50)
@@ -77,7 +86,7 @@ class Car(models.Model):
     # --- Step 7: Additional Info ---
     num_doors = models.PositiveIntegerField(default=4)
     num_luggage = models.PositiveIntegerField(default=2)
-    fuel_system = models.CharField(max_length=20, default='GASOLINE')
+    fuel_system = models.CharField(max_length=20,choices=FUEL_CHOICES,default='GASOLINE')
     has_child_seat = models.BooleanField(default=False)
     accessory_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     min_rental_days = models.PositiveIntegerField(default=1)
