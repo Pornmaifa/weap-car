@@ -1,0 +1,51 @@
+<aside class="w-full md:w-1/4 flex flex-col space-y-2 h-screen relative">
+    
+    <a href="{% url 'dashboard' %}"
+       class="p-3 rounded-lg font-semibold 
+       {% if request.resolver_match.url_name == 'dashboard' %}
+           bg-warp-blue text-white
+       {% else %}
+           bg-gray-200 text-gray-800 hover:bg-gray-300
+       {% endif %}">
+       แดชบอร์ด
+    </a>
+
+    <a href="#" 
+       class="p-3 rounded-lg font-semibold
+       {% if request.resolver_match.url_name == 'my_bookings' %}
+           bg-warp-blue text-white
+       {% else %}
+           bg-gray-200 text-gray-800 hover:bg-gray-300
+       {% endif %}">
+       การจอง
+    </a>
+
+    <a href="#" 
+       class="p-3 rounded-lg font-semibold
+       {% if request.resolver_match.url_name == 'my_income' %}
+           bg-warp-blue text-white
+       {% else %}
+           bg-gray-200 text-gray-800 hover:bg-gray-300
+       {% endif %}">
+       รายได้
+    </a>
+
+    <a href="{% url 'profile' %}" 
+       class="p-3 rounded-lg font-semibold
+       {% if request.resolver_match.url_name == 'profile' %}
+           bg-warp-blue text-white
+       {% else %}
+           bg-gray-200 text-gray-800 hover:bg-gray-300
+       {% endif %}">
+       ข้อมูลส่วนตัวของฉัน
+    </a>
+    
+    <form action="{% url 'logout' %}" method="post" class=" pt-16 mb-16 mt-16">
+        {% csrf_token %}
+        <button type="submit" 
+                class="w-full bg-white text-gray-700 p-3 rounded-lg font-semibold 
+                       border border-gray-300 hover:bg-gray-50">
+            ออกจากระบบ
+        </button>
+    </form>
+</aside>

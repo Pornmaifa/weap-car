@@ -196,6 +196,26 @@ def add_car_preview(request, car_id):
     }
     return render(request, 'car_rental/add_car_preview.html', context)
 
+
+@login_required
+def dashboard(request):
+
+    # ----------- ลบรถจากปุ่มในหน้า Dashboard ----------- #
+    if request.method == "POST":
+        car_id = request.POST.get("delete_car_id")
+        if car_id:
+            car = get_object_or_404(Car, id=car_id, owner=request.user)
+            car.delete()
+            return redirect("dashboard")  # กลับสู่หน้าดashboardหลังลบเสร็จ
+
+    # ----------- แสดงรายการรถของผู้ใช้ ----------- #
+    my_cars = Car.objects.filter(owner=request.user).order_by('-id')
+
+    context = {
+        'cars': my_cars
+    }
+    return render(request, 'car_rental/dashboard.html', context)
+
 # (เพิ่มฟังก์ชันนี้เข้าไปใน views.py)
 @login_required
 def publish_car(request, car_id):
@@ -204,7 +224,7 @@ def publish_car(request, car_id):
             car_to_publish = Car.objects.get(id=car_id, owner=request.user, status='PENDING')
         except Car.DoesNotExist:
             messages.error(request, 'ไม่พบรถที่ต้องการลงประกาศ')
-            return redirect('car_list')
+            return redirect('add_car_preview')
 
         # (เปลี่ยนสถานะเป็น "พร้อมใช้งาน")
         car_to_publish.status = 'AVAILABLE'
@@ -217,7 +237,7 @@ def publish_car(request, car_id):
             pass
         
         messages.success(request, 'ลงประกาศรถของคุณสำเร็จแล้ว!')
-        return redirect('car_list') # (กลับหน้าหลัก)
+        return redirect('dashboard') # (กลับหน้าหลัก)
     else:
         # ถ้าเข้าหน้านี้ตรงๆ (ไม่ใช่ POST) ให้กลับไปหน้า Preview
         return redirect('car_preview', car_id=car_id)

@@ -16,5 +16,6 @@ urlpatterns = [
     path('add/step7/', views.add_car_step7, name='add_car_step7'),
     path('add/preview/<int:car_id>/', views.add_car_preview, name='add_car_preview'),
     path('add/publish/<int:car_id>/', views.publish_car, name='publish_car'),
+    path('dashboard/', views.dashboard, name='dashboard'),
     # URL อื่นๆ ที่เกี่ยวกับรถและการจองจะอยู่ที่นี่
 ]

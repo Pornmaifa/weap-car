@@ -1,0 +1,18 @@
+{% load static %}
+<nav class="bg-white shadow-sm p-4 flex justify-between items-center">
+    <div class="flex items-center gap-4">
+        <a href="{% url 'car_list' %}" class="text-gray-600 hover:text-black">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+        </a>
+        <a href="{% url 'car_list' %}">
+            <img src="{% static 'images/logo.png' %}" alt="WARPCAR" class="h-8">
+        </a>
+    </div>
+    
+    <div class="flex items-center space-x-2">
+        <a href="#" class="bg-warp-blue text-white px-6 py-2 rounded-lg font-semibold">ไทย</a>
+        <a href="#" class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-300">EN</a>
+    </div>
+</nav>
