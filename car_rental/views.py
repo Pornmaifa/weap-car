@@ -60,7 +60,12 @@ def dashboard(request):
                     img_obj.save()
                 else:
                     CarImage.objects.create(car=car, image=new_image)
-            
+                    
+            if car.status != 'PENDING':
+                new_status = request.POST.get('status')
+                if new_status in ['AVAILABLE', 'MAINTENANCE']: # (ป้องกันการมั่วข้อมูล)
+                    car.status = new_status 
+
             car.save()
             messages.success(request, 'แก้ไขข้อมูลรถเรียบร้อยแล้ว')
             return redirect("dashboard")

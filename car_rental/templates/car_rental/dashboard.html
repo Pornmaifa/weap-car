@@ -70,6 +70,7 @@
                                 data-price="{{ car.price_per_day|floatformat:0 }}"
                                 data-desc="{{ car.description }}"
                                 data-img="{% if car.images.all %}{{ car.images.first.image.url }}{% endif %}"
+                                data-status="{{ car.status }}"  data-brand="{{ car.brand }}"
                                 class="bg-[#47B3C4] text-white text-xs px-3 py-1 rounded hover:bg-[#3a9faa] transition">
                             แก้ไข
                         </button>
@@ -89,7 +90,7 @@
                 {% empty %}
                 <div class="p-8 text-center text-gray-500">
                     คุณยังไม่มีรถเช่า <br>
-                    <a href="{% url 'add_car_step1' %}" class="text-[#47B3C4] hover:underline">เริ่มเพิ่มรถคันแรกของคุณเลย!</a>
+                    <a href="{% url 'add_car' %}" class="text-[#47B3C4] hover:underline">เริ่มเพิ่มรถคันแรกของคุณเลย!</a>
                 </div>
                 {% endfor %}
 
@@ -100,7 +101,7 @@
     <div id="editModal" class="fixed inset-0 bg-opacity-50 hidden z-50 flex items-center justify-center transition-opacity duration-300">
         <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl mx-4 overflow-hidden transform scale-95 transition-transform duration-300" id="modalContent">
             
-            <div class="bg-white px-6 py-4 flex justify-between items-center border-b">
+            <div class="bg-white px-6 py-4 flex justify-between items-center ">
                 <h2 class="text-2xl font-bold text-gray-800">แก้ไขข้อมูลรถ</h2>
                 <button type="button" onclick="closeEditModal()" class="text-gray-500 hover:text-gray-800 text-2xl font-bold">&times;</button>
             </div>
@@ -153,7 +154,15 @@
                     <textarea name="description" id="modal_desc" rows="3" class="w-full border border-gray-300 rounded p-2 focus:ring-2 focus:ring-[#47B3C4] outline-none"></textarea>
                 </div>
 
-                <div class="flex justify-end gap-3 pt-4 border-t">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">สถานะรถ</label>
+                        <select name="status" id="modal_status" class="w-full border border-gray-300 rounded p-2 focus:ring-2 focus:ring-[#47B3C4] outline-none bg-white">
+                            <option value="AVAILABLE">ว่าง (พร้อมใช้งาน)</option>
+                            <option value="MAINTENANCE">ไม่ว่าง (ซ่อมบำรุง/ปิดปรับปรุง)</option>
+                            </select>
+                </div>
+
+                <div class="flex  justify-between mt-6 pt-4  ">
                     <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 font-medium transition">
                         ยกเลิก
                     </button>
@@ -180,6 +189,7 @@
             const price = button.dataset.price;
             const desc = button.dataset.desc;
             const imgUrl = button.dataset.img;
+            const status = button.dataset.status;
 
             // 2. *** ใส่ ID ลงในช่องลับ (สำคัญ!) ***
             document.getElementById('edit_car_id_input').value = id;
@@ -190,7 +200,22 @@
             document.getElementById('modal_license').value = license;
             document.getElementById('modal_price').value = price;
             document.getElementById('modal_desc').value = desc;
-
+            document.getElementById('modal_status').value = status; // *** ใส่ค่าลง Dropdown ***
+            document.getElementById('modal_brand').value = brand;
+            
+            const statusSelect = document.getElementById('modal_status');
+            statusSelect.value = status;
+            if (status === 'PENDING') {
+                // ถ้ายังไม่อนุมัติ -> ล็อคปุ่ม (disabled) และทำเป็นสีเทา
+                statusSelect.disabled = true;
+                statusSelect.classList.add('bg-gray-100', 'cursor-not-allowed');
+                statusSelect.title = "ต้องผ่านการอนุมัติก่อนจึงจะเปลี่ยนสถานะได้"; // Tooltip
+            } else {
+                // ถ้าอนุมัติแล้ว -> ปลดล็อค
+                statusSelect.disabled = false;
+                statusSelect.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                statusSelect.title = "";
+            }
             // 4. จัดการรูปภาพ
             const imgPreview = document.getElementById('modal_img_preview');
             const noImg = document.getElementById('modal_no_img');
