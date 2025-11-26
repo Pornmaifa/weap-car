@@ -6,209 +6,66 @@ from django.contrib.auth.decorators import login_required
 from .forms import CarForm
 from .models import Car , CarImage
 from django.contrib import messages
-
-@login_required
-def add_car_step1(request):
-    car_id = request.session.get('car_id')
-
-    # ถ้ามี car_id อยู่แล้ว ให้ใช้รถคันเดิม
-    if car_id:
-        car = get_object_or_404(Car, id=car_id, owner=request.user)
-    else:
-        # ถ้ายังไม่มี ให้สร้างใหม่
-        car = Car.objects.create(owner=request.user)
-        request.session['car_id'] = car.id
-
-    if request.method == 'POST':
-        car.car_type = request.POST.get('car_type')
-        car.save()
-        return redirect('add_car_step2')
-
-    context = {'car': car}
-    return render(request, 'car_rental/add_car_step1.html', context)
-
-
-@login_required
-def add_car_step2(request):
-    car_id = request.session.get('car_id')
-    if not car_id:
-        return redirect('add_car_step1')
-
-    car = get_object_or_404(Car, id=car_id, owner=request.user)
-
-    if request.method == 'POST':
-        car.service_type = request.POST.get('service_type')
-        car.save()
-        return redirect('add_car_step3')
-
-    context = {'car': car}
-    return render(request, 'car_rental/add_car_step2.html', context)
-
-
-@login_required
-def add_car_step3(request):
-    car_id = request.session.get('car_id')
-    if not car_id:
-        return redirect('add_car_step1')
-
-    car = get_object_or_404(Car, id=car_id, owner=request.user)
-
-    if request.method == 'POST':
-        country = request.POST.get('country')
-        car.country = country if country else "ประเทศไทย"  
-        car.street_address = request.POST.get('street_address')
-        car.city = request.POST.get('city')
-        car.state = request.POST.get('state')
-        car.zip_code = request.POST.get('zip_code')
-        car.save()
-        return redirect('add_car_step4')
-
-    context = {'car': car}
-    return render(request, 'car_rental/add_car_step3.html', context)
-
-
-@login_required
-def add_car_step4(request):
-    car_id = request.session.get('car_id')
-    if not car_id:
-        car = Car.objects.create(owner=request.user)
-        request.session['car_id'] = car.id
-    else:
-        car = get_object_or_404(Car, id=car_id, owner=request.user)
-
-    if request.method == 'POST':
-        # ✅ ลบรูปเก่าที่เลือกให้ลบ
-        delete_ids = request.POST.get('delete_existing_ids', '').split(',')
-        if delete_ids and delete_ids[0] != '':
-            CarImage.objects.filter(car=car, id__in=delete_ids).delete()
-
-        # ✅ เพิ่มรูปใหม่
-        images = request.FILES.getlist('images')
-        for img in images:
-            CarImage.objects.create(car=car, image=img)
-
-        # ✅ ตรวจสอบว่ารูปรวม >= 5
-        if car.images.count() < 5:
-            messages.warning(request, "กรุณาเลือกรูปอย่างน้อย 5 รูป")
-            return redirect('add_car_step4')
-
-        messages.success(request, f"อัปโหลดรูปภาพสำเร็จ ({car.images.count()} รูป)")
-        return redirect('add_car_step5')
-
-    return render(request, 'car_rental/add_car_step4.html', {'car': car})
+import os
+from django.core.files.storage import default_storage
 
 
 
-@login_required
-def add_car_step5(request):
-    car_id = request.session.get('car_id')
-    if not car_id:
-        messages.error(request, "ไม่พบข้อมูลรถ")
-        return redirect('add_car_step1')
-
-    car = get_object_or_404(Car, id=car_id, owner=request.user)
-
-    if request.method == 'POST':
-        car_name = request.POST.get('name')
-        description = request.POST.get('description')
-
-        try:
-            brand, model = car_name.split(' ', 1)
-        except ValueError:
-            brand = car_name
-            model = ''
-
-        car.brand = brand
-        car.model = model
-        car.description = description
-        car.save()
-
-        return redirect('add_car_step6')
-
-    # ✅ ตอน render กลับมา ให้ preload ค่าที่เคยกรอกไว้
-    context = {
-        'car': car
-    }
-    return render(request, 'car_rental/add_car_step5.html', context)
-
-@login_required
-def add_car_step6(request):
-    car_id = request.session.get('car_id')
-    if not car_id:
-        messages.error(request, "ไม่พบข้อมูลรถที่คุณกำลังเพิ่ม")
-        return redirect('add_car_step1')
-
-    car = get_object_or_404(Car, id=car_id, owner=request.user)
-
-    if request.method == 'POST':
-        car.license_plate = request.POST.get('license_plate')
-        car.num_doors = request.POST.get('num_doors')
-        car.num_luggage = request.POST.get('num_luggage')
-        car.fuel_system = request.POST.get('fuel_system')
-        car.has_child_seat = 'has_child_seat' in request.POST
-        car.accessory_price = request.POST.get('accessory_price') or 0
-        car.min_rental_days = request.POST.get('min_rental_days')
-        car.max_rental_days = request.POST.get('max_rental_days')
-        car.save()
-
-        messages.success(request, "บันทึกข้อมูลรถเรียบร้อยแล้ว!")
-        return redirect('add_car_step7')  # ไปหน้าแสดงรถของฉัน
-    context = {'car': car}
-    return render(request, 'car_rental/add_car_step6.html', context)
-
-@login_required
-def add_car_step7(request):
-    car_id = request.session.get('car_id')
-    if not car_id:
-        messages.error(request, "ไม่พบข้อมูลรถที่คุณกำลังเพิ่ม")
-        return redirect('add_car_step1')
-
-    car = get_object_or_404(Car, id=car_id, owner=request.user)
-
-    if request.method == 'POST':
-        price = request.POST.get('price')
-        discount_option = request.POST.get('discount_option')
-
-        if not price:
-            messages.error(request, "กรุณากรอกราคาต่อวัน")
-            return redirect('add_car_step7')
-
-        car.price_per_day = price
-        car.discount_option = discount_option
-        car.status = 'PENDING'  # ✅ ยังไม่ลงประกาศ
-        car.save()
-
-        messages.success(request, "บันทึกราคาและส่วนลดเรียบร้อยแล้ว!")
-        return redirect('add_car_preview', car_id=car.id)  # ไปหน้า Preview
-    context = {'car': car}
-    return render(request, 'car_rental/add_car_step7.html', context)
 
 
 # (เพิ่มฟังก์ชันนี้เข้าไปใน views.py)
 @login_required
-def add_car_preview(request, car_id):
-    # ดึงรถของผู้ใช้พร้อมรูปภาพทั้งหมด ไม่ต้องกรอง status
-    car = get_object_or_404(Car.objects.prefetch_related('images'), id=car_id, owner=request.user)
-    
-    context = {
-        'car': car,
-        'images': car.images.all(),  # เพิ่มตัวแปรนี้เพื่อให้มั่นใจว่าภาพโหลดแน่
-    }
-    return render(request, 'car_rental/add_car_preview.html', context)
+def add_car_preview(request):
+    draft = request.session.get('car_draft')
+
+    if not draft:
+        messages.error(request, "ไม่พบข้อมูลรถ")
+        return redirect('add_car_step1')
+
+    return render(request, 'car_rental/add_car_preview.html', {'draft': draft})
 
 
 @login_required
 def dashboard(request):
-
-    # ----------- ลบรถจากปุ่มในหน้า Dashboard ----------- #
+    
     if request.method == "POST":
-        car_id = request.POST.get("delete_car_id")
-        if car_id:
+        
+        # =========== กรณีที่ 1: ลบรถ (Delete) ===========
+        if 'delete_car_id' in request.POST:
+            car_id = request.POST.get("delete_car_id")
             car = get_object_or_404(Car, id=car_id, owner=request.user)
             car.delete()
-            return redirect("dashboard")  # กลับสู่หน้าดashboardหลังลบเสร็จ
+            messages.success(request, 'ลบรถเรียบร้อยแล้ว')
+            return redirect("dashboard")
 
-    # ----------- แสดงรายการรถของผู้ใช้ ----------- #
+        # =========== กรณีที่ 2: แก้ไขรถ (Edit) ===========
+        elif 'edit_car_id' in request.POST:
+            car_id = request.POST.get("edit_car_id")
+            car = get_object_or_404(Car, id=car_id, owner=request.user)
+            
+            # รับค่าจากฟอร์ม
+            car.brand = request.POST.get('brand')
+            car.model = request.POST.get('model')
+            car.license_plate = request.POST.get('license_plate')
+            car.price_per_day = request.POST.get('price')
+            car.description = request.POST.get('description')
+
+            # จัดการรูปภาพ (ถ้ามีการอัปโหลดใหม่)
+            new_image = request.FILES.get('new_image')
+            if new_image:
+                # ถ้ามีรูปเดิมอยู่แล้ว ให้แทนที่รูปแรก หรือสร้างใหม่
+                if car.images.exists():
+                    img_obj = car.images.first()
+                    img_obj.image = new_image
+                    img_obj.save()
+                else:
+                    CarImage.objects.create(car=car, image=new_image)
+            
+            car.save()
+            messages.success(request, 'แก้ไขข้อมูลรถเรียบร้อยแล้ว')
+            return redirect("dashboard")
+
+    # =========== ส่วนแสดงผล (GET) ===========
     my_cars = Car.objects.filter(owner=request.user).order_by('-id')
 
     context = {
@@ -218,30 +75,81 @@ def dashboard(request):
 
 # (เพิ่มฟังก์ชันนี้เข้าไปใน views.py)
 @login_required
-def publish_car(request, car_id):
+def publish_car(request):
+    draft = request.session.get('car_draft')
+
+    if not draft:
+        messages.error(request, "ไม่พบข้อมูลรถใน Session")
+        return redirect('add_car_step1')
+
     if request.method == 'POST':
-        try:
-            car_to_publish = Car.objects.get(id=car_id, owner=request.user, status='PENDING')
-        except Car.DoesNotExist:
-            messages.error(request, 'ไม่พบรถที่ต้องการลงประกาศ')
-            return redirect('add_car_preview')
 
-        # (เปลี่ยนสถานะเป็น "พร้อมใช้งาน")
-        car_to_publish.status = 'AVAILABLE'
-        car_to_publish.save()
+        # 1) สร้าง Car จริงในฐานข้อมูล
+        car = Car.objects.create(
+            owner=request.user,
+            brand=draft.get('brand', ''),
+            model=draft.get('model', ''),
+            year=draft.get('year'),
+            description=draft.get('description', ''),
 
-        # (ล้าง Session - จบกระบวนการ)
-        try:
-            del request.session['add_car_data']
-        except KeyError:
-            pass
-        
-        messages.success(request, 'ลงประกาศรถของคุณสำเร็จแล้ว!')
-        return redirect('dashboard') # (กลับหน้าหลัก)
-    else:
-        # ถ้าเข้าหน้านี้ตรงๆ (ไม่ใช่ POST) ให้กลับไปหน้า Preview
-        return redirect('car_preview', car_id=car_id)
-    
+            price_per_day=draft.get('price'),
+            car_type=draft.get('car_type'),
+            license_plate=draft.get('license_plate', ''),
+            status='AVAILABLE',
+            service_type=draft.get('service_type'),
+
+            country=draft.get('country'),
+            street_address=draft.get('street_address'),
+            city=draft.get('city'),
+            state=draft.get('state'),
+            zip_code=draft.get('zip_code'),
+
+            num_doors=draft.get('num_doors', 4),
+            num_luggage=draft.get('num_luggage', 2),
+            fuel_system=draft.get('fuel_system', 'GASOLINE'),
+            has_child_seat=draft.get('has_child_seat', False),
+            accessory_price=draft.get('accessory_price', 0),
+
+            min_rental_days=draft.get('min_rental_days', 1),
+            max_rental_days=draft.get('max_rental_days', 30),
+            discount_option=draft.get('discount_option', 'NONE'),
+
+            is_published=True,
+        )
+
+        # 2) บันทึกรูปภาพ (base64 → ไฟล์)
+        import base64
+        from django.core.files.base import ContentFile
+
+        for idx, img_data in enumerate(draft.get('images', [])):
+            img_binary = base64.b64decode(img_data.split(',')[1])
+            file_name = f"car_{car.id}_{idx}.jpg"
+
+            CarImage.objects.create(
+                car=car,
+                image=ContentFile(img_binary, name=file_name)
+            )
+
+        # 3) ลบ draft ใน session
+        del request.session['car_draft']
+
+        messages.success(request, "ลงประกาศรถของคุณสำเร็จแล้ว!")
+        return redirect('dashboard')
+
+    return redirect('add_car_preview')
+
+
+
+
+
+@login_required
+def cancel_add_car(request):
+    if 'car_id' in request.session:
+        Car.objects.filter(id=request.session['car_id'], owner=request.user).delete()
+        del request.session['car_id']
+    return redirect('dashboard')
+
+
     
 # View สำหรับแสดงรถทั้งหมด
 def car_list(request):
@@ -251,25 +159,75 @@ def car_list(request):
     }
     return render(request, 'car_rental/car_list.html', context)
 
-# View สำหรับเพิ่มรถ (ต้อง Login ก่อน)
+# car_rental/views.py
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Car, CarImage
+from django.core.files.base import ContentFile
+import base64
+
 @login_required
 def add_car(request):
-    # อาจจะเพิ่มเงื่อนไขเช็คว่าเป็น Owner หรือไม่
-    # if request.user.profile.role != 'OWNER':
-    #     return redirect('car-list') 
+    if request.method == "POST":
+        data = request.POST
 
-    if request.method == 'POST':
-        form = CarForm(request.POST)
-        if form.is_valid():
-            car = form.save(commit=False) # สร้าง object รถ แต่ยังไม่บันทึกลง DB
-            car.owner = request.user      # กำหนดให้เจ้าของคือ user ที่ login อยู่
-            car.save()                    # บันทึกลง DB
-            messages.success(request, 'เพิ่มรถของคุณสำเร็จแล้ว!')
-            return redirect('car_list') # กลับไปที่หน้ารายการรถ
-    else:
-        form = CarForm()
+        # 1) สร้าง Car จริงในฐานข้อมูล
+        car = Car.objects.create(
+            owner=request.user,
+            brand=data.get("brand", ""),
+            model=data.get("model", ""),
+            car_type=data.get("car_type", "SEDAN"),
+            service_type=data.get("service_type", "SELF_DRIVE"),
 
-    context = {
-        'form': form
-    }
-    return render(request, 'car_rental/add_car.html', context)
+            # Address
+            country=data.get("country") or "ประเทศไทย",
+            street_address=data.get("street_address") or "",
+            city=data.get("city") or "",
+            state=data.get("state") or "",
+            zip_code=data.get("zip_code") or "",
+
+            # รายละเอียดรถ
+            description=data.get("description", ""),
+            license_plate=data.get("license_plate", ""),
+            num_doors=data.get("num_doors") or 4,
+            num_luggage=data.get("num_luggage") or 2,
+            fuel_system=data.get("fuel_system") or "GASOLINE",
+            has_child_seat=(data.get("has_child_seat") == "true"),
+            accessory_price=data.get("accessory_price") or 0,
+
+            min_rental_days=data.get("min_rental_days") or 1,
+            max_rental_days=data.get("max_rental_days") or 30,
+
+            price_per_day=data.get("price") or 0,
+            discount_option=data.get("discount_option") or "NONE",
+
+            status="PENDING",
+            is_published=True,
+        )
+
+        # 2) รูปภาพ (รับเป็น data URL base64 จากฟอร์ม)
+        images = request.POST.getlist("images[]")
+
+        index = 0
+        for img64 in images:
+            if not img64:
+                continue
+            if img64.startswith("data:image"):
+                try:
+                    head, raw = img64.split(",", 1)
+                except ValueError:
+                    continue
+                img_binary = base64.b64decode(raw)
+                CarImage.objects.create(
+                    car=car,
+                    image=ContentFile(img_binary, name=f"car_{car.id}_{index}.jpg")
+                )
+                index += 1
+
+        messages.success(request, "ลงประกาศรถของคุณสำเร็จแล้ว!")
+        return redirect("dashboard")
+
+    # GET: แสดงหน้า multi-step form
+    return render(request, "car_rental/add_car.html")

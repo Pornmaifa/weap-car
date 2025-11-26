@@ -1,12 +1,821 @@
-{% extends "users/base.html" %} {% block content %}
-  <div class="content-section">
-      <form method="POST">
-          {% csrf_token %} <fieldset class="form-group">
-              <legend class="border-bottom mb-4">เพิ่มรถยนต์ให้เช่า</legend>
-              {{ form.as_p }} </fieldset>
-          <div class="form-group">
-              <button class="btn btn-outline-info" type="submit">เพิ่มรถ</button>
-          </div>
-      </form>
-  </div>
-{% endblock content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เพิ่มรถเช่า - WarpCar</title>
+    <link href="{% static 'dist/styles.css' %}?v=99" rel="stylesheet">
+    <style>
+        .step { display: none; }
+        .step.active { display: block; }
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+
+    {% include 'users/navbar.html' %}
+
+    <div class="container mx-auto p-4 md:p-8 min-h-screen">
+        <form id="carForm" method="POST" class="relative">
+            {% csrf_token %}
+
+            <!-- ================== STEP 1: ประเภทรถ ================== -->
+            <section id="step-1" class="step active min-h-[70vh] flex flex-col justify-center">
+                <h1 class="text-4xl font-bold text-center mb-12">
+                    รถของคุณเป็นประเภทไหน
+                </h1>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                    <div>
+                        <input type="radio" name="car_type" value="SEDAN" id="type_sedan" class="hidden peer">
+                        <label for="type_sedan"
+                            class="flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer 
+                                   hover:shadow-lg transition-all 
+                                   peer-checked:border-warp-blue peer-checked:ring-2 peer-checked:ring-warp-blue">
+                            <img src="{% static 'car_rental/images/sedan.png' %}" alt="รถเก๋ง" class="w-full h-32 object-contain mb-2">
+                            <span class="font-semibold text-lg">รถเก๋งขนาดเล็ก</span>
+                        </label>
+                    </div>
+
+                    <div>
+                        <input type="radio" name="car_type" value="TRUCK" id="type_truck" class="hidden peer">
+                        <label for="type_truck"
+                            class="flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer 
+                                   hover:shadow-lg transition-all 
+                                   peer-checked:border-warp-blue peer-checked:ring-2 peer-checked:ring-warp-blue">
+                            <img src="{% static 'car_rental/images/truck.png' %}" alt="รถกระบะ" class="w-full h-32 object-contain mb-2">
+                            <span class="font-semibold text-lg">รถกระบะ</span>
+                        </label>
+                    </div>
+
+                    <div>
+                        <input type="radio" name="car_type" value="VAN" id="type_van" class="hidden peer">
+                        <label for="type_van"
+                            class="flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer 
+                                   hover:shadow-lg transition-all 
+                                   peer-checked:border-warp-blue peer-checked:ring-2 peer-checked:ring-warp-blue">
+                            <img src="{% static 'car_rental/images/van.png' %}" alt="รถตู้" class="w-full h-32 object-contain mb-2">
+                            <span class="font-semibold text-lg">รถตู้</span>
+                        </label>
+                    </div>
+
+                    <div>
+                        <input type="radio" name="car_type" value="EV" id="type_ev" class="hidden peer">
+                        <label for="type_ev"
+                            class="flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer 
+                                   hover:shadow-lg transition-all 
+                                   peer-checked:border-warp-blue peer-checked:ring-2 peer-checked:ring-warp-blue">
+                            <img src="{% static 'car_rental/images/ev.webp' %}" alt="รถไฟฟ้า" class="w-full h-32 object-contain mb-2">
+                            <span class="font-semibold text-lg">รถไฟฟ้า</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="fixed bottom-8 left-8">
+                    <a href="{% url 'become_owner' %}" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">
+                        ถอยกลับ
+                    </a>
+                </div>
+
+                <div class="fixed bottom-8 right-8">
+                    <button type="button" onclick="goNextStep(1)" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">
+                        ถัดไป
+                    </button>
+                </div>
+            </section>
+
+            <!-- ================== STEP 2: ประเภทบริการ ================== -->
+            <section id="step-2" class="step min-h-[70vh] flex flex-col justify-center">
+                <h1 class="text-4xl font-bold text-center mb-12">
+                    เลือกประเภทบริการ
+                </h1>
+
+                <div class="flex flex-col items-center gap-8">
+                    <div>
+                        <input type="radio" name="service_type" value="SELF_DRIVE" id="service_self" class="hidden peer">
+                        <label for="service_self"
+                            class="flex flex-col items-center justify-center w-64 h-48 p-6 
+                                   bg-gray-100 text-gray-800 rounded-xl shadow-lg cursor-pointer transition-all
+                                   hover:shadow-xl peer-checked:bg-warp-blue peer-checked:text-white
+                                   peer-checked:ring-4 peer-checked:ring-offset-2 peer-checked:ring-warp-blue-dark">
+                            <img src="{% static 'car_rental/images/self_drive.png' %}" class="w-24 h-24 object-contain mb-2">
+                            <span class="font-semibold text-2xl">ขับเอง</span>
+                        </label>
+                    </div>
+
+                    <div>
+                        <input type="radio" name="service_type" value="WITH_DRIVER" id="service_driver" class="hidden peer">
+                        <label for="service_driver"
+                            class="flex flex-col items-center justify-center w-64 h-48 p-6 
+                                   bg-gray-100 text-gray-800 rounded-xl shadow-lg cursor-pointer transition-all
+                                   hover:shadow-xl peer-checked:bg-warp-blue peer-checked:text-white
+                                   peer-checked:ring-4 peer-checked:ring-offset-2 peer-checked:ring-warp-blue-dark">
+                            <img src="{% static 'car_rental/images/with_driver.png' %}" class="w-24 h-24 object-contain mb-2">
+                            <span class="font-semibold text-2xl">พร้อมคนขับ</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="fixed bottom-8 left-8">
+                    <button type="button" onclick="goPrevStep(2)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">
+                        ถอยกลับ
+                    </button>
+                </div>
+
+                <div class="fixed bottom-8 right-8">
+                    <button type="button" onclick="goNextStep(2)" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">
+                        ถัดไป
+                    </button>
+                </div>
+            </section>
+
+            <!-- ================== STEP 3: ที่อยู่รับรถ ================== -->
+            <section id="step-3" class="step min-h-[70vh] flex flex-col justify-center">
+                <div class="max-w-xl mx-auto w-full">
+                    <h1 class="text-4xl font-bold text-center mb-8">
+                        ตำแหน่งรับรถของคุณ
+                    </h1>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-lg font-semibold mb-2">ประเทศ</label>
+                            <input type="text" name="country" placeholder="ประเทศไทย" 
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-lg font-semibold mb-2">ที่อยู่</label>
+                            <input type="text" name="street_address" placeholder="เช่น 123 ถนนหลัก" 
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-lg font-semibold mb-2">อำเภอ / เขต</label>
+                                <input type="text" name="city" 
+                                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-lg font-semibold mb-2">จังหวัด</label>
+                                <input type="text" name="state" 
+                                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-lg font-semibold mb-2">รหัสไปรษณีย์</label>
+                            <input type="text" name="zip_code" 
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fixed bottom-8 left-8">
+                    <button type="button" onclick="goPrevStep(3)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">
+                        ถอยกลับ
+                    </button>
+                </div>
+
+                <div class="fixed bottom-8 right-8">
+                    <button type="button" onclick="goNextStep(3)" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">
+                        ถัดไป
+                    </button>
+                </div>
+            </section>
+
+            <!-- ================== STEP 4: รูปภาพ ================== -->
+            <section id="step-4" class="step min-h-[70vh] flex flex-col justify-center">
+                <div class="flex-grow flex flex-col justify-center">
+                    <h1 class="text-4xl font-bold text-center mb-4">เพิ่มรูปรถ</h1>
+                    <p class="text-lg text-gray-500 text-center mb-6">เพิ่มอย่างน้อย 5 รูปเพื่อดำเนินการต่อ</p>
+
+                    <div class="max-w-4xl mx-auto border-2 border-dashed border-gray-300 rounded-lg p-6">
+                        <div id="image-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                            <!-- Preview รูปจะถูกเติมด้วย JS -->
+                        </div>
+
+                        <div class="text-center">
+                            <button type="button" id="add-image-btn"
+                                    class="bg-warp-blue text-white px-6 py-3 rounded-lg font-semibold hover:bg-warp-blue-dark text-lg">
+                                เพิ่มรูปภาพ
+                            </button>
+                            <input type="file" id="image-input" accept="image/*" multiple class="hidden">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- container ซ่อนสำหรับส่งรูปขึ้น server -->
+                <div id="hidden-images-container"></div>
+
+                <div class="fixed bottom-8 left-8">
+                    <button type="button" onclick="goPrevStep(4)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">
+                        ถอยกลับ
+                    </button>
+                </div>
+
+                <div class="fixed bottom-8 right-8">
+                    <button type="button" onclick="goNextStep(4)" id="step4-next-btn"
+                            class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark opacity-50 cursor-not-allowed">
+                        ถัดไป
+                    </button>
+                </div>
+            </section>
+
+            <!-- ================== STEP 5: ชื่อรถ + จุดขาย ================== -->
+            <section id="step-5" class="step min-h-[70vh] flex flex-col justify-center">
+                <div class="max-w-2xl mx-auto w-full">
+                    <h1 class="text-4xl font-bold text-center mb-12">
+                        ชื่อรุ่น/ยี่ห้อรถ
+                    </h1>
+                    <label class="text-lg font-semibold mb-2 block">
+                        ชื่อรถ (ตัวอย่าง YARIS 1.2)
+                    </label>
+                    <input type="text" id="car_name" name="name"
+                           placeholder="กรอกชื่อรถของคุณ" required
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                    <h2 class="text-3xl font-bold text-center mt-16 mb-8">
+                        รายละเอียดรถเพื่อเป็นจุดขายของคุณ
+                    </h2>
+                    <textarea id="car_description" name="description" rows="6" maxlength="200"
+                              class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="เช่น รถประหยัดน้ำมัน, มีประกันชั้น 1..." required></textarea>
+
+                    <div id="char-counter" class="text-right text-gray-500 mt-2">
+                        0/200
+                    </div>
+                </div>
+
+                <div class="fixed bottom-8 left-8">
+                    <button type="button" onclick="goPrevStep(5)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">
+                        ถอยกลับ
+                    </button>
+                </div>
+
+                <div class="fixed bottom-8 right-8">
+                    <button type="button" onclick="goNextStep(5)" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">
+                        ถัดไป
+                    </button>
+                </div>
+            </section>
+
+            <!-- ================== STEP 6: รายละเอียดรถ (ทะเบียน/ประตู/สัมภาระ/เชื้อเพลิง) ================== -->
+            <section id="step-6" class="step min-h-[70vh] flex flex-col justify-center">
+                <div class="max-w-xl mx-auto w-full">
+                    <h1 class="text-4xl font-bold text-center mb-12">
+                        รายละเอียดรถ
+                    </h1>
+
+                    <div class="space-y-6">
+                        <div>
+                            <label class="text-lg font-semibold mb-2 block">
+                                ป้ายทะเบียนรถ <span class="text-sm text-gray-500">(ตัวอย่าง กก 0000 อุบลราชธานี)</span>
+                            </label>
+                            <input type="text" name="license_plate" required
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <div>
+                            <label class="text-lg font-semibold mb-2 block">จำนวนประตู</label>
+                            <div class="flex items-center border border-gray-300 rounded-lg p-3">
+                                <button type="button" class="decrement-btn w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+                                        data-target="num_doors">-</button>
+                                <input type="number" id="num_doors" name="num_doors"
+                                       value="4" min="1" max="8" required readonly
+                                       class="flex-grow text-center text-lg font-semibold border-none focus:outline-none">
+                                <button type="button" class="increment-btn w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+                                        data-target="num_doors">+</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-lg font-semibold mb-2 block">จำนวนสัมภาระ</label>
+                            <div class="flex items-center border border-gray-300 rounded-lg p-3">
+                                <button type="button" class="decrement-btn w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+                                        data-target="num_luggage">-</button>
+                                <input type="number" id="num_luggage" name="num_luggage"
+                                       value="2" min="0" max="10" required readonly
+                                       class="flex-grow text-center text-lg font-semibold border-none focus:outline-none">
+                                <button type="button" class="increment-btn w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+                                        data-target="num_luggage">+</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-lg font-semibold mb-2 block">ระบบเชื้อเพลิง</label>
+                            <select name="fuel_system" required
+                                    class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                                <option value="">เลือกประเภทเชื้อเพลิง</option>
+                                <option value="GASOLINE">เบนซิน</option>
+                                <option value="DIESEL">ดีเซล</option>
+                                <option value="LPG">LPG</option>
+                                <option value="NGV">NGV</option>
+                                <option value="ELECTRIC">ไฟฟ้า (EV)</option>
+                                <option value="HYBRID">ไฮบริด</option>
+                            </select>
+                        </div>
+
+                        <div class="flex items-center justify-between border border-gray-300 rounded-lg p-3">
+                            <label class="text-lg font-semibold">อุปกรณ์เสริม (ที่นั่งเด็ก)</label>
+                            <input type="checkbox" id="child_seat" value="true"
+                                   class="h-6 w-6 text-warp-blue border-gray-300 rounded focus:ring-warp-blue"
+                                   onchange="syncChildSeat(this)">
+                            <input type="hidden" name="has_child_seat" id="has_child_seat_hidden" value="false">
+                        </div>
+
+                        <div>
+                            <label class="text-sm text-gray-500 mb-1 block">เพิ่มราคาสำหรับอุปกรณ์เสริม</label>
+                            <input type="number" name="accessory_price"
+                                   value="0" min="0" step="10"
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <h3 class="text-xl font-bold text-center mt-10 mb-4">ผู้เช่าสามารถเช่าได้นานเท่าใด</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-lg font-semibold mb-2 block">ต่ำสุด: วัน</label>
+                                <div class="flex items-center border border-gray-300 rounded-lg p-3">
+                                    <button type="button" class="decrement-btn w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+                                            data-target="min_rental_days">-</button>
+                                    <input type="number" id="min_rental_days" name="min_rental_days"
+                                           value="1" min="1" max="30" required readonly
+                                           class="flex-grow text-center text-lg font-semibold border-none focus:outline-none">
+                                    <button type="button" class="increment-btn w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+                                            data-target="min_rental_days">+</button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-lg font-semibold mb-2 block">สูงสุด: วัน</label>
+                                <div class="flex items-center border border-gray-300 rounded-lg p-3">
+                                    <button type="button" class="decrement-btn w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+                                            data-target="max_rental_days">-</button>
+                                    <input type="number" id="max_rental_days" name="max_rental_days"
+                                           value="30" min="1" max="90" required readonly
+                                           class="flex-grow text-center text-lg font-semibold border-none focus:outline-none">
+                                    <button type="button" class="increment-btn w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+                                            data-target="max_rental_days">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fixed bottom-8 left-8">
+                    <button type="button" onclick="goPrevStep(6)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">
+                        ถอยกลับ
+                    </button>
+                </div>
+
+                <div class="fixed bottom-8 right-8">
+                    <button type="button" onclick="goNextStep(6)" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">
+                        ถัดไป
+                    </button>
+                </div>
+            </section>
+
+            <!-- ================== STEP 7: ราคา + ส่วนลด ================== -->
+            <section id="step-7" class="step min-h-[70vh] flex flex-col justify-center">
+                <div class="max-w-xl mx-auto w-full">
+                    <h1 class="text-4xl font-bold text-center mb-8">
+                        ตั้งราคารถของคุณ
+                    </h1>
+
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-lg font-semibold mb-2">ราคาต่อวัน (THB)</label>
+                            <input type="number" name="price" min="0" step="10" required
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-lg font-semibold mb-2">ตัวเลือกส่วนลด</label>
+                            <select name="discount_option"
+                                    class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                                <option value="NONE">ไม่มีส่วนลด</option>
+                                <option value="FIRST_TIMER_20">ส่วนลด 20% สำหรับผู้เช่าครั้งแรก</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fixed bottom-8 left-8">
+                    <button type="button" onclick="goPrevStep(7)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">
+                        ถอยกลับ
+                    </button>
+                </div>
+
+                <div class="fixed bottom-8 right-8">
+                    <button type="button" onclick="goPreview()" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">
+                        ดูตัวอย่างก่อนลงประกาศ
+                    </button>
+                </div>
+            </section>
+
+            <!-- ================== STEP 8: PREVIEW ================== -->
+            <section id="step-8" class="step pb-40">
+                <div class="bg-yellow-100 border-b-4 border-yellow-400 text-yellow-800 p-4 text-center font-semibold">
+                    นี่คือตัวอย่างหน้าประกาศของคุณ (ยังไม่แสดงต่อสาธารณะ)
+                </div>
+
+                <div class="container mx-auto p-4 md:p-8">
+                    <!-- รูปภาพ -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-8 rounded-lg overflow-hidden shadow-lg" id="preview-images">
+                        <!-- เติมด้วย JS -->
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                        <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-lg">
+                            <h1 class="text-3xl font-bold mb-4" id="preview-title"></h1>
+                            <hr class="my-4">
+
+                            <h2 class="text-2xl font-semibold mb-4">รายละเอียดรถ</h2>
+
+                            <div class="grid grid-cols-2 gap-4 text-lg">
+                                <div><strong>ประเภทบริการ:</strong> <span id="preview-service"></span></div>
+                                <div><strong>ประเภทตัวรถ:</strong> <span id="preview-type"></span></div>
+                                <div><strong>จำนวนประตู:</strong> <span id="preview-doors"></span></div>
+                                <div><strong>จำนวนสัมภาระ:</strong> <span id="preview-luggage"></span></div>
+                                <div><strong>ระบบเชื้อเพลิง:</strong> <span id="preview-fuel"></span></div>
+                            </div>
+
+                            <h2 class="text-2xl font-semibold mt-8 mb-4">คำอธิบายรถ</h2>
+                            <p class="text-gray-700 text-lg whitespace-pre-line" id="preview-description"></p>
+
+                            <h2 class="text-2xl font-semibold mt-8 mb-4">อุปกรณ์เสริม</h2>
+                            <div id="preview-accessory"></div>
+                        </div>
+
+                        <div class="lg:col-span-1 space-y-6">
+                            <div class="bg-white p-6 rounded-lg shadow-lg">
+                                <h2 class="text-2xl font-semibold mb-4">สถานที่รับรถ</h2>
+                                <p class="text-gray-700 text-lg" id="preview-address"></p>
+                            </div>
+
+                            <div class="bg-white p-6 rounded-lg shadow-lg sticky top-8">
+                                <h2 class="text-3xl font-bold text-gray-900 mb-2">
+                                    <span id="preview-price"></span> THB 
+                                    <span class="text-lg font-normal text-gray-600">/วัน</span>
+                                </h2>
+
+                                <div id="preview-discount"></div>
+
+                                <button type="button"
+                                        class="w-full bg-gray-400 text-white p-4 rounded-lg mt-4 font-bold cursor-not-allowed" disabled>
+                                    จอง (ตัวอย่าง)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fixed bottom-0 left-0 w-full bg-white border-t shadow-inner py-4">
+                    <div class="container mx-auto flex justify-between items-center px-8">
+                        <button type="button" onclick="showStep(7)"
+                                class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">
+                            ถอยกลับ (แก้ไข)
+                        </button>
+
+                        <button type="button" onclick="submitCarForm()"
+                                class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">
+                            ยืนยันและลงประกาศ
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </form>
+    </div>
+
+    <!-- ================== SCRIPT ================== -->
+    <script>
+    let currentStep = 1;
+    const totalSteps = 8;
+    let imageList = [];  // เก็บ dataURL ของรูป
+    const STORAGE_KEY = "warp_car_draft";
+
+    function showStep(n) {
+        document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+        const step = document.getElementById(`step-${n}`);
+        if (step) step.classList.add("active");
+        currentStep = n;
+    }
+
+    function goNextStep(step) {
+        if (step === 1) {
+            if (!document.querySelector('input[name="car_type"]:checked')) {
+                alert("กรุณาเลือกประเภทรถ");
+                return;
+            }
+        }
+        if (step === 2) {
+            if (!document.querySelector('input[name="service_type"]:checked')) {
+                alert("กรุณาเลือกประเภทบริการ");
+                return;
+            }
+        }
+        if (step === 4) {
+            if (imageList.length < 5) {
+                alert("กรุณาอัปโหลดรูปอย่างน้อย 5 รูป");
+                return;
+            }
+        }
+        saveDraft();
+        if (step < totalSteps) showStep(step + 1);
+    }
+
+    function goPrevStep(step) {
+        saveDraft();
+        if (step > 1) showStep(step - 1);
+    }
+
+    // ========== localStorage: เก็บ/โหลดข้อมูล ==========
+    function saveDraft() {
+        const form = document.getElementById("carForm");
+        const data = {};
+        Array.from(form.elements).forEach(el => {
+            if (!el.name) return;
+            if (el.type === "radio") {
+                if (el.checked) data[el.name] = el.value;
+            } else if (el.type === "checkbox") {
+                if (el.id === "child_seat") {
+                    data["has_child_seat"] = el.checked ? "true" : "false";
+                } else {
+                    data[el.name] = el.checked;
+                }
+            } else if (el.type !== "file" && el.type !== "button" && el.type !== "submit") {
+                data[el.name] = el.value;
+            }
+        });
+        data["_images"] = imageList;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function loadDraft() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        try {
+            const data = JSON.parse(raw);
+            const form = document.getElementById("carForm");
+            Object.keys(data).forEach(name => {
+                if (name === "_images") return;
+                const value = data[name];
+                const els = form.querySelectorAll(`[name="${name}"]`);
+                if (els.length === 1) {
+                    const el = els[0];
+                    if (el.type === "checkbox") {
+                        el.checked = (value === "true" || value === true);
+                        if (el.id === "child_seat") {
+                            document.getElementById("has_child_seat_hidden").value = el.checked ? "true" : "false";
+                        }
+                    } else {
+                        el.value = value;
+                    }
+                } else if (els.length > 1) {
+                    els.forEach(el => {
+                        if (el.type === "radio" && el.value === value) {
+                            el.checked = true;
+                        }
+                    });
+                }
+            });
+
+            if (Array.isArray(data["_images"])) {
+                imageList = data["_images"];
+                renderImagePreview();
+            }
+        } catch (e) {
+            console.log("loadDraft error", e);
+        }
+    }
+
+    // ========== จัดการ child seat hidden ==========
+    function syncChildSeat(cb) {
+        document.getElementById("has_child_seat_hidden").value = cb.checked ? "true" : "false";
+    }
+
+    // ========== จัดการ Plus / Minus ปุ่มตัวเลข ==========
+    function setupNumberButtons() {
+        document.querySelectorAll(".increment-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const targetId = btn.dataset.target;
+                const input = document.getElementById(targetId);
+                if (!input) return;
+                let val = parseInt(input.value || "0");
+                const max = parseInt(input.max || "999");
+                if (val < max) {
+                    input.value = val + 1;
+                }
+                saveDraft();
+            });
+        });
+        document.querySelectorAll(".decrement-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const targetId = btn.dataset.target;
+                const input = document.getElementById(targetId);
+                if (!input) return;
+                let val = parseInt(input.value || "0");
+                const min = parseInt(input.min || "0");
+                if (val > min) {
+                    input.value = val - 1;
+                }
+                saveDraft();
+            });
+        });
+    }
+
+    // ========== ตัวนับตัวอักษร description ==========
+    function setupDescriptionCounter() {
+        const textarea = document.getElementById("car_description");
+        const counter = document.getElementById("char-counter");
+        if (!textarea || !counter) return;
+        const update = () => {
+            const len = textarea.value.length;
+            counter.innerText = `${len}/200`;
+        };
+        textarea.addEventListener("input", () => {
+            update();
+            saveDraft();
+        });
+        update();
+    }
+
+    // ========== รูปภาพ (Step4) ==========
+    function renderImagePreview() {
+        const grid = document.getElementById("image-grid");
+        const hiddenContainer = document.getElementById("hidden-images-container");
+        const nextBtn = document.getElementById("step4-next-btn");
+
+        grid.innerHTML = "";
+        hiddenContainer.innerHTML = "";
+
+        imageList.forEach((src, idx) => {
+            const div = document.createElement("div");
+            div.className = "relative group";
+            div.innerHTML = `
+                <img src="${src}" class="w-full h-40 object-cover rounded-lg shadow">
+                <button type="button" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold opacity-0 group-hover:opacity-100 transition-opacity">&times;</button>
+            `;
+            div.querySelector("button").addEventListener("click", () => {
+                imageList.splice(idx, 1);
+                renderImagePreview();
+                saveDraft();
+            });
+            grid.appendChild(div);
+
+            // hidden input สำหรับ submit
+            const hidden = document.createElement("input");
+            hidden.type = "hidden";
+            hidden.name = "images[]";
+            hidden.value = src;
+            hiddenContainer.appendChild(hidden);
+        });
+
+        if (imageList.length >= 5) {
+            nextBtn.classList.remove("opacity-50", "cursor-not-allowed");
+        } else {
+            nextBtn.classList.add("opacity-50", "cursor-not-allowed");
+        }
+    }
+
+    function setupImageUpload() {
+        const addBtn = document.getElementById("add-image-btn");
+        const input = document.getElementById("image-input");
+
+        addBtn.addEventListener("click", () => input.click());
+        input.addEventListener("change", (e) => {
+            const files = Array.from(e.target.files);
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    imageList.push(ev.target.result);
+                    renderImagePreview();
+                    saveDraft();
+                };
+                reader.readAsDataURL(file);
+            });
+            input.value = "";
+        });
+    }
+
+    // ========== Preview Step ==========
+    function goPreview() {
+        // แยก brand, model
+        const fullName = document.querySelector('input[name="name"]').value || "";
+        let brand = fullName;
+        let model = "";
+        if (fullName.includes(" ")) {
+            brand = fullName.split(" ")[0];
+            model = fullName.substring(brand.length).trim();
+        }
+        document.querySelector('input[name="brand"]')?.remove();
+        document.querySelector('input[name="model"]')?.remove();
+        const form = document.getElementById("carForm");
+        const bInput = document.createElement("input");
+        bInput.type = "hidden";
+        bInput.name = "brand";
+        bInput.value = brand;
+        form.appendChild(bInput);
+        const mInput = document.createElement("input");
+        mInput.type = "hidden";
+        mInput.name = "model";
+        mInput.value = model;
+        form.appendChild(mInput);
+
+        buildPreviewUI();
+        saveDraft();
+        showStep(8);
+    }
+
+    function buildPreviewUI() {
+        const getVal = name => (document.querySelector(`[name="${name}"]`)?.value || "").trim();
+
+        // รูป
+        const imgWrap = document.getElementById("preview-images");
+        imgWrap.innerHTML = "";
+        imageList.forEach(src => {
+            const div = document.createElement("div");
+            div.className = "aspect-w-3 aspect-h-2";
+            div.innerHTML = `<img src="${src}" class="w-full h-full object-cover">`;
+            imgWrap.appendChild(div);
+        });
+
+        const brand = getVal("brand");
+        const model = getVal("model");
+        document.getElementById("preview-title").innerText = (brand + " " + model).trim();
+
+        document.getElementById("preview-description").innerText = getVal("description");
+
+        const carType = document.querySelector('input[name="car_type"]:checked')?.value || "";
+        const serviceType = document.querySelector('input[name="service_type"]:checked')?.value || "";
+        const fuel = getVal("fuel_system");
+        document.getElementById("preview-type").innerText = carType;
+        document.getElementById("preview-service").innerText = serviceType;
+        document.getElementById("preview-fuel").innerText = fuel;
+
+        document.getElementById("preview-doors").innerText = getVal("num_doors");
+        document.getElementById("preview-luggage").innerText = getVal("num_luggage");
+
+        const addr = `${getVal("street_address")}\nต. ${getVal("city")}\nจ. ${getVal("state")} ${getVal("zip_code")}`;
+        document.getElementById("preview-address").innerText = addr.trim();
+
+        document.getElementById("preview-price").innerText = getVal("price");
+
+        const discountOpt = getVal("discount_option");
+        const discountDiv = document.getElementById("preview-discount");
+        discountDiv.innerHTML = "";
+        if (discountOpt === "FIRST_TIMER_20") {
+            discountDiv.innerHTML = `
+                <div class="p-2 bg-green-100 text-green-700 rounded-lg text-center font-medium mt-2">
+                    ส่วนลด 20% สำหรับผู้เช่าครั้งแรก
+                </div>
+            `;
+        }
+
+        const accessoryDiv = document.getElementById("preview-accessory");
+        accessoryDiv.innerHTML = "";
+        const hasChild = document.getElementById("child_seat").checked;
+        if (hasChild) {
+            const price = getVal("accessory_price") || "0";
+            accessoryDiv.innerHTML = `
+                <div class="flex items-center p-4 border rounded-lg">
+                    <img src="{% static 'images/child_seat_icon.png' %}" class="w-16 h-16 mr-4">
+                    <div>
+                        <strong class="text-lg">ที่นั่งเด็ก</strong>
+                        <p class="text-gray-600">สำหรับเด็กอายุ 1-3 ปี</p>
+                        <p class="text-lg font-semibold text-green-600">${price} บ./วัน</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            accessoryDiv.innerHTML = `<p class="text-gray-500">ไม่มีอุปกรณ์เสริม</p>`;
+        }
+    }
+
+    // ========== Submit ==========
+    function submitCarForm() {
+        if (imageList.length < 5) {
+            alert("กรุณาอัปโหลดรูปอย่างน้อย 5 รูป");
+            showStep(4);
+            return;
+        }
+        // ล้าง draft ให้สะอาดหลังส่ง
+        localStorage.removeItem(STORAGE_KEY);
+        document.getElementById("carForm").submit();
+    }
+
+    // ========== Init ==========
+    document.addEventListener("DOMContentLoaded", () => {
+        loadDraft();
+        setupNumberButtons();
+        setupDescriptionCounter();
+        setupImageUpload();
+
+        // listener เพื่อ save draft อัตโนมัติ
+        document.getElementById("carForm").addEventListener("input", () => {
+            saveDraft();
+        });
+    });
+
+    </script>
+</body>
+</html>

@@ -41,6 +41,7 @@ class Car(models.Model):
 
     STATUS_CHOICES = [
         ('AVAILABLE', 'พร้อมใช้งาน'),
+        ('PENDING', 'รอดำเนินการ'),
         ('BOOKED', 'ถูกจองแล้ว'),
         ('MAINTENANCE', 'ซ่อมบำรุง'),
     ]
@@ -73,7 +74,7 @@ class Car(models.Model):
     price_per_day = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     car_type = models.CharField(max_length=10, choices=CAR_TYPE_CHOICES, default='SEDAN')
     license_plate = models.CharField(max_length=100, default='')
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='AVAILABLE')
+    status = models.CharField(max_length=20,choices=STATUS_CHOICES, default='PENDING') 
     service_type = models.CharField(max_length=20, choices=SERVICE_TYPE_CHOICES, default='SELF_DRIVE')
 
     # --- Step 3: Address ---
