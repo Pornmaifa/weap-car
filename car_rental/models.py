@@ -31,7 +31,13 @@ class Profile(models.Model):
 from django.db import models
 from django.contrib.auth.models import User
 
+from django.db import models
+from django.contrib.auth.models import User # หรือ get_user_model() ถ้าใช้ Custom User
+
 class Car(models.Model):
+    # ==========================
+    # 1. CHOICES CONSTANTS
+    # ==========================
     CAR_TYPE_CHOICES = [
         ('SEDAN', 'รถเก๋งขนาดเล็ก'),
         ('TRUCK', 'รถกระบะ'),
@@ -40,10 +46,11 @@ class Car(models.Model):
     ]
 
     STATUS_CHOICES = [
+        ('PENDING', 'รอดำเนินการตรวจสอบ'), # Default ควรเป็นอันนี้
         ('AVAILABLE', 'พร้อมใช้งาน'),
-        ('PENDING', 'รอดำเนินการ'),
         ('BOOKED', 'ถูกจองแล้ว'),
         ('MAINTENANCE', 'ซ่อมบำรุง'),
+        ('REJECTED', 'ไม่อนุมัติ'), # เผื่อ Admin ปฏิเสธ
     ]
 
     SERVICE_TYPE_CHOICES = [
@@ -54,6 +61,7 @@ class Car(models.Model):
     DISCOUNT_CHOICES = [
         ('NONE', 'ไม่มีส่วนลด'),
         ('FIRST_TIMER_20', 'ส่วนลด 20% สำหรับผู้เช่าครั้งแรก'),
+        ('WEEKLY_10', 'เช่า 7 วัน ลด 10%'),
     ]
 
     FUEL_CHOICES = [
@@ -65,45 +73,88 @@ class Car(models.Model):
         ('HYBRID', 'ไฮบริด'),
     ]
 
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    brand = models.CharField(max_length=50)
-    model = models.CharField(max_length=50)
-    year = models.IntegerField(null=True, blank=True)
-    description = models.TextField(max_length=200, null=True, blank=True)
+    # ✅ เพิ่มใหม่: ระบบเกียร์
+    TRANSMISSION_CHOICES = [
+        ('AUTO', 'เกียร์อัตโนมัติ'),
+        ('MANUAL', 'เกียร์ธรรมดา'),
+    ]
 
-    price_per_day = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    # ==========================
+    # 2. CORE FIELDS (เจ้าของ & สถานะ)
+    # ==========================
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cars')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
+    is_published = models.BooleanField(default=False) # True = แสดงหน้าร้าน, False = ซ่อน/Draft
+    published_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True) # ✅ เพิ่ม: วันที่สร้าง
+    updated_at = models.DateTimeField(auto_now=True)     # ✅ เพิ่ม: วันที่แก้ไขล่าสุด
+
+    # ==========================
+    # 3. CAR DETAILS (ข้อมูลรถ)
+    # ==========================
+    brand = models.CharField(max_length=50, verbose_name="ยี่ห้อ") # เช่น Toyota
+    model = models.CharField(max_length=50, verbose_name="รุ่น")   # เช่น Yaris Ativ
+    year = models.PositiveIntegerField(null=True, blank=True, verbose_name="ปีจดทะเบียน")
+    description = models.TextField(max_length=500, null=True, blank=True, verbose_name="คำอธิบายรถ")
+    
     car_type = models.CharField(max_length=10, choices=CAR_TYPE_CHOICES, default='SEDAN')
-    license_plate = models.CharField(max_length=100, default='')
-    status = models.CharField(max_length=20,choices=STATUS_CHOICES, default='PENDING') 
     service_type = models.CharField(max_length=20, choices=SERVICE_TYPE_CHOICES, default='SELF_DRIVE')
+    license_plate = models.CharField(max_length=100, default='', help_text="ทะเบียนรถ (Admin only)")
 
-    # --- Step 3: Address ---
-    country = models.CharField(max_length=100, default='ประเทศไทย')  # ✅ กำหนด default ป้องกัน null error
-    street_address = models.CharField(max_length=255, null=True, blank=True)
-    city = models.CharField(max_length=100, default="Bangkok")
-    state = models.CharField(max_length=100, default="Unknown")  # จังหวัด
-    zip_code = models.CharField(max_length=10, null=True, blank=True)
-
-    # --- Step 7: Additional Info ---
-    num_doors = models.PositiveIntegerField(default=4)
-    num_luggage = models.PositiveIntegerField(default=2)
-    fuel_system = models.CharField(max_length=20,choices=FUEL_CHOICES,default='GASOLINE')
+    # ==========================
+    # 4. SPECS & FEATURES (สเปค)
+    # ==========================
+    transmission = models.CharField(max_length=10, choices=TRANSMISSION_CHOICES, default='AUTO', verbose_name="ระบบเกียร์") # ✅ เพิ่ม
+    fuel_system = models.CharField(max_length=20, choices=FUEL_CHOICES, default='GASOLINE')
+    num_doors = models.PositiveIntegerField(default=4, verbose_name="จำนวนประตู")
+    num_luggage = models.PositiveIntegerField(default=2, verbose_name="จำนวนสัมภาระ")
+    
+    # Accessories
     has_child_seat = models.BooleanField(default=False)
-    accessory_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    accessory_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="ราคาอุปกรณ์เสริมต่อวัน")
+
+    # ==========================
+    # 5. LOCATION (สถานที่รับรถ)
+    # ==========================
+    country = models.CharField(max_length=100, default='ประเทศไทย')
+    street_address = models.CharField(max_length=255, null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True) # เขต/อำเภอ
+    state = models.CharField(max_length=100, null=True, blank=True) # จังหวัด
+    zip_code = models.CharField(max_length=10, null=True, blank=True)
+    
+    # (Optional) ถ้าอนาคตจะทำ Map แนะนำให้เพิ่ม lat/long
+    # latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    # longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+
+    # ==========================
+    # 6. PRICING & RULES (ราคา & กฎ)
+    # ==========================
+    price_per_day = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    discount_option = models.CharField(max_length=50, choices=DISCOUNT_CHOICES, default='NONE')
     min_rental_days = models.PositiveIntegerField(default=1)
     max_rental_days = models.PositiveIntegerField(default=30)
-    discount_option = models.CharField(max_length=50, choices=DISCOUNT_CHOICES, default='NONE')
 
-    is_published = models.BooleanField(default=False)
-    published_at = models.DateTimeField(null=True, blank=True)
-
+    # ==========================
+    # 7. DOCUMENTS (เอกสารยืนยัน - Admin Only)
+    # ==========================
+    # ✅ เพิ่มใหม่: เอกสารสำคัญ (ใช้ FileField เผื่อเป็น PDF)
+    doc_registration = models.FileField(upload_to='car_docs/registration/', null=True, blank=True, verbose_name="เล่มทะเบียน")
+    doc_insurance = models.FileField(upload_to='car_docs/insurance/', null=True, blank=True, verbose_name="กรมธรรม์")
+    
+    num_seats = models.PositiveIntegerField(default=5) # ✅ เพิ่ม
+    rules = models.TextField(blank=True, null=True)   # ✅ เพิ่ม
     def __str__(self):
-        return f'{self.brand} {self.model} ({self.year})'
+        return f'{self.brand} {self.model} ({self.license_plate})'
+
+    class Meta:
+        ordering = ['-created_at'] # เรียงจากรถที่เพิ่มล่าสุดก่อน
 
 
 class CarImage(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='car_images/')
+    is_cover = models.BooleanField(default=False) # ✅ (Optional) เพิ่มเพื่อให้เจ้าของเลือกรูปปกได้
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Image for {self.car.brand} {self.car.model}"

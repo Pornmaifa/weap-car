@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ค้นหารถเช่า</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://kit.fontawesome.com/a2d9d6a66a.js" crossorigin="anonymous"></script>
+
+    <style>
+        body { font-family: 'Sarabun', sans-serif; }
+    </style>
+</head>
+
+<body class="min-h-screen bg-[#48a9b9]">
+{% load humanize %}
+    <!-- 🔵 TOP SEARCH BAR -->
+    <div class="bg-[#9e9e9e] px-10 py-5 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+
+            <form method="get"
+                  action="{% url 'search_cars' %}"
+                  class="w-full md:w-4/5 grid grid-cols-1 md:grid-cols-[2fr_2fr_auto] gap-4 items-end">
+
+                <div class="flex flex-col">
+                    <label class="text-xs text-gray-800 mb-1 pl-1">จุดรับรถ</label>
+                    <input type="text" name="location"
+                           class="w-full px-4 py-2.5 rounded shadow-sm outline-none focus:ring-2 focus:ring-[#48a9b9] text-gray-700"
+                           value="{{ search_location }}"
+                           placeholder="สถานที่รับรถ">
+                </div>
+
+                <div class="flex flex-col">
+                    <label class="text-xs text-gray-800 mb-1 pl-1">วันที่และเวลา</label>
+                    <div class="flex gap-2">
+                        <input type="date" name="date_from"
+                               class="w-full px-3 py-2.5 rounded shadow-sm outline-none text-gray-700"
+                               value="{{ search_date_from }}">
+
+                        <input type="date" name="date_to"
+                               class="w-full px-3 py-2.5 rounded shadow-sm outline-none text-gray-700"
+                               value="{{ search_date_to }}">
+                    </div>
+                </div>
+
+                <button type="submit"
+                        class="bg-[#48a9b9] hover:bg-[#3d919f] text-white font-bold py-2.5 px-8 rounded shadow-sm transition">
+                    ค้นหา
+                </button>
+
+            </form>
+
+            <a href="{% url 'dashboard' %}">
+                <div class="hidden md:flex w-12 h-12 bg-gray-300 rounded-full items-center justify-center text-white text-xl shadow-inner cursor-pointer">
+                    <i class="fas fa-user"></i>
+                </div>
+            </a>
+
+        </div>
+    </div>
+
+    <!-- 🔵 CONTENT -->
+    <div class="max-w-7xl mx-auto p-5 md:p-10 flex flex-col md:flex-row gap-6">
+
+        <!-- LEFT CATEGORY MENU -->
+        <div class="w-full md:w-64 flex-shrink-0">
+            <div class="bg-white rounded-lg p-6 shadow-lg sticky top-5">
+                <h3 class="text-lg font-bold text-gray-800 mb-6 border-b pb-2">ประเภทรถ</h3>
+
+                <div class="flex flex-col gap-2">
+
+                    <!-- SEDAN -->
+                    <a href="?category=sedan&location={{ search_location }}&date_from={{ search_date_from }}&date_to={{ search_date_to }}"
+                       class="flex flex-col items-center p-4 rounded-lg transition group
+                        {% if search_category == 'sedan' %} bg-gray-200 ring-2 ring-[#48a9b9] {% else %} hover:bg-gray-100 {% endif %}">
+                        <img src="https://img.icons8.com/ios/100/sedan.png"
+                             class="w-16 opacity-80 group-hover:opacity-100">
+                        <span class="text-sm font-medium text-gray-700">รถเก๋ง</span>
+                    </a>
+
+                    <!-- PICKUP -->
+                    <a href="?category=pickup&location={{ search_location }}&date_from={{ search_date_from }}&date_to={{ search_date_to }}"
+                       class="flex flex-col items-center p-4 rounded-lg transition group
+                        {% if search_category == 'pickup' %} bg-gray-200 ring-2 ring-[#48a9b9] {% else %} hover:bg-gray-100 {% endif %}">
+                        <img src="https://img.icons8.com/ios/100/pickup.png"
+                             class="w-16 opacity-80 group-hover:opacity-100">
+                        <span class="text-sm font-medium text-gray-700">รถกระบะ</span>
+                    </a>
+
+                    <!-- VAN -->
+                    <a href="?category=van&location={{ search_location }}&date_from={{ search_date_from }}&date_to={{ search_date_to }}"
+                       class="flex flex-col items-center p-4 rounded-lg transition group
+                        {% if search_category == 'van' %} bg-gray-200 ring-2 ring-[#48a9b9] {% else %} hover:bg-gray-100 {% endif %}">
+                        <img src="https://img.icons8.com/ios/100/van.png"
+                             class="w-16 opacity-80 group-hover:opacity-100">
+                        <span class="text-sm font-medium text-gray-700">รถตู้</span>
+                    </a>
+
+                    <!-- EV -->
+                    <a href="?category=ev&location={{ search_location }}&date_from={{ search_date_from }}&date_to={{ search_date_to }}"
+                       class="flex flex-col items-center p-4 rounded-lg transition group
+                        {% if search_category == 'ev' %} bg-gray-200 ring-2 ring-[#48a9b9] {% else %} hover:bg-gray-100 {% endif %}">
+                        <img src="https://img.icons8.com/ios/100/electric-vehicle.png"
+                             class="w-16 opacity-80 group-hover:opacity-100">
+                        <span class="text-sm font-medium text-gray-700">รถไฟฟ้า</span>
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- 🔵 CAR RESULTS -->
+        <div class="flex-1">
+
+            {% for car in cars %}
+            <div class="bg-white rounded-xl p-6 mb-6 shadow-md hover:shadow-xl transition flex flex-col md:flex-row items-center">
+
+                <div class="w-full md:w-5/12 flex justify-center p-4">
+                    {% if car.carimage_set.first %}
+                        <img src="{{ car.carimage_set.first.image.url }}"
+                             class="max-h-40 object-contain hover:scale-105 transition">
+                    {% else %}
+                        <img src="https://placehold.co/400x300?text=No+Image"
+                             class="max-h-40 object-contain grayscale opacity-50">
+                    {% endif %}
+                </div>
+
+                <div class="w-full md:w-7/12 md:pl-8 mt-4">
+
+                    <div class="flex items-baseline gap-2 mb-1">
+                        <span class="text-lg font-bold">THB</span>
+                        <span class="text-4xl font-extrabold text-red-600">{{ car.price_per_day|intcomma }}</span>
+                        <span class="text-lg font-bold">/ วัน</span>
+                    </div>
+
+                    <h2 class="text-2xl font-black uppercase">
+                        {{ car.brand }} {{ car.model }}
+                    </h2>
+
+                    <p class="text-sm text-gray-500 mt-2">
+                        รับรถที่: {{ car.city }} · {{ car.state }}
+                    </p>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+            <div class="text-center text-white mt-20">
+                <i class="fas fa-car-crash text-6xl opacity-70"></i>
+                <p class="text-3xl font-bold mt-4">ไม่พบรถที่ค้นหา</p>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

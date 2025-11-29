@@ -11,5 +11,8 @@ urlpatterns = [
     path('add/preview/', views.add_car_preview, name='add_car_preview'),
     path('add/publish/<int:car_id>/', views.publish_car, name='publish_car'),
     path('dashboard/', views.dashboard, name='dashboard'),
+    path("cars/search/", views.car_search, name="car_search"),
+    path('search/', views.search_cars, name='search_cars'),
+
     # URL อื่นๆ ที่เกี่ยวกับรถและการจองจะอยู่ที่นี่
 ]

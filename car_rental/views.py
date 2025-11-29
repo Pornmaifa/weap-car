@@ -8,9 +8,11 @@ from .models import Car , CarImage
 from django.contrib import messages
 import os
 from django.core.files.storage import default_storage
-
-
-
+from django.shortcuts import render, redirect
+from .models import Car, CarImage
+from django.core.files.base import ContentFile
+import base64
+from django.db.models import Q # ใช้สำหรับ query ขั้นสูง
 
 
 # (เพิ่มฟังก์ชันนี้เข้าไปใน views.py)
@@ -166,12 +168,7 @@ def car_list(request):
 
 # car_rental/views.py
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .models import Car, CarImage
-from django.core.files.base import ContentFile
-import base64
+
 
 @login_required
 def add_car(request):
@@ -192,6 +189,8 @@ def add_car(request):
             city=data.get("city") or "",
             state=data.get("state") or "",
             zip_code=data.get("zip_code") or "",
+            num_seats=data.get("num_seats", 5), # ✅ เพิ่ม
+            rules=data.get("rules", ""),        # ✅ เพิ่ม
 
             # รายละเอียดรถ
             description=data.get("description", ""),
@@ -213,26 +212,145 @@ def add_car(request):
         )
 
         # 2) รูปภาพ (รับเป็น data URL base64 จากฟอร์ม)
-        images = request.POST.getlist("images[]")
+        images = request.POST.getlist("images_base64[]")
 
-        index = 0
-        for img64 in images:
+        for index, img64 in enumerate(images):
             if not img64:
                 continue
-            if img64.startswith("data:image"):
+            if ";base64," in img64:
                 try:
-                    head, raw = img64.split(",", 1)
-                except ValueError:
+                    format, imgstr = img64.split(';base64,') 
+                    ext = format.split('/')[-1]  # ดึงนามสกุลไฟล์ เช่น png, jpeg
+                
+                    img_binary = base64.b64decode(imgstr)
+                    CarImage.objects.create(
+                        car=car,
+                        image=ContentFile(img_binary, name=f"car_{car.id}_{index}.{ext}")
+                    )
+                except Exception as e:
+                    print(f"Error saving image {index}: {e}")
                     continue
-                img_binary = base64.b64decode(raw)
-                CarImage.objects.create(
-                    car=car,
-                    image=ContentFile(img_binary, name=f"car_{car.id}_{index}.jpg")
-                )
-                index += 1
 
-        messages.success(request, "ลงประกาศรถของคุณสำเร็จแล้ว!")
+        messages.success(request, "ลงประกาศรถของคุณสำเร็จแล้ว! กรุณารอการตรวจสอบจากแอดมิน")
         return redirect("dashboard")
 
     # GET: แสดงหน้า multi-step form
     return render(request, "car_rental/add_car.html")
+
+
+
+@login_required
+def car_search(request):
+
+    service_type = request.GET.get("service_type", "SELF_DRIVE").strip()
+
+    pickup = request.GET.get("pickup", "").strip()
+    dropoff = request.GET.get("dropoff", "").strip()
+    
+    filter_car_type = request.GET.get("car_type", "").strip()
+
+    start_date = request.GET.get("start_date")
+    start_time = request.GET.get("start_time")
+    end_date = request.GET.get("end_date")
+    end_time = request.GET.get("end_time")
+
+    # Base Query
+    cars = Car.objects.filter(
+        is_published=True,
+        service_type=service_type,
+    )
+
+    # -------------------------------
+    # 1) ค้นหาจุดรับรถ
+    # -------------------------------
+    if pickup:
+        cars = cars.filter(
+            Q(state__icontains=pickup) |
+            Q(city__icontains=pickup) |
+            Q(street_address__icontains=pickup)
+        )
+
+    # -------------------------------
+    # 2) ค้นหาจุดคืนรถ
+    # -------------------------------
+    if dropoff:
+        cars = cars.filter(
+            Q(state__icontains=dropoff) |
+            Q(city__icontains=dropoff) |
+            Q(street_address__icontains=dropoff)
+        )
+
+    # -------------------------------
+    # 3) ฟิลเตอร์ประเภทรถ
+    # -------------------------------
+    if filter_car_type:
+        cars = cars.filter(car_type=filter_car_type)
+
+    return render(request, "car_rental/car_search.html", {
+        "cars": cars,
+        "service_type": service_type,
+        "pickup": pickup,
+        "dropoff": dropoff,
+        "car_type": filter_car_type,
+    })
+
+# car_rental/views.py
+
+
+
+
+
+@login_required
+def search_cars(request):
+
+    # ------------------------------
+    # ค่าที่ส่งมาจาก Search Form
+    # ------------------------------
+    search_location = request.GET.get("location", "")
+    search_category = request.GET.get("category", "")
+    search_date_from = request.GET.get("date_from", "")
+    search_date_to = request.GET.get("date_to", "")
+
+    # ------------------------------
+    # เริ่มสร้าง Query
+    # ------------------------------
+    cars = Car.objects.filter(
+        is_published=True,
+        status="AVAILABLE"
+    )
+
+    # ------------------------------
+    # Filter: ประเภทรถ
+    # ------------------------------
+    if search_category:
+        category_map = {
+            "sedan": "SEDAN",
+            "pickup": "TRUCK",
+            "van": "VAN",
+            "ev": "EV",
+        }
+        if search_category in category_map:
+            cars = cars.filter(car_type=category_map[search_category])
+
+    # ------------------------------
+    # Filter: สถานที่ (Match ได้ทั้ง จังหวัด / อำเภอ / ถนน)
+    # ------------------------------
+    if search_location:
+        cars = cars.filter(
+            Q(street_address__icontains=search_location) |
+            Q(city__icontains=search_location) |
+            Q(state__icontains=search_location)
+        )
+
+    # (ถ้าต้องการตรวจ availability วัน–เวลา ต้องทำเพิ่มภายหลัง)
+
+    # ------------------------------
+    # ส่งค่าไปหน้า Template
+    # ------------------------------
+    return render(request, "car_rental/search_cars.html", {
+        "cars": cars,
+        "search_location": search_location,
+        "search_category": search_category,
+        "search_date_from": search_date_from,
+        "search_date_to": search_date_to,
+    })
