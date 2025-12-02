@@ -5,36 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ค้นหารถเช่า</title>
 
-    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
 
-    <!-- Icons -->
     <script src="https://kit.fontawesome.com/a2d9d6a66a.js" crossorigin="anonymous"></script>
 
     <style>
         body { font-family: 'Sarabun', sans-serif; }
+        /* ซ่อน Scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 
 <body class="min-h-screen bg-[#48a9b9]">
 {% load humanize %}
-    <!-- 🔵 TOP SEARCH BAR -->
-    <div class="bg-[#9e9e9e] px-10 py-5 shadow-md">
+
+    <div class="bg-[#9e9e9e] px-10 py-5 shadow-md relative z-50">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
 
             <form method="get"
                   action="{% url 'search_cars' %}"
                   class="w-full md:w-4/5 grid grid-cols-1 md:grid-cols-[2fr_2fr_auto] gap-4 items-end">
 
-                <div class="flex flex-col">
+                <div class="flex flex-col relative">
                     <label class="text-xs text-gray-800 mb-1 pl-1">จุดรับรถ</label>
-                    <input type="text" name="location"
-                           class="w-full px-4 py-2.5 rounded shadow-sm outline-none focus:ring-2 focus:ring-[#48a9b9] text-gray-700"
-                           value="{{ search_location }}"
-                           placeholder="สถานที่รับรถ">
+                        
+                    
+                    <div class="relative w-full">
+                        <input type="text" 
+                               id="search-input" 
+                               name="location"
+                               class="w-full px-4 py-2.5 rounded shadow-sm outline-none focus:ring-2 focus:ring-[#48a9b9] text-gray-700"
+                               value="{{ search_location }}"
+                               placeholder="สถานที่รับรถ"
+                               autocomplete="off">
+                        
+                        <button type="button" id="clear-btn" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 hidden cursor-pointer">
+                            <i class="fas fa-times-circle"></i>
+                        </button>
+                    </div>
+
+                    <div id="suggestions-box" class="absolute top-full left-0 w-full bg-white mt-1 rounded shadow-lg border border-gray-200 max-h-60 overflow-y-auto no-scrollbar hidden z-[100]">
+                        </div>
                 </div>
 
                 <div class="flex flex-col">
@@ -66,17 +80,13 @@
         </div>
     </div>
 
-    <!-- 🔵 CONTENT -->
-    <div class="max-w-7xl mx-auto p-5 md:p-10 flex flex-col md:flex-row gap-6">
+    <div class="max-w-7xl mx-auto p-5 md:p-10 flex flex-col md:flex-row gap-6 relative z-0">
 
-        <!-- LEFT CATEGORY MENU -->
         <div class="w-full md:w-64 flex-shrink-0">
             <div class="bg-white rounded-lg p-6 shadow-lg sticky top-5">
                 <h3 class="text-lg font-bold text-gray-800 mb-6 border-b pb-2">ประเภทรถ</h3>
 
                 <div class="flex flex-col gap-2">
-
-                    <!-- SEDAN -->
                     <a href="?category=sedan&location={{ search_location }}&date_from={{ search_date_from }}&date_to={{ search_date_to }}"
                        class="flex flex-col items-center p-4 rounded-lg transition group
                         {% if search_category == 'sedan' %} bg-gray-200 ring-2 ring-[#48a9b9] {% else %} hover:bg-gray-100 {% endif %}">
@@ -85,7 +95,6 @@
                         <span class="text-sm font-medium text-gray-700">รถเก๋ง</span>
                     </a>
 
-                    <!-- PICKUP -->
                     <a href="?category=pickup&location={{ search_location }}&date_from={{ search_date_from }}&date_to={{ search_date_to }}"
                        class="flex flex-col items-center p-4 rounded-lg transition group
                         {% if search_category == 'pickup' %} bg-gray-200 ring-2 ring-[#48a9b9] {% else %} hover:bg-gray-100 {% endif %}">
@@ -94,7 +103,6 @@
                         <span class="text-sm font-medium text-gray-700">รถกระบะ</span>
                     </a>
 
-                    <!-- VAN -->
                     <a href="?category=van&location={{ search_location }}&date_from={{ search_date_from }}&date_to={{ search_date_to }}"
                        class="flex flex-col items-center p-4 rounded-lg transition group
                         {% if search_category == 'van' %} bg-gray-200 ring-2 ring-[#48a9b9] {% else %} hover:bg-gray-100 {% endif %}">
@@ -103,7 +111,6 @@
                         <span class="text-sm font-medium text-gray-700">รถตู้</span>
                     </a>
 
-                    <!-- EV -->
                     <a href="?category=ev&location={{ search_location }}&date_from={{ search_date_from }}&date_to={{ search_date_to }}"
                        class="flex flex-col items-center p-4 rounded-lg transition group
                         {% if search_category == 'ev' %} bg-gray-200 ring-2 ring-[#48a9b9] {% else %} hover:bg-gray-100 {% endif %}">
@@ -111,18 +118,15 @@
                              class="w-16 opacity-80 group-hover:opacity-100">
                         <span class="text-sm font-medium text-gray-700">รถไฟฟ้า</span>
                     </a>
-
                 </div>
             </div>
         </div>
 
-        <!-- 🔵 CAR RESULTS -->
         <div class="flex-1">
-
             {% for car in cars %}
-            <div class="bg-white rounded-xl p-6 mb-6 shadow-md hover:shadow-xl transition flex flex-col md:flex-row items-center">
+            <div class="bg-white rounded-xl p-6 mb-6 shadow-md hover:shadow-xl transition flex flex-col md:flex-row items-center border border-transparent hover:border-[#48a9b9]">
 
-                <div class="w-full md:w-5/12 flex justify-center p-4">
+                <div class="w-full md:w-5/12 flex justify-center p-4 relative">
                     {% if car.carimage_set.first %}
                         <img src="{{ car.carimage_set.first.image.url }}"
                              class="max-h-40 object-contain hover:scale-105 transition">
@@ -133,23 +137,21 @@
                 </div>
 
                 <div class="w-full md:w-7/12 md:pl-8 mt-4">
-
                     <div class="flex items-baseline gap-2 mb-1">
                         <span class="text-lg font-bold">THB</span>
                         <span class="text-4xl font-extrabold text-red-600">{{ car.price_per_day|intcomma }}</span>
                         <span class="text-lg font-bold">/ วัน</span>
                     </div>
 
-                    <h2 class="text-2xl font-black uppercase">
+                    <h2 class="text-2xl font-black uppercase text-gray-800">
                         {{ car.brand }} {{ car.model }}
                     </h2>
 
                     <p class="text-sm text-gray-500 mt-2">
+                        <i class="fas fa-map-marker-alt text-[#48a9b9] mr-1"></i>
                         รับรถที่: {{ car.city }} · {{ car.state }}
                     </p>
-
                 </div>
-
             </div>
 
             {% empty %}
@@ -158,11 +160,92 @@
                 <p class="text-3xl font-bold mt-4">ไม่พบรถที่ค้นหา</p>
             </div>
             {% endfor %}
-
         </div>
     </div>
 
-</div>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // ข้อมูลสถานที่
+        const thaiLocations = [
+            { name: "กรุงเทพมหานคร", type: "province", keywords: "bkk bangkok" },
+            { name: "เชียงใหม่", type: "province", keywords: "chiang mai" },
+            { name: "ภูเก็ต", type: "province", keywords: "phuket" },
+            { name: "ขอนแก่น", type: "province", keywords: "khon kaen" },
+            { name: "อุบลราชธานี", type: "province", keywords: "ubon" },
+            { name: "อุดรธานี", type: "province", keywords: "udon" },
+            { name: "สุราษฎร์ธานี", type: "province", keywords: "surat thani samui" },
+            { name: "กระบี่", type: "province", keywords: "krabi" },
+            { name: "สนามบินสุวรรณภูมิ", type: "airport", keywords: "bkk suvarnabhumi" },
+            { name: "สนามบินดอนเมือง", type: "airport", keywords: "dmk don mueang" },
+            { name: "สนามบินเชียงใหม่", type: "airport", keywords: "cnx" },
+            { name: "สนามบินอุบลราชธานี", type: "airport", keywords: "ubp" }
+        ];
+
+        const searchInput = document.getElementById('search-input');
+        const suggestionsBox = document.getElementById('suggestions-box');
+        const clearBtn = document.getElementById('clear-btn');
+
+        if (!searchInput || !suggestionsBox) return;
+
+        function getIcon(type) {
+            if (type === 'airport') return '<i class="fas fa-plane-departure text-gray-400 mr-2 w-5 text-center"></i>';
+            return '<i class="fas fa-map-marker-alt text-[#48a9b9] mr-2 w-5 text-center"></i>';
+        }
+
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            suggestionsBox.innerHTML = '';
+            
+            if (query.length > 0) {
+                if(clearBtn) clearBtn.classList.remove('hidden');
+                suggestionsBox.classList.remove('hidden');
+
+                const matches = thaiLocations.filter(loc => 
+                    loc.name.includes(query) || loc.keywords.includes(query)
+                );
+
+                if (matches.length > 0) {
+                    const header = document.createElement('div');
+                    header.className = 'px-4 py-2 text-xs text-gray-400 font-semibold bg-gray-50 border-b';
+                    header.innerText = 'ผลการค้นหาแนะนำ';
+                    suggestionsBox.appendChild(header);
+
+                    matches.forEach(loc => {
+                        const div = document.createElement('div');
+                        div.className = 'px-4 py-2 cursor-pointer hover:bg-gray-100 transition flex items-center border-b border-gray-100 last:border-0 text-sm text-gray-700';
+                        div.innerHTML = `${getIcon(loc.type)} ${loc.name}`;
+                        
+                        div.addEventListener('click', () => {
+                            searchInput.value = loc.name;
+                            suggestionsBox.classList.add('hidden');
+                        });
+                        suggestionsBox.appendChild(div);
+                    });
+                } else {
+                    suggestionsBox.innerHTML = '<div class="px-4 py-2 text-gray-500 text-sm text-center">ไม่พบสถานที่...</div>';
+                }
+            } else {
+                if(clearBtn) clearBtn.classList.add('hidden');
+                suggestionsBox.classList.add('hidden');
+            }
+        });
+
+        if(clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                suggestionsBox.classList.add('hidden');
+                clearBtn.classList.add('hidden');
+                searchInput.focus();
+            });
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+                suggestionsBox.classList.add('hidden');
+            }
+        });
+    });
+    </script>
 
 </body>
 </html>
