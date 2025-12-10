@@ -1,0 +1,46 @@
+# ========================
+# 1. Node.js & Tailwind CSS
+# ========================
+# โฟลเดอร์ Dependencies ที่ติดตั้งผ่าน npm
+node_modules/
+
+# ไฟล์ Output ของการ Build Tailwind/PostCSS (ไม่ควร Commit)
+# โปรดตรวจสอบว่า Path นี้ตรงกับที่คุณใช้ในคำสั่ง Build:
+# ตัวอย่าง: npx tailwindcss -i ./input.css -o ./static/dist/styles.css
+/static/dist/
+/static/css/styles.css 
+
+# ไฟล์ Log และ Configuration ของ Node
+npm-debug.log*
+yarn-error.log
+
+# ========================
+# 2. Django / Python
+# ========================
+# Python Virtual Environment
+venv/
+.venv/
+
+# ไฟล์ฐานข้อมูลและไฟล์ที่อัปโหลดโดยผู้ใช้
+db.sqlite3
+media/
+/static/src/  # ถ้าโฟลเดอร์นี้ใช้เก็บไฟล์ชั่วคราว/ต้นฉบับที่ไม่ต้องการ Commit
+
+# ไฟล์ Compiled (Generated Files)
+__pycache__/
+*.pyc
+*.egg-info/
+*.sqlite3-journal
+
+# ========================
+# 3. โฟลเดอร์ชั่วคราว/เฉพาะระบบ
+# ========================
+# โฟลเดอร์ 'scr' ที่ปรากฏในโครงสร้าง (น่าจะเป็นไฟล์ชั่วคราว)
+scr/
+
+# ไฟล์เฉพาะระบบปฏิบัติการ
+.DS_Store
+Thumbs.db
+
+# ไฟล์ IDE (ตัวอย่าง Visual Studio Code)
+.vscode/
