@@ -1,0 +1,80 @@
+{% load static %}
+{% load humanize %}
+<!-- 
+    Navbar component replicating the design in the user's image:
+    1. Back button
+    2. Logo (WARPCAR)
+    3. Language selection (Thai/EN)
+    4. User/Profile icon
+-->
+<nav class="bg-[#9e9e9e] px-4 py-3 shadow-lg relative z-50">
+    <div class="max-w-7xl mx-auto flex justify-between items-center h-16">
+
+        <!-- Left Section: Back Button and Logo -->
+        <div class="flex items-center gap-4">
+            <!-- Back Button (Styled to match the light gray/teal circle in the image) -->
+            <button onclick="window.history.back()" 
+                    class="w-10 h-10 rounded-full bg-gray-200/70 flex items-center justify-center 
+                           hover:bg-gray-300 transition duration-150 shadow-md flex-shrink-0"
+                    aria-label="Back">
+                <i class="fas fa-arrow-left text-[#48a9b9] text-lg"></i>
+            </button>
+            
+            <!-- Logo (WARPCAR) -->
+            <a href="{% url 'car_list' %}" class="flex items-center hover:opacity-90 transition">
+                <!-- Using a placeholder for the logo text matching the image's style -->
+                <div class="text-xl font-extrabold tracking-wider text-white" style="color: #1a4f6d; text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);">
+                    <!-- Assuming the logo image file is still in 'images/logo_warpcar.png' -->
+                    <img src="{% static 'images/logo.png' %}" alt="WARPCAR" class="h-8 object-contain" style="filter: brightness(0.8);">
+                </div>
+            </a>
+        </div>
+
+        <!-- Right Section: Language Toggles and Profile Icon -->
+        <div class="flex items-center gap-4">
+            
+            <!-- Language Buttons (Thai / EN) -->
+            <div class="flex space-x-2 text-sm font-bold">
+                <a href="#" class="bg-[#48a9b9] text-white px-4 py-2 rounded shadow-md hover:bg-[#3d919f] transition duration-150">
+                    ไทย
+                </a>
+                <a href="#" class="bg-[#5fc0cd] text-white px-4 py-2 rounded shadow-md hover:bg-[#48a9b9] transition duration-150">
+                    EN
+                </a>
+            </div>
+
+            <!-- Profile / Login Icon -->
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="relative group">
+                    {% if user.profile.image %}
+                        <!-- User has a profile image -->
+                        <img src="{{ user.profile.image.url }}" 
+                             class="w-12 h-12 rounded-full border-2 border-white shadow-lg object-cover bg-white"
+                             alt="Profile">
+                    {% else %}
+                        <!-- Default profile icon, replicating the light gray circle in the image -->
+                        <div class="w-12 h-12 rounded-full bg-gray-200 shadow-lg flex items-center justify-center text-gray-500 text-xl border-2 border-white">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    {% endif %}
+                </a>
+            {% else %}
+                <!-- Icon for non-logged-in users, matching the placeholder style -->
+                <a href="{% url 'login' %}" class="w-12 h-12 rounded-full bg-gray-200 shadow-lg flex items-center justify-center text-gray-500 text-xl border-2 border-white cursor-pointer">
+                    <i class="fas fa-user"></i>
+                </a>
+            {% endif %}
+        </div>
+
+    </div>
+</nav>
+<!-- Load Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<!-- Tailwind CSS must be loaded for this component to work -->
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    /* Custom style for the background color to match the image closely */
+    .bg-\[\#9e9e9e\] {
+        background-color: #9e9e9e;
+    }
+</style>

@@ -3,8 +3,10 @@
 from datetime import timezone
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
+
+from users import models
 from .forms import CarForm
-from .models import Car , CarImage
+from .models import Car , CarImage, ReviewReply
 from django.contrib import messages
 import os
 from django.core.files.storage import default_storage
@@ -239,30 +241,28 @@ def add_car(request):
 
 
 
-@login_required
-def car_search(request):
 
-    service_type = request.GET.get("service_type", "SELF_DRIVE").strip()
+def search_cars(request):
+    # 1. รับค่าจากหน้าแรก (ชื่อฟิลด์ตรงตามฟอร์ม)
+    pickup = request.GET.get('pickup', '').strip()
+    dropoff = request.GET.get('dropoff', '').strip()
 
-    pickup = request.GET.get("pickup", "").strip()
-    dropoff = request.GET.get("dropoff", "").strip()
-    
-    filter_car_type = request.GET.get("car_type", "").strip()
+    start_date = request.GET.get('start_date', '')
+    start_time = request.GET.get('start_time', '')
+    end_date = request.GET.get('end_date', '')
+    end_time = request.GET.get('end_time', '')
 
-    start_date = request.GET.get("start_date")
-    start_time = request.GET.get("start_time")
-    end_date = request.GET.get("end_date")
-    end_time = request.GET.get("end_time")
+    service_type = request.GET.get('service_type', 'SELF_DRIVE')
+    car_type_filter = request.GET.get('car_type', '')
 
-    # Base Query
-    cars = Car.objects.filter(
-        is_published=True,
-        service_type=service_type,
-    )
+    # 2. ดึงรายการรถ
+    cars = Car.objects.filter(status='AVAILABLE', is_published=True)
 
-    # -------------------------------
-    # 1) ค้นหาจุดรับรถ
-    # -------------------------------
+    # 3. กรองตามประเภทบริการ
+    if service_type:
+        cars = cars.filter(service_type=service_type)
+
+    # 4. กรองตามสถานที่ pickup
     if pickup:
         cars = cars.filter(
             Q(state__icontains=pickup) |
@@ -270,87 +270,73 @@ def car_search(request):
             Q(street_address__icontains=pickup)
         )
 
-    # -------------------------------
-    # 2) ค้นหาจุดคืนรถ
-    # -------------------------------
-    if dropoff:
-        cars = cars.filter(
-            Q(state__icontains=dropoff) |
-            Q(city__icontains=dropoff) |
-            Q(street_address__icontains=dropoff)
-        )
+    # 5. กรองตามประเภทรถ
+    if car_type_filter:
+        cars = cars.filter(car_type=car_type_filter)
 
-    # -------------------------------
-    # 3) ฟิลเตอร์ประเภทรถ
-    # -------------------------------
-    if filter_car_type:
-        cars = cars.filter(car_type=filter_car_type)
+    # 6. ส่งค่ากลับไปหน้า search_cars.html เพื่อใส่ค่ากลับลง input
+    context = {
+        'cars': cars,
 
-    return render(request, "car_rental/car_search.html", {
-        "cars": cars,
-        "service_type": service_type,
-        "pickup": pickup,
-        "dropoff": dropoff,
-        "car_type": filter_car_type,
+        # คืนค่าเดิมกลับไปให้ form จำค่าได้
+        'search_location': pickup,
+        'pickup': pickup,
+        'dropoff': dropoff,
+        'start_date': start_date,
+        'start_time': start_time,
+        'end_date': end_date,
+        'end_time': end_time,
+
+        'search_service': service_type,
+        'search_category': car_type_filter,
+    }
+    return render(request, 'car_rental/search_cars.html', context)
+
+from datetime import datetime, timedelta
+
+def car_detail(request, car_id):
+    car = get_object_or_404(Car, id=car_id)
+
+    # ⭐ ดึงรีวิวทั้งหมดของรถคันนี้
+    reviews = car.reviews.prefetch_related("replies").all()
+
+    # รับค่าจาก Query Params
+    location = request.GET.get("location", "-")
+    date_from = request.GET.get("date_from")
+    time_from = request.GET.get("time_from") or "10:00"
+    date_to = request.GET.get("date_to")
+    time_to = request.GET.get("time_to") or "10:00"
+
+    # รวมเป็น datetime
+    pickup_datetime = datetime.strptime(f"{date_from} {time_from}", "%Y-%m-%d %H:%M")
+    dropoff_datetime = datetime.strptime(f"{date_to} {time_to}", "%Y-%m-%d %H:%M")
+
+    # คำนวณจำนวนวัน
+    rental_days = (dropoff_datetime - pickup_datetime).days
+    if rental_days <= 0:
+        rental_days = 1
+
+    total_price = car.price_per_day * rental_days
+
+    return render(request, "car_rental/car_detail.html", {
+        "reviews": reviews, 
+        "car": car,
+        "location": location,
+        "pickup_datetime": pickup_datetime,
+        "dropoff_datetime": dropoff_datetime,
+        "rental_days": rental_days,
+        "total_price": total_price,
     })
 
-# car_rental/views.py
 
-
-
-
-
-@login_required
-def search_cars(request):
-
-    # ------------------------------
-    # ค่าที่ส่งมาจาก Search Form
-    # ------------------------------
-    search_location = request.GET.get("location", "")
-    search_category = request.GET.get("category", "")
-    search_date_from = request.GET.get("date_from", "")
-    search_date_to = request.GET.get("date_to", "")
-
-    # ------------------------------
-    # เริ่มสร้าง Query
-    # ------------------------------
-    cars = Car.objects.filter(
-        is_published=True,
-        status="AVAILABLE"
-    )
-
-    # ------------------------------
-    # Filter: ประเภทรถ
-    # ------------------------------
-    if search_category:
-        category_map = {
-            "sedan": "SEDAN",
-            "pickup": "TRUCK",
-            "van": "VAN",
-            "ev": "EV",
-        }
-        if search_category in category_map:
-            cars = cars.filter(car_type=category_map[search_category])
-
-    # ------------------------------
-    # Filter: สถานที่ (Match ได้ทั้ง จังหวัด / อำเภอ / ถนน)
-    # ------------------------------
-    if search_location:
-        cars = cars.filter(
-            Q(street_address__icontains=search_location) |
-            Q(city__icontains=search_location) |
-            Q(state__icontains=search_location)
+def submit_reply(request, review_id):
+    if request.method == "POST":
+        ReviewReply.objects.create(
+            review_id=review_id,
+            user=request.user,
+            comment=request.POST["comment"]
         )
+    return redirect(request.META.get("HTTP_REFERER"))
 
-    # (ถ้าต้องการตรวจ availability วัน–เวลา ต้องทำเพิ่มภายหลัง)
 
-    # ------------------------------
-    # ส่งค่าไปหน้า Template
-    # ------------------------------
-    return render(request, "car_rental/search_cars.html", {
-        "cars": cars,
-        "search_location": search_location,
-        "search_category": search_category,
-        "search_date_from": search_date_from,
-        "search_date_to": search_date_to,
-    })
+

@@ -1,0 +1,232 @@
+{% load static %}
+{% load humanize %}
+{% load star_filters %}
+
+{% block content %}
+{% include 'car_rental/navbar_detail.html' %}
+
+<div class="bg-gray-50 font-sarabun">
+
+    <!-- Progress Steps -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 mb-2">
+        <div class="flex justify-between items-center bg-white rounded-lg shadow-sm p-4 border border-gray-300">
+            <div class="flex flex-col items-center flex-1 text-[#48a9b9]">
+                <i class="fas fa-check-circle text-2xl mb-1"></i>
+                <span class="text-xs font-bold">ผลการค้นหา</span>
+            </div>
+            <div class="flex flex-col items-center flex-1 text-[#48a9b9]">
+                <i class="fas fa-check-circle text-2xl mb-1"></i>
+                <span class="text-xs font-bold">รายละเอียดรถ</span>
+            </div>
+            <div class="flex flex-col items-center flex-1 text-gray-400">
+                <i class="far fa-circle text-2xl mb-1"></i>
+                <span class="text-xs">ข้อมูลผู้ใช้</span>
+            </div>
+            <div class="flex flex-col items-center flex-1 text-gray-400">
+                <i class="far fa-circle text-2xl mb-1"></i>
+                <span class="text-xs">ชำระเงิน</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+
+        <!-- Car Images -->
+        <div class="flex overflow-x-auto gap-4 p-2 no-scrollbar border-b border-gray-200 mb-4">
+            {% for image in car.images.all %}
+            <div class="flex-shrink-0 w-full md:w-2/3 lg:w-1/2">
+                <img src="{{ image.image.url }}" class="w-full h-80 object-cover rounded-lg shadow-xl hover:shadow-2xl transition">
+            </div>
+            {% empty %}
+            <div class="w-full h-80 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500 text-2xl shadow-xl">
+                ไม่มีรูปภาพ
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- 2 Columns Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- LEFT SIDE -->
+            <div class="lg:col-span-2 space-y-6">
+
+                <!-- Car Detail Card -->
+                <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
+                    <h1 class="text-3xl font-bold mb-4">{{ car.brand }} {{ car.model }}</h1>
+
+                    <hr class="my-4">
+
+                    <!-- รายละเอียดรถ -->
+                    <h2 class="text-2xl font-semibold mb-4">รายละเอียดรถ</h2>
+
+                    <div class="grid grid-cols-2 gap-4 text-lg">
+                        <div><strong>ประเภทบริการ:</strong> {{ car.get_service_type_display }}</div>
+                        <div><strong>ประเภทรถ:</strong> {{ car.get_car_type_display }}</div>
+                        <div><strong>ระบบเกียร์:</strong> {{ car.get_transmission_display }}</div>
+                        <div><strong>จำนวนที่นั่ง:</strong> {{ car.num_seats }} คน</div>
+                        <div><strong>จำนวนสัมภาระ:</strong> {{ car.num_luggage }} ใบ</div>
+                        <div><strong>ระบบเชื้อเพลิง:</strong> {{ car.get_fuel_system_display }}</div>
+                    </div>
+
+                    <!-- รายละเอียดเพิ่มเติม -->
+                    <h2 class="text-2xl font-semibold mt-8 mb-4">รายละเอียดเพิ่มเติมของรถ</h2>
+                    <p class="text-gray-700 text-lg whitespace-pre-line">{{ car.description }}</p>
+
+                    <!-- กฎและข้อห้าม -->
+                    <h2 class="text-2xl font-semibold mt-8 mb-4">กฎและข้อห้าม</h2>
+                    <p class="text-gray-700 text-lg whitespace-pre-line">{{ car.rules|default:"ไม่มีข้อห้าม" }}</p>
+
+                    <!-- อุปกรณ์เสริม -->
+                    <h2 class="text-2xl font-semibold mt-8 mb-4">อุปกรณ์เสริม</h2>
+
+                    {% if car.has_child_seat %}
+                    <div class="flex items-center p-4 border rounded-lg bg-gray-50">
+                        <img src="{% static 'images/child_seat_icon.png' %}" class="w-16 h-16 mr-4">
+                        <div>
+                            <strong class="text-lg">ที่นั่งเด็ก</strong>
+                            <p class="text-gray-600">เหมาะสำหรับเด็กอายุ 1–3 ปี</p>
+                            <p class="text-lg font-semibold text-green-600">+ {{ car.accessory_price }} บ./วัน</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="text-gray-500">ไม่มีอุปกรณ์เสริม</p>
+                    {% endif %}
+                </div>
+
+                <!-- Reviews Section -->                                 
+                    <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-200 mt-6">
+
+                        <h2 class="text-2xl font-semibold mb-4">รีวิวจากผู้เช่า</h2>
+
+                        {% for review in reviews %}
+                        <div class="border-b border-gray-200 pb-4">
+                            
+                            <!-- รีวิวหลัก -->
+                            <div class="flex items-center mb-2">
+                                <div class="text-yellow-500 text-lg">
+                                    {{ review.stars|stars }}
+                                </div>
+                                <span class="text-gray-500 text-sm ml-2">{{ review.created_at|date:"d M Y" }}</span>
+                            </div>
+
+                            <p class="text-gray-800 text-lg leading-relaxed">
+                                "{{ review.comment }}"
+                            </p>
+
+                            <p class="mt-2 text-gray-600 text-sm font-medium">
+                                – {{ review.user.username }}
+                            </p>
+
+                            <!-- ปุ่มตอบกลับ -->
+                            <button onclick="toggleReplyForm('{{ review.id }}')" class="text-blue-500 text-sm mt-2">
+                                ตอบกลับ
+                            </button>
+
+                            <!-- ฟอร์มตอบกลับ -->
+                            <form id="reply-form-{{ review.id }}" method="POST"
+                                action="{% url 'submit_reply' review.id %}"
+                                class="hidden mt-2">
+                                {% csrf_token %}
+                                <textarea name="comment"
+                                        class="w-full p-2 border rounded-lg"
+                                        placeholder="เขียนตอบกลับ..."></textarea>
+                                <button class="bg-blue-500 text-white px-4 py-1 rounded mt-2">ส่ง</button>
+                            </form>
+
+                            <!-- Replies -->
+                            <div class="ml-6 mt-3 space-y-2">
+                                {% for reply in review.replies.all %}
+                                <div class="p-3 bg-gray-100 rounded-lg">
+                                    <p class="text-gray-800 text-sm">"{{ reply.comment }}"</p>
+                                    <p class="text-gray-500 text-xs mt-1">– {{ reply.user.username }} | {{ reply.created_at|date:"d M Y" }}</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+                        {% endfor %}
+                    </div>
+
+
+
+                <!-- Additional Accessories -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {% for item in accessories %}
+                    <div class="flex flex-col items-center border rounded-lg p-3 hover:shadow-md transition bg-gray-50">
+                        <img src="{% static 'images/child_seat.png' %}"
+                             onerror="this.onerror=null; this.src='https://placehold.co/80x80?text=ADDON'"
+                             class="w-16 h-16 object-contain mb-2">
+                        <span class="text-sm font-medium text-gray-800 text-center">{{ item.name }}</span>
+                        <span class="text-xs text-red-500 mt-1">฿{{ item.price|intcomma }}/วัน</span>
+                        <input type="checkbox" name="addon_{{ forloop.counter }}" class="w-4 h-4 mt-2 text-green-500">
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- RIGHT SIDE -->
+            <div class="lg:col-span-1 space-y-6">
+
+                <!-- Pickup & Return Info -->
+                <div class="p-6 rounded-lg shadow-lg bg-gray-200 border border-gray-300">
+                    <h2 class="text-xl font-bold mb-4 text-gray-800">การรับและคืนรถ</h2>
+
+                    <div class="space-y-6 border-l-2 border-dashed border-gray-400 pl-4">
+                        <div class="relative">
+                            <span class="absolute -left-5 top-0 w-4 h-4 bg-gray-600 rounded-full border-2 border-white"></span>
+                            <p class="text-sm text-gray-700">รับรถวันที่ {{ pickup_datetime|date:"d M Y" }}</p>
+                            <p class="font-bold text-gray-900">{{ pickup_datetime|time:"H:i" }} น.</p>
+                            <p class="text-sm text-gray-700">สถานที่: {{ location }}</p>
+                        </div>
+
+                        <div class="relative">
+                            <span class="absolute -left-5 top-0 w-4 h-4 bg-gray-600 rounded-full border-2 border-white"></span>
+                            <p class="text-sm text-gray-700">คืนรถวันที่ {{ dropoff_datetime|date:"d M Y" }}</p>
+                            <p class="font-bold text-gray-900">{{ dropoff_datetime|time:"H:i" }} น.</p>
+                            <p class="text-sm text-gray-700">สถานที่: {{ location }}</p>
+                        </div>
+                    </div>
+
+                    <p class="mt-6 text-center text-lg font-bold text-gray-800">
+                        รวมเช่า {{ rental_days }} วัน
+                    </p>
+                </div>
+
+                <!-- Price Summary -->
+                <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-100 sticky top-24">
+                    <h2 class="text-xl font-bold mb-4 border-b pb-2">สรุปราคา</h2>
+
+                    <div class="flex justify-between mb-2">
+                        <p class="text-gray-600">ค่าเช่ารถ ({{ rental_days }} วัน)</p>
+                        <p class="font-bold text-gray-800">฿{{ total_price|intcomma }}</p>
+                    </div>
+
+                    <div class="flex justify-between mb-4">
+                        <p class="text-gray-600">ค่าประกัน/บริการ</p>
+                        <p class="font-bold text-green-500">฿0</p>
+                    </div>
+
+                    <div class="flex justify-between border-t border-gray-200 pt-4">
+                        <p class="text-xl font-bold text-gray-800">ราคารวมสุทธิ</p>
+                        <p class="text-3xl font-extrabold text-red-600">฿{{ total_price|intcomma }}</p>
+                    </div>
+
+                    <a href="#"
+                       class="block w-full mt-6 bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-lg shadow-lg transition text-center text-2xl">
+                        จอง {{ total_price|intcomma }} THB
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleReplyForm(id) {
+    document.getElementById("reply-form-" + id).classList.toggle("hidden");
+}
+</script>
+
+{% endblock %}

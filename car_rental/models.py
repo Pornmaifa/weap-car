@@ -143,6 +143,9 @@ class Car(models.Model):
     
     num_seats = models.PositiveIntegerField(default=5) # ✅ เพิ่ม
     rules = models.TextField(blank=True, null=True)   # ✅ เพิ่ม
+
+    #แอดมิน
+   
     def __str__(self):
         return f'{self.brand} {self.model} ({self.license_plate})'
 
@@ -158,6 +161,10 @@ class CarImage(models.Model):
 
     def __str__(self):
         return f"Image for {self.car.brand} {self.car.model}"
+    
+
+
+
 
 # ตาราง Promotion
 class Promotion(models.Model):
@@ -207,13 +214,19 @@ class Payment(models.Model):
     def __str__(self):
         return f'Payment for Booking #{self.booking.id}'
 
-# ตาราง Review
+
 class Review(models.Model):
-    booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
-    member = models.ForeignKey(User, on_delete=models.CASCADE)
-    rating = models.IntegerField() # เช่น 1-5
-    comment = models.TextField(blank=True, null=True)
-    review_date = models.DateTimeField(auto_now_add=True)
+    car = models.ForeignKey(Car, related_name="reviews", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    stars = models.IntegerField(default=5)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class ReviewReply(models.Model):
+    review = models.ForeignKey(Review, related_name="replies", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Review by {self.member.username} for Booking #{self.booking.id}'
+        return f"Reply by {self.user.username}"
