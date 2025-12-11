@@ -194,13 +194,23 @@
                         <div>
                             <label class="text-lg font-semibold mb-2 block">ระบบเกียร์</label>
                             <div class="grid grid-cols-2 gap-4">
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="transmission" value="AUTO" class="peer hidden" checked>
-                                    <div class="p-3 text-center border-2 border-gray-200 rounded-lg hover:shadow-md transition-all peer-checked:border-warp-blue peer-checked:bg-blue-50 peer-checked:text-warp-blue font-semibold">อัตโนมัติ (Auto)</div>
+
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" 
+                                        name="transmission" 
+                                        value="AUTO" 
+                                        class="w-5 h-5 accent-blue-500 cursor-pointer"
+                                        checked>
+                                    <span class="leading-none">ออโต้ (Auto)</span>
                                 </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="transmission" value="MANUAL" class="peer hidden">
-                                    <div class="p-3 text-center border-2 border-gray-200 rounded-lg hover:shadow-md transition-all peer-checked:border-warp-blue peer-checked:bg-blue-50 peer-checked:text-warp-blue font-semibold">ธรรมดา (Manual)</div>
+
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" 
+                                        name="transmission" 
+                                        value="MANUAL" 
+                                        class="w-5 h-5 accent-blue-500 cursor-pointer"
+                                        checked>
+                                    <span class="leading-none">ธรรมดา (Manual)</span>
                                 </label>
                             </div>
                         </div>

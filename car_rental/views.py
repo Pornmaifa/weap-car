@@ -302,15 +302,26 @@ def car_detail(request, car_id):
 
     # รับค่าจาก Query Params
     location = request.GET.get("location", "-")
-    date_from = request.GET.get("date_from")
-    time_from = request.GET.get("time_from") or "10:00"
-    date_to = request.GET.get("date_to")
-    time_to = request.GET.get("time_to") or "10:00"
+    date_from = (request.GET.get("date_from") or "").strip()
+    time_from = (request.GET.get("time_from") or "10:00").strip()
+    date_to = (request.GET.get("date_to") or "").strip()
+    time_to = (request.GET.get("time_to") or "10:00").strip()
 
+    if not date_from:
+        date_from = datetime.now().strftime("%d/%m/%Y")
+
+    if not date_to:
+        date_to = datetime.now().strftime("%d/%m/%Y")
+
+    try:    
     # รวมเป็น datetime
-    pickup_datetime = datetime.strptime(f"{date_from} {time_from}", "%Y-%m-%d %H:%M")
-    dropoff_datetime = datetime.strptime(f"{date_to} {time_to}", "%Y-%m-%d %H:%M")
-
+        pickup_datetime = datetime.strptime(f"{date_from} {time_from}", "%d/%m/%Y %H:%M")
+        dropoff_datetime = datetime.strptime(f"{date_to} {time_to}", "%d/%m/%Y %H:%M")
+    except Exception as e:
+        # ป้องกันเว็บพัง ถ้า format เพี้ยน
+        print("DATE PARSE ERROR:", e)
+        pickup_datetime = datetime.now()
+        dropoff_datetime = datetime.now()
     # คำนวณจำนวนวัน
     rental_days = (dropoff_datetime - pickup_datetime).days
     if rental_days <= 0:
