@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>เพิ่มรถเช่า - WarpCar</title>
+    <script src="{% static 'car_rental/js/thai_provinces.js' %}"></script>
     <link href="{% static 'dist/styles.css' %}?v=99" rel="stylesheet">
     <style>
         .step { display: none; }
@@ -102,9 +103,14 @@
                                 <label class="block text-lg font-semibold mb-2">อำเภอ / เขต</label>
                                 <input type="text" name="city" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                             </div>
+                        
                             <div>
                                 <label class="block text-lg font-semibold mb-2">จังหวัด</label>
-                                <input type="text" name="state" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <input type="text" id="province-input-display" placeholder="เลือกจังหวัด"autocomplete="off" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <input type="hidden" name="state" id="province-input">
+                                <div id="province-suggestions"
+                                    class="absolute z-50 w-64 bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto hidden">
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -644,6 +650,55 @@
         localStorage.removeItem(STORAGE_KEY);
         document.getElementById("carForm").submit();
     }
+    
+    document.addEventListener("DOMContentLoaded", () => {
+        const input = document.getElementById("province-input-display");
+        const hiddenInput = document.getElementById("province-input");
+        const box = document.getElementById("province-suggestions");
+
+        if (!input || !hiddenInput || !box) return;
+
+        input.addEventListener("input", () => {
+            const val = input.value.trim();
+            box.innerHTML = "";
+            hiddenInput.value = "";
+
+            if (!val) {
+                box.classList.add("hidden");
+                return;
+            }
+
+            const matches = THAI_PROVINCES.filter(p =>
+                p.includes(val)
+            );
+
+            if (!matches.length) {
+                box.classList.add("hidden");
+                return;
+            }
+
+            matches.forEach(p => {
+                const div = document.createElement("div");
+                div.className = "px-4 py-2 cursor-pointer hover:bg-gray-100";
+                div.innerText = p;
+                div.onclick = () => {
+                    input.value = p;
+                    hiddenInput.value = p;
+                    box.classList.add("hidden");
+                };
+                box.appendChild(div);
+            });
+
+            box.classList.remove("hidden");
+        });
+
+        document.addEventListener("click", e => {
+            if (!input.contains(e.target) && !box.contains(e.target)) {
+                box.classList.add("hidden");
+            }
+        });
+    });
+   
     </script>
 </body>
 </html>

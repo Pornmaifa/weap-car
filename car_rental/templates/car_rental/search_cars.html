@@ -35,6 +35,7 @@
         <form method="get" action="{% url 'search_cars' %}" class="flex-1 w-full md:w-auto grid grid-cols-1 md:grid-cols-[2fr_2fr_auto] gap-4 items-end">
             
             <input type="hidden" name="service_type" value="{{ service_type }}">
+            <input type="hidden" name="province" id="province-input" value="{{ province|default:'' }}">
 
             <div class="flex flex-col relative">
                 <label class="text-xs text-gray-800 mb-1 pl-1 font-bold">จุดรับรถ</label>
@@ -94,30 +95,42 @@
 </div>
 
     <div class="max-w-7xl mx-auto p-5 md:p-10 flex flex-col md:flex-row gap-6 relative z-0">
-
         <div class="w-full md:w-64 flex-shrink-0">
             <div class="bg-white rounded-lg p-6 shadow-lg sticky top-5">
+                <h3 class="text-lg font-bold text-gray-800 mb-6 border-b pb-2">ประเภทคนขับ</h3>
+                <div class="flex flex-col gap-2">
+                <a href="?service_type=SELF_DRIVE&province={{ province }}&pickup={{ pickup }}&car_type={{ search_category }}&start_date={{ start_date }}&start_time={{ start_time }}&end_date={{ end_date }}&end_time={{ end_time }}"
+                    class="flex flex-col items-center p-4 rounded-lg transition group{% if search_service == 'SELF_DRIVE' %}bg-blue-50 border border-blue-200{% else %}hover:bg-gray-100{% endif %}">
+                        <img src="https://img.icons8.com/ios/100/car.png"class="w-16 opacity-80 group-hover:opacity-100">
+                        <span class="text-sm font-medium text-gray-700">ขับเอง</span>
+                </a>
+                <a href="?service_type=WITH_DRIVER&province={{ province }}&pickup={{ pickup }}&car_type={{ search_category }}&start_date={{ start_date }}&start_time={{ start_time }}&end_date={{ end_date }}&end_time={{ end_time }}"
+                    class="flex flex-col items-center p-4 rounded-lg transition group {% if search_service == 'WITH_DRIVER' %}bg-blue-50 border border-blue-200{% else %}hover:bg-gray-100{% endif %}">
+                        <img src="https://img.icons8.com/ios/100/driver.png" class="w-16 opacity-80 group-hover:opacity-100">
+                        <span class="text-sm font-medium text-gray-700">พร้อมคนขับ</span>
+                </a>
+            </div>
                 <h3 class="text-lg font-bold text-gray-800 mb-6 border-b pb-2">ประเภทรถ</h3>
                 <div class="flex flex-col gap-2">
-                    <a href="?car_type=SEDAN&pickup={{ pickup }}&service_type={{ search_service }}&start_date={{ start_date }}&start_time={{ start_time }}&end_date={{ end_date }}&end_time={{ end_time }}"
+                    <a href="?car_type=SEDAN&province={{ province }}&pickup={{ pickup }}&service_type={{ search_service }}&start_date={{ start_date }}&start_time={{ start_time }}&end_date={{ end_date }}&end_time={{ end_time }}"
                        class="flex flex-col items-center p-4 rounded-lg transition group {% if search_category == 'SEDAN' %}bg-blue-50 border border-blue-200{% else %}hover:bg-gray-100{% endif %}">
                         <img src="https://img.icons8.com/ios/100/sedan.png" class="w-16 opacity-80 group-hover:opacity-100">
                         <span class="text-sm font-medium text-gray-700">รถเก๋ง</span>
                     </a>
 
-                    <a href="?car_type=TRUCK&pickup={{ pickup }}&service_type={{ search_service }}&start_date={{ start_date }}&start_time={{ start_time }}&end_date={{ end_date }}&end_time={{ end_time }}"
+                    <a href="?car_type=TRUCK&province={{ province }}&pickup={{ pickup }}&service_type={{ search_service }}&start_date={{ start_date }}&start_time={{ start_time }}&end_date={{ end_date }}&end_time={{ end_time }}"
                        class="flex flex-col items-center p-4 rounded-lg transition group {% if search_category == 'TRUCK' %}bg-blue-50 border border-blue-200{% else %}hover:bg-gray-100{% endif %}">
                         <img src="https://img.icons8.com/ios/100/pickup.png" class="w-16 opacity-80 group-hover:opacity-100">
                         <span class="text-sm font-medium text-gray-700">รถกระบะ</span>
                     </a>
 
-                     <a href="?car_type=VAN&pickup={{ pickup }}&service_type={{ search_service }}&start_date={{ start_date }}&start_time={{ start_time }}&end_date={{ end_date }}&end_time={{ end_time }}"
+                     <a href="?car_type=VAN&province={{ province }}&pickup={{ pickup }}&service_type={{ search_service }}&start_date={{ start_date }}&start_time={{ start_time }}&end_date={{ end_date }}&end_time={{ end_time }}"
                        class="flex flex-col items-center p-4 rounded-lg transition group {% if search_category == 'VAN' %}bg-blue-50 border border-blue-200{% else %}hover:bg-gray-100{% endif %}">
                         <img src="https://img.icons8.com/ios/100/van.png" class="w-16 opacity-80 group-hover:opacity-100">
                         <span class="text-sm font-medium text-gray-700">รถตู้</span>
                     </a>
 
-                     <a href="?car_type=EV&pickup={{ pickup }}&service_type={{ search_service }}&start_date={{ start_date }}&start_time={{ start_time }}&end_date={{ end_date }}&end_time={{ end_time }}"
+                     <a href="?car_type=EV&province={{ province }}&pickup={{ pickup }}&service_type={{ search_service }}&start_date={{ start_date }}&start_time={{ start_time }}&end_date={{ end_date }}&end_time={{ end_time }}"
                        class="flex flex-col items-center p-4 rounded-lg transition group {% if search_category == 'EV' %}bg-blue-50 border border-blue-200{% else %}hover:bg-gray-100{% endif %}">
                         <img src="https://img.icons8.com/ios/100/electric-vehicle.png" class="w-16 opacity-80 group-hover:opacity-100">
                         <span class="text-sm font-medium text-gray-700">รถไฟฟ้า</span>
@@ -160,16 +173,18 @@
 
                     <div class="mt-4 flex gap-3 text-sm text-gray-600 flex-wrap">
                         <span class="bg-gray-100 px-3 py-1 rounded-full"><i class="fas fa-user-friends mr-1"></i> {{ car.num_seats }} ที่นั่ง</span>
-                        <span class="bg-gray-100 px-3 py-1 rounded-full"><i class="fas fa-suitcase mr-1"></i> {{ car.num_luggage }} ใบ</span>
+                        <span class="bg-gray-100 px-3 py-1 rounded-full"><i class="fas fa-suitcase mr-1"></i> กระเป๋า {{ car.num_luggage }} ใบ</span>
                         <span class="bg-gray-100 px-3 py-1 rounded-full"><i class="fas fa-cogs mr-1"></i> {{ car.get_transmission_display }}</span>
                         <span class="bg-gray-100 px-3 py-1 rounded-full"><i class="fas fa-gas-pump mr-1"></i> {{ car.get_fuel_system_display }}</span>
                     </div>
 
                     <div class="mt-6 text-right">
                         <a href="{% url 'car_detail' car.id %}?location={{ pickup }}&date_from={{ start_date }}&time_from={{ start_time }}&date_to={{ end_date }}&time_to={{ end_time }}"
-                            class="bg-[#48a9b9] text-white px-6 py-2 rounded-lg font-bold hover:bg-[#368a99] transition shadow-md">
-                                จองคันนี้
+                            class="book-btn bg-[#48a9b9] text-white px-6 py-2 rounded-lg font-bold hover:bg-[#368a99] transition shadow-md"
+                            data-pickup="{{ pickup }}">
+                            จองคันนี้
                         </a>
+
 
                     </div>
                 </div>
@@ -188,10 +203,10 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        
-        // 1. ข้อมูลสถานที่ (Database จำลอง)
+
+        // 1. ข้อมูลสถานที่ (Database จำลอง) - เหมือนเดิม
         const locations = [
-    // --- จังหวัด (Provinces) ---
+            // --- จังหวัด (Provinces) ---
             { name: "กรุงเทพมหานคร", type: "province", keywords: "bangkok krung thep maha nakhon bkk" },
             { name: "สมุทรปราการ", type: "province", keywords: "samut prakan" },
             { name: "นนทบุรี", type: "province", keywords: "nonthaburi" },
@@ -355,59 +370,129 @@
         const box = document.getElementById('suggestions-box');
         const clearBtn = document.getElementById('clear-btn');
 
-        // ถ้าหาไม่เจอ ให้หยุดทำงาน (ป้องกัน Error)
         if (!input || !box) return;
 
-        // 3. ฟังก์ชันเลือกไอคอน (สำคัญ! ต้องมี)
+        // 3. ฟังก์ชัน Helper
         function getIcon(type) {
             if (type === 'airport') return '<i class="fas fa-plane-departure text-gray-400 mr-2 w-5 text-center"></i>';
+            if (type === 'train') return '<i class="fas fa-train text-gray-400 mr-2 w-5 text-center"></i>';
+            if (type === 'bus') return '<i class="fas fa-bus text-gray-400 mr-2 w-5 text-center"></i>';
             return '<i class="fas fa-map-marker-alt text-[#48a9b9] mr-2 w-5 text-center"></i>';
         }
 
-        // 4. Event Listener: เมื่อพิมพ์ข้อความ
+        function extractProvince(loc) {
+            // ถ้าเป็นจังหวัดอยู่แล้ว คืนค่าเลย
+            if (loc.type === "province") return loc.name;
+
+            // ถ้าไม่ใช่จังหวัด ลองหาว่าสถานที่นี้มีชื่อจังหวัดแฝงอยู่ไหม
+            const provinces = locations.filter(l => l.type === "province");
+            for (const p of provinces) {
+                // เช็คทั้งชื่อไทยและ keyword
+                if (loc.name.includes(p.name) || (loc.keywords && loc.keywords.includes(p.name))) {
+                    return p.name;
+                }
+            }
+            return ""; // หาไม่เจอ
+        }
+
+        // 4. สร้าง HTML สำหรับ 1 บรรทัด (Refactored)
+        function createItemElement(loc, isSubItem = false) {
+            const div = document.createElement('div');
+            // ถ้าเป็น sub-item ให้เยื้องซ้าย (pl-8)
+            const paddingClass = isSubItem ? 'pl-8' : 'px-4';
+            div.className = `${paddingClass} py-2 cursor-pointer hover:bg-gray-100 transition flex items-center border-b border-gray-100 last:border-0 text-sm text-gray-700`;
+            div.innerHTML = `${getIcon(loc.type)} ${loc.name}`;
+            
+            div.onclick = () => {
+                input.value = loc.name;
+                const provinceInput = document.getElementById("province-input");
+                if (provinceInput) {
+                    provinceInput.value = extractProvince(loc);
+                }
+                box.classList.add("hidden");
+            };
+            return div;
+        }
+
+        // 5. Event Listener หลัก
         input.addEventListener('input', function() {
             const val = this.value.toLowerCase().trim();
-            box.innerHTML = ''; // ล้างข้อมูลเก่า
+            box.innerHTML = ''; 
 
             if (val.length > 0) {
-                // แสดงปุ่ม Clear และกล่อง
                 if(clearBtn) clearBtn.classList.remove('hidden');
                 box.classList.remove('hidden');
 
-                // กรองข้อมูล
-                const matches = locations.filter(l => 
+                // 5.1 กรองข้อมูลทั้งหมดที่ตรงกับคำค้นหาก่อน
+                const allMatches = locations.filter(l => 
                     l.name.includes(val) || (l.keywords && l.keywords.includes(val))
                 );
 
-                if (matches.length > 0) {
-                    // สร้าง Header
+                // 5.2 แยกประเภท: จังหวัดที่เจอ และ สถานที่อื่นๆ ที่ไม่ใช่จังหวัด
+                const matchedProvinces = allMatches.filter(l => l.type === 'province');
+                const matchedPlaces = allMatches.filter(l => l.type !== 'province');
+
+                // 5.3 Logic การแสดงผล (หัวใจสำคัญของการแก้ไขครั้งนี้)
+                let hasResults = false;
+
+                // --- กรณี A: เจอจังหวัด (Group Mode) ---
+                if (matchedProvinces.length > 0) {
+                    hasResults = true;
+                    
+                    matchedProvinces.forEach(prov => {
+                        // สร้าง Header จังหวัด (คลิกไม่ได้)
+                        const header = document.createElement('div');
+                        header.className = 'px-4 py-2 text-sm text-gray-800 font-bold bg-gray-100 border-b cursor-default';
+                        header.innerHTML = `<i class="fas fa-map-marker-alt text-[#48a9b9] mr-2"></i> ${prov.name}`;
+                        box.appendChild(header);
+
+                        // หาสถานที่ย่อยที่อยู่ในจังหวัดนี้
+                        // (ใช้ Logic เดียวกับ extractProvince แต่ทำแบบกลับกัน)
+                        const subLocations = matchedPlaces.filter(place => {
+                            return place.name.includes(prov.name) || (place.keywords && place.keywords.includes(prov.name));
+                        });
+
+                        if (subLocations.length > 0) {
+                            subLocations.forEach(sub => {
+                                box.appendChild(createItemElement(sub, true)); // true = เป็น sub item
+                            });
+                        } else {
+                            // ถ้าจังหวัดนั้นไม่มีสถานที่ใน DB (เช่น บึงกาฬ อาจจะยังไม่มีสนามบินใน List)
+                            const emptyMsg = document.createElement('div');
+                            emptyMsg.className = 'px-8 py-2 text-xs text-gray-400 italic';
+                            emptyMsg.innerText = 'ไม่มีจุดรับรถในโซนนี้';
+                            box.appendChild(emptyMsg);
+                        }
+                    });
+                } 
+                
+                // --- กรณี B: ไม่ใช่การค้นหาจังหวัดโดยตรง หรือ มีสถานที่หลงเหลือ (Fallback/Mixed Mode) ---
+                // ถ้าค้นหา "ดอนเมือง" (ไม่เจอจังหวัด แต่เจอสนามบิน) ก็ให้แสดงแบบปกติ
+                else if (matchedPlaces.length > 0) {
+                    hasResults = true;
+                    // ใส่ Header ปกติ
                     const header = document.createElement('div');
                     header.className = 'px-4 py-2 text-xs text-gray-400 font-semibold bg-gray-50 border-b';
-                    header.innerText = 'ผลการค้นหาแนะนำ';
+                    header.innerText = 'ผลการค้นหา';
                     box.appendChild(header);
 
-                    // วนลูปสร้างรายการ
-                    matches.forEach(loc => {
-                        const div = document.createElement('div');
-                        div.className = 'px-4 py-2 cursor-pointer hover:bg-gray-100 transition flex items-center border-b border-gray-100 last:border-0 text-sm text-gray-700';
-                        div.innerHTML = `${getIcon(loc.type)} ${loc.name}`;
-                        
-                        div.onclick = () => { 
-                            input.value = loc.name; 
-                            box.classList.add('hidden'); 
-                        };
-                        box.appendChild(div);
+                    matchedPlaces.forEach(loc => {
+                        box.appendChild(createItemElement(loc, false));
                     });
-                } else {
-                    box.innerHTML = '<div class="px-4 py-2 text-gray-500 text-sm text-center">ไม่พบสถานที่...</div>';
                 }
+
+                // ไม่พบข้อมูล
+                if (!hasResults) {
+                     box.innerHTML = '<div class="px-4 py-2 text-gray-500 text-sm text-center">ไม่พบสถานที่...</div>';
+                }
+
             } else {
                 if(clearBtn) clearBtn.classList.add('hidden');
                 box.classList.add('hidden');
             }
         });
 
-        // 5. Event: ปุ่ม Clear
+        // 6. Event: ปุ่ม Clear & คลิกข้างนอก (เหมือนเดิม)
         if(clearBtn) {
             clearBtn.addEventListener('click', () => {
                 input.value = '';
@@ -417,20 +502,17 @@
             });
         }
 
-        // 6. Event: คลิกข้างนอกเพื่อปิด
         document.addEventListener('click', (e) => {
             if (!input.contains(e.target) && !box.contains(e.target)) {
                 box.classList.add('hidden');
             }
         });
 
+        // --- ส่วน Datepicker / Flatpickr (เหมือนเดิม) ---
         const now = new Date();
-        
-        // คำนวณวันรับรถ (พรุ่งนี้)
         const pickupDate = new Date(now);
         pickupDate.setDate(now.getDate() + 1);
         
-        // ปัดเศษนาทีให้สวยงาม (00 หรือ 30)
         if (pickupDate.getMinutes() < 30) {
             pickupDate.setMinutes(30);
         } else {
@@ -438,20 +520,16 @@
             pickupDate.setMinutes(0);
         }
 
-        // คำนวณวันคืนรถ (1 วันหลังจากวันรับ)
-        const dropoffDate = new Date(pickupDate);
-        dropoffDate.setDate(pickupDate.getDate() + 1);
-
         flatpickr("#datepicker-start", { 
             dateFormat: "d/m/Y", 
-            defaultDate:"{{ start_date|default:'' }}",
+            defaultDate: "{{ start_date|default:'' }}",
             minDate: "today"
         });
         
         flatpickr("#datepicker-end", { 
             dateFormat: "d/m/Y", 
             defaultDate: "{{ end_date|default:'' }}",
-            minDate:"{{ start_date|default:'today' }} " 
+            minDate: "{{ start_date|default:'today' }}" 
         });
         
         flatpickr("#timepicker-start", { 
@@ -468,6 +546,16 @@
             dateFormat: "H:i", 
             time_24hr: true,
             defaultDate: "{{ end_time|default:'' }}"
+        });
+
+        document.querySelectorAll(".book-btn").forEach(btn => {
+            btn.addEventListener("click", function (e) {
+                const pickup = (this.dataset.pickup || "").trim();
+                if (!pickup) {
+                    e.preventDefault();
+                    alert("กรุณาเลือกสถานที่รับรถก่อนทำการจอง");
+                }
+            });
         });
     });
 </script>

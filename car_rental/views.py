@@ -162,9 +162,26 @@ def cancel_add_car(request):
     
 # View สำหรับแสดงรถทั้งหมด
 def car_list(request):
-    cars = Car.objects.filter(status='AVAILABLE') # แสดงเฉพาะรถที่พร้อมใช้งาน
+    province = request.GET.get('province', '').strip()
+    service_type = request.GET.get('service_type', 'SELF_DRIVE')
+    car_type = request.GET.get('car_type', '')
+
+    cars = Car.objects.filter(status='AVAILABLE', is_published=True)
+
+    if service_type:
+        cars = cars.filter(service_type=service_type)
+
+    if province:
+        cars = cars.filter(state__exact=province)
+
+    if car_type:
+        cars = cars.filter(car_type=car_type)
+
     context = {
-        'cars': cars
+        'cars': cars,
+        'province': province,
+        'search_service': service_type,
+        'search_category': car_type,
     }
     return render(request, 'car_rental/car_list.html', context)
 
@@ -246,6 +263,7 @@ def search_cars(request):
     # 1. รับค่าจากหน้าแรก (ชื่อฟิลด์ตรงตามฟอร์ม)
     pickup = request.GET.get('pickup', '').strip()
     dropoff = request.GET.get('dropoff', '').strip()
+    province = request.GET.get('province', '').strip()
 
     start_date = request.GET.get('start_date', '')
     start_time = request.GET.get('start_time', '')
@@ -255,20 +273,22 @@ def search_cars(request):
     service_type = request.GET.get('service_type', 'SELF_DRIVE')
     car_type_filter = request.GET.get('car_type', '')
 
+    if not pickup:
+            province = ""
     # 2. ดึงรายการรถ
     cars = Car.objects.filter(status='AVAILABLE', is_published=True)
 
+    
     # 3. กรองตามประเภทบริการ
     if service_type:
         cars = cars.filter(service_type=service_type)
 
     # 4. กรองตามสถานที่ pickup
-    if pickup:
-        cars = cars.filter(
-            Q(state__icontains=pickup) |
-            Q(city__icontains=pickup) |
-            Q(street_address__icontains=pickup)
-        )
+    
+    if province:
+        cars = cars.filter(state__exact=province.strip())
+
+
 
     # 5. กรองตามประเภทรถ
     if car_type_filter:
@@ -277,7 +297,7 @@ def search_cars(request):
     # 6. ส่งค่ากลับไปหน้า search_cars.html เพื่อใส่ค่ากลับลง input
     context = {
         'cars': cars,
-
+        "province": province,
         # คืนค่าเดิมกลับไปให้ form จำค่าได้
         'search_location': pickup,
         'pickup': pickup,

@@ -33,6 +33,7 @@
             <form action="{% url 'search_cars' %}" method="get" class="w-full" id="search-form" autocomplete="off">
 
                 <input type="hidden" id="service_type" name="service_type" value="SELF_DRIVE">
+                <input type="hidden" name="province" id="province-input">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     
@@ -107,7 +108,7 @@
     document.addEventListener("DOMContentLoaded", function() {
         // --- 1. ข้อมูลสถานที่ ---
         const locations = [
-    // --- จังหวัด (Provinces) ---
+            // --- จังหวัด (Provinces) ---
             { name: "กรุงเทพมหานคร", type: "province", keywords: "bangkok krung thep maha nakhon bkk" },
             { name: "สมุทรปราการ", type: "province", keywords: "samut prakan" },
             { name: "นนทบุรี", type: "province", keywords: "nonthaburi" },
@@ -278,82 +279,155 @@
             inactiveBtn.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
             inactiveBtn.classList.add('text-gray-500', 'hover:text-gray-700', 'border-b-0');
             
-            serviceTypeInput.value = serviceValue;
+            if(serviceTypeInput) serviceTypeInput.value = serviceValue;
         }
 
-        btnSelf.addEventListener('click', function() {
-            setActiveButton(btnSelf, btnDriver, 'SELF_DRIVE');
-        });
+        if(btnSelf) {
+             btnSelf.addEventListener('click', function() {
+                setActiveButton(btnSelf, btnDriver, 'SELF_DRIVE');
+            });
+        }
+       
+        if(btnDriver) {
+            btnDriver.addEventListener('click', function() {
+                setActiveButton(btnDriver, btnSelf, 'WITH_DRIVER');
+            });
+        }
 
-        btnDriver.addEventListener('click', function() {
-            setActiveButton(btnDriver, btnSelf, 'WITH_DRIVER');
-        });
-
+        // --- Helper Functions ---
         function getIcon(type) {
             if (type === 'airport') return '<i class="fas fa-plane-departure text-gray-400 mr-2 w-6 text-center"></i>';
             if (type === 'train') return '<i class="fas fa-train text-gray-400 mr-2 w-6 text-center"></i>';
             if (type === 'bus') return '<i class="fas fa-bus text-gray-400 mr-2 w-6 text-center"></i>';
-            return '<i class="fas fa-map-marker-alt text-blue-500 mr-2 w-6 text-center"></i>'; // จังหวัด
+            return '<i class="fas fa-map-marker-alt text-[#48a9b9] mr-2 w-6 text-center"></i>'; // จังหวัด
         }
-        // --- 3. ระบบ Auto-Suggestion และการคัดลอกค่า (Pickup/Dropoff) ---
+
+        function extractProvince(loc) {
+            if (loc.type === "province") return loc.name;
+            const provinces = locations.filter(l => l.type === "province");
+            for (const p of provinces) {
+                if (loc.name.includes(p.name) || (loc.keywords && loc.keywords.includes(p.name))) {
+                    return p.name;
+                }
+            }
+            return "";
+        }
+
+        // --- 3. ระบบ Auto-Suggestion (Updated Logic) ---
         function setupLocationInput(inputID, suggestionBoxID, clearBtnID, copyValue = false) {
             const input = document.getElementById(inputID);
             const box = document.getElementById(suggestionBoxID);
             const clearBtn = document.getElementById(clearBtnID);
             const dropoffInput = document.getElementById('dropoff-input');
+            const provinceInput = document.getElementById('province-input'); // ถ้ามี input hidden สำหรับเก็บค่าจังหวัด
             
-            // *** ส่วนที่เพิ่ม/แก้ไข: กำหนดความสูงสูงสุดและการเลื่อน (Scroll) ให้กับกล่องคำแนะนำ ***
-            box.style.cssText += "max-height: 280px; overflow-y: auto;"; // กำหนดความสูงสูงสุด 250px
+            // Set style for box
+            if(box) box.style.cssText += "max-height: 280px; overflow-y: auto; overflow-x: hidden;";
 
             if (!input || !box) return;
+
+            // สร้าง Function สร้าง Element สำหรับรายการปกติและรายการย่อย
+            function createItemElement(loc, isSubItem = false) {
+                const div = document.createElement('div');
+                // CSS inline เพื่อให้เข้ากับ code เดิมของ homepage
+                const paddingLeft = isSubItem ? '30px' : '15px';
+                div.style.cssText = `padding: 10px 15px 10px ${paddingLeft}; cursor: pointer; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; background-color: white;`;
+                
+                div.innerHTML = `${getIcon(loc.type)}<span style="color:#333; font-size:14px;">${loc.name}</span>`;
+                
+                div.onmouseover = function() { this.style.backgroundColor = "#f3f4f6"; };
+                div.onmouseout = function() { this.style.backgroundColor = "white"; };
+
+                div.onclick = function() {
+                    input.value = loc.name;
+                    box.style.display = 'none';
+                    if (copyValue && dropoffInput) dropoffInput.value = loc.name;
+                    
+                    // Set province hidden value if exists
+                    if(provinceInput) provinceInput.value = extractProvince(loc);
+                };
+                return div;
+            }
 
             input.addEventListener('input', function() {
                 const val = this.value.toLowerCase().trim();
                 box.innerHTML = '';
 
                 if (val.length > 0) {
-                    const matches = locations.filter(l => l.name.toLowerCase().includes(val));
-                    
-                    if (matches.length > 0) {
-                        box.style.display = 'block';
-                        clearBtn.style.display = 'block';
+                    box.style.display = 'block';
+                    if(clearBtn) clearBtn.style.display = 'block';
 
+                    // 1. กรองข้อมูลทั้งหมด
+                    const allMatches = locations.filter(l => 
+                        l.name.toLowerCase().includes(val) || (l.keywords && l.keywords.includes(val))
+                    );
+                    
+                    const matchedProvinces = allMatches.filter(l => l.type === 'province');
+                    const matchedPlaces = allMatches.filter(l => l.type !== 'province');
+                    
+                    let hasResults = false;
+
+                    // 2. Logic การแสดงผล
+                    // Case A: เจอจังหวัด (แสดง Header + ลูกข่าย)
+                    if (matchedProvinces.length > 0) {
+                        hasResults = true;
+                        matchedProvinces.forEach(prov => {
+                            // Header จังหวัด (คลิกไม่ได้)
+                            const header = document.createElement('div');
+                            header.style.cssText = "padding: 8px 15px; font-size: 13px; color: #4b5563; background: #e5e7eb; font-weight: bold; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid #d1d5db;";
+                            header.innerHTML = `<i class="fas fa-map-marker-alt" style="color:#48a9b9; margin-right:8px;"></i>${prov.name}`;
+                            box.appendChild(header);
+
+                            // หาจุดย่อยในจังหวัดนี้
+                            const subLocations = matchedPlaces.filter(place => {
+                                return place.name.includes(prov.name) || (place.keywords && place.keywords.includes(prov.name));
+                            });
+
+                            if (subLocations.length > 0) {
+                                subLocations.forEach(sub => {
+                                    box.appendChild(createItemElement(sub, true));
+                                });
+                            } else {
+                                const emptyMsg = document.createElement('div');
+                                emptyMsg.style.cssText = "padding: 10px 30px; font-size: 12px; color: #9ca3af; font-style: italic; background: white;";
+                                emptyMsg.innerText = 'ไม่มีจุดรับรถในโซนนี้';
+                                box.appendChild(emptyMsg);
+                            }
+                        });
+                    }
+                    // Case B: ไม่ใช่การค้นหาจังหวัดโดยตรง หรือ มีสถานที่หลงเหลือ (แสดงรายการปกติ)
+                    else if (matchedPlaces.length > 0) {
+                        hasResults = true;
+                        // Header ปกติ
                         const header = document.createElement('div');
                         header.style.cssText = "padding: 8px 15px; font-size: 12px; color: #999; background: #f5f5f5; font-weight: bold; position: sticky; top: 0; z-index: 10;";
                         header.innerText = 'สถานที่แนะนำ';
                         box.appendChild(header);
 
-                        matches.forEach(loc => {
-                            const div = document.createElement('div');
-                            div.style.cssText = "padding: 10px 15px; cursor: pointer; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center;";
-                            let icon = loc.type === 'airport' ? '<i class="fas fa-plane" style="color:#999; margin-right:10px;"></i>' : '<i class="fas fa-map-marker-alt" style="color:#48a9b9; margin-right:10px;"></i>';
-                            div.innerHTML = icon + `<span style="color:#333;">${loc.name}</span>`;
-                            div.onmouseover = function() { this.style.backgroundColor = "#eeffff"; };
-                            div.onmouseout = function() { this.style.backgroundColor = "white"; };
-
-                            div.onclick = function() {
-                                input.value = loc.name;
-                                box.style.display = 'none';
-                                if (copyValue) dropoffInput.value = loc.name;
-                            };
-                            box.appendChild(div);
+                        matchedPlaces.forEach(loc => {
+                            box.appendChild(createItemElement(loc, false));
                         });
-                    } else {
+                    }
+
+                    if (!hasResults) {
                         box.style.display = 'none';
                     }
+
                 } else {
                     box.style.display = 'none';
-                    clearBtn.style.display = 'none';
+                    if(clearBtn) clearBtn.style.display = 'none';
                 }
             });
 
-            clearBtn.addEventListener('click', () => {
-                input.value = '';
-                box.style.display = 'none';
-                clearBtn.style.display = 'none';
-                input.focus();
-                if (copyValue) dropoffInput.value = '';
-            });
+            if(clearBtn) {
+                clearBtn.addEventListener('click', () => {
+                    input.value = '';
+                    box.style.display = 'none';
+                    clearBtn.style.display = 'none';
+                    input.focus();
+                    if (copyValue && dropoffInput) dropoffInput.value = '';
+                });
+            }
 
             document.addEventListener('click', (e) => {
                 if (!input.contains(e.target) && !box.contains(e.target)) {
@@ -366,19 +440,13 @@
         setupLocationInput('dropoff-input', 'dropoff-suggestions', 'dropoff-clear-btn', false);
 
         // --- 4. การตอบสนองของปุ่มค้นหา ---
-        const searchBtn = document.getElementById('search-btn');
-        // searchBtn.addEventListener('click', ...); // ปล่อยให้ Form Submit ตามปกติ
+        // const searchBtn = document.getElementById('search-btn');
 
         // --- 5. ตั้งค่าวันเวลาอัตโนมัติ (Drivehub Style) ---
-        // Logic: รับรถ = พรุ่งนี้ (เวลานี้), คืนรถ = มะรืนนี้ (เวลานี้)
-        
         const now = new Date();
-        
-        // คำนวณวันรับรถ (พรุ่งนี้)
         const pickupDate = new Date(now);
         pickupDate.setDate(now.getDate() + 1);
         
-        // ปัดเศษนาทีให้สวยงาม (00 หรือ 30)
         if (pickupDate.getMinutes() < 30) {
             pickupDate.setMinutes(30);
         } else {
@@ -386,21 +454,44 @@
             pickupDate.setMinutes(0);
         }
 
-        // คำนวณวันคืนรถ (1 วันหลังจากวันรับ)
         const dropoffDate = new Date(pickupDate);
         dropoffDate.setDate(pickupDate.getDate() + 1);
 
-        // Config Flatpickr
-        flatpickr("#datepicker-start", { 
-            dateFormat: "d/m/Y", 
-            defaultDate: pickupDate,
-            minDate: "today"
-        });
-        
-        flatpickr("#datepicker-end", { 
+        // ✅ เพิ่ม: สร้าง "วันนี้แบบตัดเวลา" กันเคสบาง browser หลุดย้อนหลัง
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const endPicker = flatpickr("#datepicker-end", { 
             dateFormat: "d/m/Y", 
             defaultDate: dropoffDate,
-            minDate: pickupDate 
+            minDate: dropoffDate // ✅ เริ่มต้นให้ขั้นต่ำ = วันรับรถ+1 วัน
+        });
+
+        
+// ✅ เปลี่ยน: เก็บ instance ของ startPicker และเพิ่ม onChange
+        const startPicker = flatpickr("#datepicker-start", { 
+            dateFormat: "d/m/Y", 
+            defaultDate: pickupDate,
+            minDate: today, // ✅ กันเลือกย้อนหลังแบบชัวร์
+
+            // ✅ เพิ่ม: เวลา user เปลี่ยนวันรับรถ -> บังคับวันคืนรถ >= วันรับรถ + 1 วัน
+            onChange: function(selectedDates) {
+                if (!selectedDates.length) return;
+
+                const startDate = selectedDates[0];
+
+                // ✅ min วันคืนรถ = วันรับรถ + 1 วัน
+                const minDropoff = new Date(startDate);
+                minDropoff.setDate(startDate.getDate() + 1);
+
+                // อัปเดต minDate ของวันคืนรถ
+                endPicker.set("minDate", minDropoff);
+
+                // ถ้าวันคืนรถเดิมน้อยกว่า min -> เลื่อนให้ถูกต้อง
+                if (!endPicker.selectedDates.length || endPicker.selectedDates[0] < minDropoff) {
+                    endPicker.setDate(minDropoff, true);
+                }
+            }
         });
         
         flatpickr("#timepicker-start", { 
