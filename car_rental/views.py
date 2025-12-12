@@ -369,5 +369,28 @@ def submit_reply(request, review_id):
         )
     return redirect(request.META.get("HTTP_REFERER"))
 
+# car_rental/views.py
 
+def user_info(request, car_id):
+    car = get_object_or_404(Car, id=car_id)
+    
+    # รับค่าจาก URL (Query Params) ที่ส่งมาจากหน้าก่อนหน้า
+    # หรือถ้าใช้ Session ก็ดึงจาก Session ได้เลย
+    # เพื่อความง่าย ผมจำลองการคำนวณใหม่ หรือคุณจะส่ง context เดิมมาก็ได้
+    
+    # (โค้ดส่วนคำนวณวันและราคา เหมือนใน car_detail ...)
+    # สมมติว่าได้ตัวแปรเหล่านี้มาแล้ว:
+    pickup_datetime = datetime.now() + timedelta(days=1) # ตัวอย่าง
+    dropoff_datetime = datetime.now() + timedelta(days=4) # ตัวอย่าง
+    rental_days = 3
+    total_price = car.price_per_day * rental_days
+
+    context = {
+        'car': car,
+        'pickup_datetime': pickup_datetime,
+        'dropoff_datetime': dropoff_datetime,
+        'rental_days': rental_days,
+        'total_price': total_price,
+    }
+    return render(request, 'car_rental/user_info.html', context)
 

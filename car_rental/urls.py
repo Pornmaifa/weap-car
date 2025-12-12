@@ -13,5 +13,6 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('search/', views.search_cars, name='search_cars'),
     path('detail/<int:car_id>/', views.car_detail, name='car_detail'),
-     path("review/<int:review_id>/reply/", views.submit_reply, name="submit_reply"),
+    path("review/<int:review_id>/reply/", views.submit_reply, name="submit_reply"),
+    path('book/user-info/<int:car_id>/', views.user_info, name='user_info'),
 ]

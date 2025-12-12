@@ -212,7 +212,7 @@
                         <p class="text-3xl font-extrabold text-red-600">฿{{ total_price|intcomma }}</p>
                     </div>
 
-                    <a href="#"
+                    <a href="{% url 'user_info' car.id %}"
                        class="block w-full mt-6 bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-lg shadow-lg transition text-center text-2xl">
                         จอง {{ total_price|intcomma }} THB
                     </a>

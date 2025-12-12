@@ -1,0 +1,161 @@
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+{% include 'car_rental/navbar_detail.html' %}
+
+<div class="min-h-screen font-sarabun pt-20 pb-12" style="background-color: #fff; ">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
+        <div class="flex flex-wrap justify-center md:justify-between items-center px-4 md:px-20 gap-4">
+            
+            <div class="flex items-center gap-2 text-gray-800">
+                <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+                    <i class="fas fa-check text-xl font-bold text-black"></i>
+                </div>
+                <span class="text-sm font-medium">ผลการค้นหา</span>
+            </div>
+
+            <div class="hidden md:block w-12 h-1 bg-gray-200"></div>
+
+            <div class="flex items-center gap-2 text-gray-800">
+                <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+                    <i class="fas fa-check text-xl font-bold text-black"></i>
+                </div>
+                <span class="text-sm font-medium">รายละเอียดรถ</span>
+            </div>
+
+            <div class="hidden md:block w-12 h-1 bg-gray-200"></div>
+
+            <div class="flex items-center gap-2 text-[#48a9b9]">
+                <div class="w-10 h-10 rounded-full bg-[#48a9b9] flex items-center justify-center text-white shadow-lg">
+                    <i class="fas fa-check text-xl font-bold"></i>
+                </div>
+                <span class="text-sm font-bold">ข้อมูล</span>
+            </div>
+
+            <div class="hidden md:block w-12 h-1 bg-gray-200"></div>
+
+            <div class="flex items-center gap-2 text-gray-400">
+                <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                </div>
+                <span class="text-sm">ชำระเงิน</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-2 lg:grid-cols-12 gap-12">
+            
+            <div class="lg:col-span-7 space-y-12 pt-4">
+                
+                <div>
+                    <h2 class="text-2xl font-medium text-gray-800 mb-6">สมาชิก</h2>
+                    
+                    <div class="space-y-3 mb-8">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-check text-green-600 text-xl"></i>
+                            <span class="text-gray-600">ได้รับข้อมูลข่าวสารกับทุกๆ โปรโมชั่น</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-check text-green-600 text-xl"></i>
+                            <span class="text-gray-600">ข้อมูลการจองรถของคุณจะไม่สูญหาย</span>
+                        </div>
+                    </div>
+
+                    <form method="POST" action="{% url 'login' %}"> 
+                        {% csrf_token %}
+                        <div class="space-y-5 max-w-md">
+                            <div>
+                                <label class="block text-gray-500 text-sm mb-1">อีเมล</label>
+                                <input type="email" name="username" class="w-full border border-gray-400 p-3 rounded-none focus:outline-none focus:border-[#48a9b9]">
+                            </div>
+                            <div>
+                                <label class="block text-gray-500 text-sm mb-1">รหัสผ่าน</label>
+                                <input type="password" name="password" class="w-full border border-gray-400 p-3 rounded-none focus:outline-none focus:border-[#48a9b9]">
+                            </div>
+
+                            <button type="submit" class="w-full bg-[#48a9b9] hover:bg-[#3ba0b0] text-white text-xl font-medium py-3 shadow-md transition">
+                                สมาชิก
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-medium text-gray-800 mb-6">ลูกค้าทั่วไป</h2>
+                    <div class="max-w-md">
+                        <a href="#" class="block w-full bg-[#48a9b9] hover:bg-[#3ba0b0] text-white text-xl font-medium py-3 text-center shadow-md transition">
+                            ลูกค้าทั่วไป
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="lg:col-span-5">
+                <div class="bg-gray-100/70 p-8 rounded-lg border border-gray-300 h-full relative">
+                    
+                    <div class="mb-6 flex justify-center">
+                        {% if car.images.first %}
+                            <img src="{{ car.images.first.image.url }}" class="w-full max-w-xs object-contain" alt="{{ car.model }}">
+                        {% else %}
+                            <div class="w-full h-48 bg-gray-200 flex items-center justify-center">No Image</div>
+                        {% endif %}
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-black mb-1">{{ car.brand }} {{ car.model }}</h3>
+                    <p class="text-gray-600 font-medium mb-4">รายละเอียดรถ</p>
+
+                    <div class="space-y-2 mb-6">
+                        <div class="flex items-center gap-2 text-sm text-gray-700 font-medium">
+                            <i class="fas fa-check text-green-700"></i> รถใหม่ ไมล์น้อย
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-gray-700 font-medium">
+                            <i class="fas fa-check text-green-700"></i> คืนช้าได้ 1 ชม.นับจากเวลารับรถ
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-gray-700 font-medium">
+                            <i class="fas fa-check text-green-700"></i> บริการช่วยเหลือฉุกเฉินบนท้องถนน
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-gray-700 font-medium">
+                            <i class="fas fa-check text-green-700"></i> ไม่จำกัดจำนวน กิโลเมตร การใช้งาน
+                        </div>
+                    </div>
+
+                    <div class="text-4xl font-medium text-red-600 mb-6">
+                        {{ total_price|intcomma }} THB
+                    </div>
+
+                    <h4 class="text-xl font-medium text-black mb-4">การรับรถและคืนรถ</h4>
+                    
+                    <div class="relative border-l-2 border-gray-400 ml-2 pl-6 pb-8 space-y-12">
+                        <div class="relative">
+                            <span class="absolute -left-[31px] top-1 w-4 h-4 rounded-full border-2 border-gray-500 bg-white"></span>
+                            <p class="text-sm font-medium text-black">
+                                {{ pickup_datetime|date:"lที่ j M." }} · {{ pickup_datetime|time:"H:i" }} น.
+                            </p>
+                            <p class="text-sm text-black">
+                                ท่าอากาศยานสุวรรณภูมิ
+                            </p>
+                        </div>
+
+                        <div class="relative">
+                            <span class="absolute -left-[31px] top-1 w-4 h-4 rounded-full border-2 border-gray-500 bg-white"></span>
+                            <p class="text-sm font-medium text-black">
+                                {{ dropoff_datetime|date:"l j M." }} · {{ dropoff_datetime|time:"H:i" }} น.
+                            </p>
+                            <p class="text-sm text-black">
+                                ท่าอากาศยานสุวรรณภูมิ
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
