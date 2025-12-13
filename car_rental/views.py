@@ -15,6 +15,8 @@ from .models import Car, CarImage
 from django.core.files.base import ContentFile
 import base64
 from django.db.models import Q # ใช้สำหรับ query ขั้นสูง
+from car_rental.utils import build_rental_context 
+from .models import GuestCustomer
 
 
 # (เพิ่มฟังก์ชันนี้เข้าไปใน views.py)
@@ -347,7 +349,7 @@ def car_detail(request, car_id):
     if rental_days <= 0:
         rental_days = 1
 
-    total_price = car.price_per_day * rental_days
+    rental_ctx = build_rental_context(car, pickup_datetime, dropoff_datetime)
 
     return render(request, "car_rental/car_detail.html", {
         "reviews": reviews, 
@@ -355,8 +357,8 @@ def car_detail(request, car_id):
         "location": location,
         "pickup_datetime": pickup_datetime,
         "dropoff_datetime": dropoff_datetime,
-        "rental_days": rental_days,
-        "total_price": total_price,
+        **rental_ctx,
+        
     })
 
 
@@ -373,24 +375,79 @@ def submit_reply(request, review_id):
 
 def user_info(request, car_id):
     car = get_object_or_404(Car, id=car_id)
+
+    # ❗ ดึงค่าที่ผู้ใช้เลือกมาจริง ๆ
+    pickup_str = request.GET.get("pickup_datetime")
+    dropoff_str = request.GET.get("dropoff_datetime")
+    location = request.GET.get("location", "-")
+
+    if pickup_str and dropoff_str:
+        pickup_datetime = datetime.fromisoformat(pickup_str)
+        dropoff_datetime = datetime.fromisoformat(dropoff_str)
+    else:
+        # fallback กันเว็บพัง
+        pickup_datetime = datetime.now()
+        dropoff_datetime = datetime.now() + timedelta(days=1)
+
+    rental_ctx = build_rental_context(car, pickup_datetime, dropoff_datetime)
+
+    request.session["booking"] = {
+        "car_id": car.id,
+        "pickup_datetime": pickup_datetime.isoformat(),
+        "dropoff_datetime": dropoff_datetime.isoformat(),
+        "location": location,
+        "rental_days": rental_ctx["rental_days"],
+        "total_price": str(rental_ctx["total_price"]),
+
+    }
+
+     # ✅ กรณีลูกค้าทั่วไปกด submit
+    if request.method == "POST":
+        GuestCustomer.objects.create(
+            first_name=request.POST["first_name"],
+            last_name=request.POST["last_name"],
+            email=request.POST["email"],
+            phone_number=request.POST["phone_number"],
+            license_number=request.POST["license_number"],
+            car=car
+        )
+
+        # ต่อไปค่อย redirect ไปหน้าชำระเงิน
+        return redirect("checkout")  # หรือหน้า payment ในอนาคต
     
-    # รับค่าจาก URL (Query Params) ที่ส่งมาจากหน้าก่อนหน้า
-    # หรือถ้าใช้ Session ก็ดึงจาก Session ได้เลย
-    # เพื่อความง่าย ผมจำลองการคำนวณใหม่ หรือคุณจะส่ง context เดิมมาก็ได้
-    
-    # (โค้ดส่วนคำนวณวันและราคา เหมือนใน car_detail ...)
-    # สมมติว่าได้ตัวแปรเหล่านี้มาแล้ว:
-    pickup_datetime = datetime.now() + timedelta(days=1) # ตัวอย่าง
-    dropoff_datetime = datetime.now() + timedelta(days=4) # ตัวอย่าง
-    rental_days = 3
-    total_price = car.price_per_day * rental_days
+    context = {
+        "car": car,
+        "location": location,
+        "pickup_datetime": pickup_datetime,
+        "dropoff_datetime": dropoff_datetime,
+        **rental_ctx,
+    }
+    return render(request, "car_rental/user_info.html", context)
+
+
+def checkout(request, car_id):
+    car = get_object_or_404(Car, id=car_id)
+
+    booking = request.session.get("booking")
+
+    if not booking:
+        return redirect("car_detail", car_id=car.id)
+
+    pickup_datetime = datetime.fromisoformat(booking["pickup_datetime"])
+    dropoff_datetime = datetime.fromisoformat(booking["dropoff_datetime"])
+    location = booking["location"]
+    rental_days = booking["rental_days"]
+    total_price = booking["total_price"]
 
     context = {
-        'car': car,
-        'pickup_datetime': pickup_datetime,
-        'dropoff_datetime': dropoff_datetime,
-        'rental_days': rental_days,
-        'total_price': total_price,
+        "car": car,
+        "pickup_datetime": pickup_datetime,
+        "dropoff_datetime": dropoff_datetime,
+        "rental_days": rental_days,
+        "total_price": total_price,
+        "location": location,
     }
-    return render(request, 'car_rental/user_info.html', context)
+
+    return render(request, "car_rental/checkout.html", context)
+
 

@@ -1,3 +1,4 @@
+
 {% load static %}
 {% load humanize %}
 
@@ -25,9 +26,9 @@
                 <span class="text-xs font-bold">ข้อมูลผู้ใช้</span>
             </div>
 
-            <div class="flex flex-col items-center flex-1 text-gray-400">
-                <i class="far fa-circle text-2xl mb-1"></i>
-                <span class="text-xs">ชำระเงิน</span>
+            <div class="flex flex-col items-center flex-1 text-[#48a9b9]">
+                <i class="fas fa-check-circle text-2xl mb-1"></i>
+                <span class="text-xs font-bold">ชำระเงิน</span>
             </div>
 
         </div>
@@ -36,87 +37,27 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 lg:grid-cols-12 gap-12">
             
-            <div class="lg:col-span-7 space-y-12 pt-4">
+            <div class="lg:col-span-7 space-y-12 pt-4 flex flex-col items-center">
                 
-                <div id="member-login-mode">
-                    <h2 class="text-2xl font-medium text-gray-800 mb-6">สมาชิก</h2>
-                    
-                    <div class="space-y-3 mb-8">
-                        <div class="flex items-center gap-3">
-                            <i class="fas fa-check text-green-600 text-xl"></i>
-                            <span class="text-gray-600">ได้รับข้อมูลข่าวสารกับทุกๆ โปรโมชั่น</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <i class="fas fa-check text-green-600 text-xl"></i>
-                            <span class="text-gray-600">ข้อมูลการจองรถของคุณจะไม่สูญหาย</span>
-                        </div>
-                    </div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">ชำระเงินและรับการแจ้งเตือน</h2>
 
-                    <form method="POST" action="{% url 'login' %}"> 
-                        {% csrf_token %}
-                        <div class="space-y-5 max-w-md">
-                            <div>
-                                <label class="block text-gray-500 text-sm mb-1">อีเมล</label>
-                                <input type="email" name="username" class="w-full border border-gray-400 p-3 rounded-none focus:outline-none focus:border-[#48a9b9]">
-                            </div>
-                            <div>
-                                <label class="block text-gray-500 text-sm mb-1">รหัสผ่าน</label>
-                                <input type="password" name="password" class="w-full border border-gray-400 p-3 rounded-none focus:outline-none focus:border-[#48a9b9]">
-                            </div>
+            <div class="w-full max-w-sm bg-white p-8 rounded-lg shadow-xl border border-gray-200 text-center">
+                
+                <h3 class="text-xl font-semibold mb-6">สแกนคิวอาร์โค้ดเพื่อรับแจ้งเตือน</h3>
 
-                            <button type="submit" class="w-full bg-[#48a9b9] hover:bg-[#3ba0b0] text-white text-xl font-medium py-3 shadow-md transition">
-                                สมาชิก
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                <img src="{% static 'car_rental/images/QRcode.png' %}" 
+                    alt="QR Code Line OA" 
+                    class="w-48 h-48 mx-auto object-contain rounded-lg mb-6 shadow-md border border-gray-300">
+                <p class="text-gray-600 mb-8 text-sm">
+                    สแกน Line OA เพื่อรับการแจ้งเตือนสถานะการจองและการชำระเงิน
+                </p>
 
-                <div id="guest-switch-button">
-                    <h2 class="text-2xl font-medium text-gray-800 mb-6">ลูกค้าทั่วไป</h2>
-                    <div class="max-w-md">
-                        <button onclick="showGuestForm()" class="block w-full bg-[#48a9b9] hover:bg-[#3ba0b0] text-white text-xl font-medium py-3 text-center shadow-md transition">
-                            ลูกค้าทั่วไป
-                        </button>
-                    </div>
-                </div>
-
-                <div id="guest-form-mode" class="hidden">
-                    <h2 class="text-2xl font-medium text-gray-800 mb-6">กรอกข้อมูลลูกค้าทั่วไป</h2>
-                    
-                    <form method="POST" action="{% url 'checkout' car.id %}"> {% csrf_token %}
-                        <div class="space-y-5 max-w-md">
-                            
-                            <div>
-                                <label class="block text-gray-500 text-sm mb-1">ชื่อจริง</label>
-                                <input type="text" name="first_name" required class="w-full border border-gray-400 p-3 rounded-none focus:outline-none focus:border-[#48a9b9]">
-                            </div>
-                            <div>
-                                <label class="block text-gray-500 text-sm mb-1">นามสกุล</label>
-                                <input type="text" name="last_name" required class="w-full border border-gray-400 p-3 rounded-none focus:outline-none focus:border-[#48a9b9]">
-                            </div>
-                            <div>
-                                <label class="block text-gray-500 text-sm mb-1">อีเมล</label>
-                                <input type="email" name="email" required class="w-full border border-gray-400 p-3 rounded-none focus:outline-none focus:border-[#48a9b9]">
-                            </div>
-                            <div>
-                                <label class="block text-gray-500 text-sm mb-1">เบอร์โทรศัพท์</label>
-                                <input type="tel" name="phone_number" required class="w-full border border-gray-400 p-3 rounded-none focus:outline-none focus:border-[#48a9b9]">
-                            </div>
-                             <div>
-                                <label class="block text-gray-500 text-sm mb-1">หมายเลขใบขับขี่</label>
-                                <input type="text" name="license_number" required class="w-full border border-gray-400 p-3 rounded-none focus:outline-none focus:border-[#48a9b9]">
-                            </div>
-                            <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white text-xl font-medium py-3 shadow-md transition">
-                                ดำเนินการต่อ (ชำระเงิน)
-                            </button>
-                            
-                            <button type="button" onclick="showMemberLogin()" class="w-full text-gray-600 py-3 text-center underline text-sm">
-                                ย้อนกลับไปยังหน้าสมาชิก
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                <button class="w-full bg-[#48a9b9] hover:bg-[#3ba0b0] text-white text-xl font-medium py-3 shadow-lg transition">
+                    <i class="fas fa-money-bill-wave mr-2"></i> จ่ายเงิน
+                </button>
+                
             </div>
+        </div>
 
             <div class="lg:col-span-5">
                 <div class="bg-gray-100/70 p-8 rounded-lg border border-gray-300 h-full relative">
@@ -212,17 +153,5 @@
         </div>
     </div>
 </div>
-<script>
-    function showGuestForm() {
-        document.getElementById('member-login-mode').classList.add('hidden');
-        document.getElementById('guest-switch-button').classList.add('hidden');
-        document.getElementById('guest-form-mode').classList.remove('hidden');
-    }
 
-    function showMemberLogin() {
-        document.getElementById('member-login-mode').classList.remove('hidden');
-        document.getElementById('guest-switch-button').classList.remove('hidden');
-        document.getElementById('guest-form-mode').classList.add('hidden');
-    }
-</script>
 {% endblock %}
