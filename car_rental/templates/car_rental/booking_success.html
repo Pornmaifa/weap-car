@@ -1,0 +1,45 @@
+
+{% load static %}
+
+{% block content %}
+{% include 'car_rental/navbar_detail.html' %}
+
+<div class="min-h-screen font-sarabun pt-24 pb-12 bg-gray-50 flex items-center justify-center">
+    <div class="max-w-md w-full bg-white p-8 rounded-xl shadow-2xl text-center border border-gray-100">
+        
+        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100">
+            <svg class="h-10 w-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+        </div>
+
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">จองสำเร็จ!</h2>
+        <p class="text-gray-600 mb-8">
+            ขอบคุณที่ใช้บริการ WarpCar<br>
+            เราได้รับข้อมูลการจองและการชำระเงินมัดจำเรียบร้อยแล้ว
+        </p>
+
+        <div class="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <p class="text-sm text-blue-600 mb-2">เลขที่การจองของคุณ (โปรดบันทึกไว้)</p>
+            <p class="text-4xl font-bold text-blue-800 tracking-wider select-all">
+                {{ booking.booking_ref }}
+            </p>
+        </div>
+
+        <div class="bg-blue-50 p-4 rounded-lg mb-8 text-sm text-blue-800">
+            <p class="font-bold mb-1">สิ่งที่ต้องทำต่อไป:</p>
+            <p>กรุณานำ "ใบขับขี่" และ "บัตรประชาชน" ตัวจริง<br>มายื่นในวันรับรถเพื่อชำระยอดคงเหลือ</p>
+        </div>
+
+        <a href="/" class="block w-full bg-[#48a9b9] hover:bg-[#3ba0b0] text-white text-xl font-bold py-3 rounded-lg shadow-md transition">
+            กลับหน้าหลัก
+        </a>
+        
+        <a href="{% url 'manage_booking' %}" class="block w-full text-gray-500 mt-4 text-sm hover:underline">
+            ตรวจสอบสถานะการจอง
+        </a>
+
+    </div>
+</div>
+
+{% endblock %}

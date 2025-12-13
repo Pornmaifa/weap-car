@@ -1,0 +1,77 @@
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+{% include 'car_rental/navbar_detail.html' %}
+
+<div class="min-h-screen font-sarabun pt-20 pb-12 bg-gray-50">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">เลือกวิธีการชำระเงิน</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
+                <h3 class="text-xl font-bold mb-4">สรุปยอดที่ต้องชำระ</h3>
+                
+                <div class="flex justify-between mb-2 text-gray-500">
+                    <span>ค่าเช่าทั้งหมด</span>
+                    <span class="line-through">{{ total_price|intcomma }} THB</span>
+                </div>
+
+                <div class="flex justify-between mb-4 text-lg font-medium">
+                    <span>ยอดมัดจำออนไลน์ (30%)</span>
+                    <span class="text-blue-600">{{ deposit_amount|intcomma }} THB</span>
+                </div>
+
+                <hr class="my-4 border-dashed">
+
+                <div class="flex justify-between items-center mb-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <span class="font-bold text-gray-800">ยอดชำระตอนนี้</span>
+                    <span class="text-3xl font-bold text-blue-600">{{ deposit_amount|intcomma }} THB</span>
+                </div>
+
+                <div class="flex justify-between text-sm text-gray-500 mt-2">
+                    <span>* ยอดคงเหลือจ่ายหน้างาน</span>
+                    <span class="font-bold text-gray-700">{{ pay_on_arrival|intcomma }} THB</span>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                
+                <form method="POST" action="{% url 'process_payment' car.id %}">
+                    {% csrf_token %}
+                    
+                    <label class="flex items-center p-4 bg-white border rounded-lg cursor-pointer hover:shadow-md transition mb-3">
+                        <input type="radio" name="payment_method" value="credit_card" checked class="w-5 h-5 text-blue-600">
+                        <div class="ml-4 flex-1">
+                            <span class="block font-medium">บัตรเครดิต / เดบิต</span>
+                            <span class="text-xs text-gray-500">Visa, Mastercard, JCB</span>
+                        </div>
+                        <i class="fas fa-credit-card text-2xl text-gray-400"></i>
+                    </label>
+
+                    <label class="flex items-center p-4 bg-white border rounded-lg cursor-pointer hover:shadow-md transition mb-6">
+                        <input type="radio" name="payment_method" value="qrcode" class="w-5 h-5 text-blue-600">
+                        <div class="ml-4 flex-1">
+                            <span class="block font-medium">QR Code PromptPay</span>
+                            <span class="text-xs text-gray-500">สแกนจ่ายผ่านแอปธนาคาร</span>
+                        </div>
+                        <i class="fas fa-qrcode text-2xl text-gray-400"></i>
+                    </label>
+
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xl font-bold py-4 rounded-lg shadow-lg transition">
+                        ยืนยันการชำระเงิน {{ deposit_amount|intcomma }} THB
+                    </button>
+                    
+                    <p class="text-xs text-center text-gray-400 mt-4">
+                        <i class="fas fa-lock"></i> ข้อมูลการชำระเงินของคุณปลอดภัย 100%
+                    </p>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

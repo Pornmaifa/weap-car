@@ -1,0 +1,54 @@
+
+
+{% block content %}
+{% include 'car_rental/navbar_detail.html' %}
+
+<div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-sarabun">
+    <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+        
+        <div class="text-center">
+            <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
+                ตรวจสอบสถานะการจอง
+            </h2>
+            <p class="mt-2 text-sm text-gray-600">
+                สำหรับลูกค้าทั่วไป (Guest)
+            </p>
+        </div>
+
+        {% if error %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <span class="block sm:inline">{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <form class="mt-8 space-y-6" method="POST" action="">
+            {% csrf_token %}
+            <div class="rounded-md shadow-sm -space-y-px">
+                
+                <div class="mb-4">
+                    <label for="booking_ref" class="block text-sm font-medium text-gray-700 mb-1">เลขที่ใบจอง (Booking Ref)</label>
+                    <input id="booking_ref" name="booking_ref" type="text" required 
+                        class="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" 
+                        placeholder="เช่น BK-2025...">
+                </div>
+
+                <div>
+                    <label for="email_or_phone" class="block text-sm font-medium text-gray-700 mb-1">อีเมล หรือ เบอร์โทรศัพท์</label>
+                    <input id="email_or_phone" name="email_or_phone" type="text" required 
+                        class="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" 
+                        placeholder="กรอกข้อมูลที่ใช้ตอนจอง">
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#48a9b9] hover:bg-[#3ba0b0] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-md transition">
+                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    ค้นหาการจอง
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

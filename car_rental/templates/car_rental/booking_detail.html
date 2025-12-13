@@ -1,0 +1,64 @@
+
+{% load humanize %}
+
+{% block content %}
+{% include 'car_rental/navbar_detail.html' %}
+
+<div class="max-w-4xl mx-auto px-4 py-10 font-sarabun">
+    
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg border border-gray-200">
+        <div class="px-4 py-5 sm:px-6 flex justify-between items-center bg-gray-50">
+            <div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                    รายละเอียดการจอง: {{ booking.booking_ref }}
+                </h3>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                    สถานะ: 
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                        {% if booking.status == 'confirmed' %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                        {{ booking.get_status_display }}
+                    </span>
+                </p>
+            </div>
+            <a href="/" class="text-blue-600 hover:text-blue-900 text-sm">กลับหน้าหลัก</a>
+        </div>
+
+        <div class="border-t border-gray-200">
+            <dl>
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">รถที่เช่า</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {{ booking.car.brand }} {{ booking.car.model }} ({{ booking.car.license_plate }})
+                    </dd>
+                </div>
+
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">วันรับรถ - คืนรถ</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {{ booking.pickup_datetime|date:"d M Y H:i" }} - {{ booking.dropoff_datetime|date:"d M Y H:i" }}
+                    </dd>
+                </div>
+
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">ชื่อผู้จอง</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {% if booking.user %}
+                            {{ booking.user.first_name }} {{ booking.user.last_name }} (Member)
+                        {% else %}
+                            {{ booking.guest.first_name }} {{ booking.guest.last_name }} (Guest)
+                        {% endif %}
+                    </dd>
+                </div>
+
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">การชำระเงิน</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <p>จ่ายมัดจำแล้ว: <span class="text-green-600 font-bold">{{ booking.deposit_amount|intcomma }} THB</span></p>
+                        <p>ค้างจ่ายหน้างาน: <span class="text-red-600 font-bold">{{ booking.total_price|add:"-"|add:booking.deposit_amount|intcomma }} THB</span></p>
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -2,7 +2,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User # ดึงโมเดล User ของ Django มาใช้
-
+from django.conf import settings
 # ตาราง Profile ที่รวม Owner และ Member เข้าด้วยกัน
 class Profile(models.Model):
     ROLE_CHOICES = (
@@ -163,24 +163,35 @@ class CarImage(models.Model):
         return f"Image for {self.car.brand} {self.car.model}"
 
 
-#ลูกค้าทั่วไป
-class GuestCustomer(models.Model):
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    email = models.EmailField()
-    phone_number = models.CharField(max_length=20)
-    license_number = models.CharField(max_length=50)
+# ตาราง Booking
+class Booking(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'รอชำระเงิน'),
+        ('confirmed', 'ยืนยันแล้ว (มัดจำแล้ว)'),
+        ('completed', 'จบงาน (คืนรถแล้ว)'),
+        ('cancelled', 'ยกเลิก'),
+    ]
 
-    car = models.ForeignKey(
-        Car,
-        on_delete=models.CASCADE,
-        related_name="guest_bookings"
-    )
-
+    car = models.ForeignKey('Car', on_delete=models.CASCADE)
+    # ถ้าเป็นสมาชิกใช้ user ถ้าเป็นลูกค้าทั่วไปใช้ guest
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    guest = models.ForeignKey('GuestCustomer', on_delete=models.CASCADE, null=True, blank=True)
+    
+    pickup_datetime = models.DateTimeField()
+    dropoff_datetime = models.DateTimeField()
+    location = models.CharField(max_length=200)
+    
+    # เรื่องเงิน
+    total_price = models.DecimalField(max_digits=10, decimal_places=2) # ราคาทั้งหมด
+    deposit_amount = models.DecimalField(max_digits=10, decimal_places=2) # ยอดที่จ่ายออนไลน์ (มัดจำ)
+    
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
+    booking_ref = models.CharField(max_length=20, unique=True, null=True, blank=True) # เลขที่ใบจอง เช่น BK-20251214-XXXX
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return f"Booking {self.booking_ref} - {self.car.brand}"
+
 
 
 # ตาราง Promotion
@@ -195,24 +206,7 @@ class Promotion(models.Model):
     def __str__(self):
         return self.title
 
-# ตาราง Booking
-class Booking(models.Model):
-    STATUS_CHOICES = (
-        ('PENDING', 'Pending'),
-        ('APPROVED', 'Approved'),
-        ('CANCELLED', 'Cancelled'),
-        ('COMPLETED', 'Completed'),
-    )
-    member = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
-    car = models.ForeignKey(Car, on_delete=models.CASCADE)
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
-    booking_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
-    approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_bookings')
 
-    def __str__(self):
-        return f'Booking #{self.id} for {self.car.license_plate}'
 
 # ตาราง Payment (เชื่อมกับ Booking แบบ One-to-One)
 class Payment(models.Model):
@@ -247,3 +241,41 @@ class ReviewReply(models.Model):
 
     def __str__(self):
         return f"Reply by {self.user.username}"
+#ลูกค้าทั่วไป
+class GuestCustomer(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=20)
+    license_number = models.CharField(max_length=50)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+    
+
+# car_rental/models.py
+
+class PlatformSetting(models.Model):
+    # เราจะเก็บเป็นทศนิยม เช่น 0.15, 0.20, 0.30
+    commission_rate = models.DecimalField(
+        max_digits=4, 
+        decimal_places=2, 
+        default=0.15, 
+        help_text="ใส่เป็นทศนิยม เช่น 0.15 คือ 15%, 0.30 คือ 30%"
+    )
+    
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"การตั้งค่าระบบ (ค่าคอม {self.commission_rate * 100}%)"
+
+    def save(self, *args, **kwargs):
+        # ป้องกันไม่ให้สร้างหลายอัน (Singleton Pattern แบบบ้านๆ)
+        # ถ้ามีอยู่แล้ว ให้แก้ของเดิมแทนการสร้างใหม่
+        if not self.pk and PlatformSetting.objects.exists():
+            # ถ้าพยายาม create ใหม่ แต่มีของเก่าอยู่แล้ว ให้ไปแก้ตัวแรกสุดแทน
+            self.pk = PlatformSetting.objects.first().pk
+        super().save(*args, **kwargs)
+
