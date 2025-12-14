@@ -1,0 +1,85 @@
+{% load static %}
+{% load humanize %}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คำขอเช่าที่รออนุมัติ - WarpCar</title>
+    <link href="{% static 'dist/styles.css' %}?v=4" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+    {% include 'car_rental/navbar_detail.html' %}
+     <div class="container mx-auto flex flex-col md:flex-row p-4 md:p-8 gap-8">
+        {% include 'users/sidebar.html' %} 
+        
+        <main class="flex-1 p-4 md:p-8">
+            
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">คำขอเช่าที่รออนุมัติ</h1>
+
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                {% if pending_bookings %}
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-600 text-sm uppercase">
+                                    <th class="p-4 border-b">รถที่จอง</th>
+                                    <th class="p-4 border-b">ผู้เช่า</th>
+                                    <th class="p-4 border-b">วันที่ใช้งาน</th>
+                                    <th class="p-4 border-b">รวมเงิน</th>
+                                    <th class="p-4 border-b text-center">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-700">
+                                {% for booking in pending_bookings %}
+                                <tr class="hover:bg-blue-50 transition border-b last:border-b-0">
+                                    <td class="p-4 flex items-center gap-3">
+                                        {% if booking.car.images.first %}
+                                            <img src="{{ booking.car.images.first.image.url }}" class="w-12 h-12 rounded object-cover">
+                                        {% endif %}
+                                        <div>
+                                            <div class="font-bold">{{ booking.car.brand }} {{ booking.car.model }}</div>
+                                            <div class="text-xs text-gray-500">{{ booking.car.license_plate }}</div>
+                                        </div>
+                                    </td>
+                                    <td class="p-4">
+                                        <div class="font-semibold">{{ booking.renter.first_name }} {{ booking.renter.last_name }}</div>
+                                        <div class="text-xs text-gray-500">Tel: {{ booking.renter.profile.phone }}</div>
+                                    </td>
+                                    <td class="p-4 text-sm">
+                                        <div>รับ: {{ booking.pickup_datetime|date:"d M Y H:i" }}</div>
+                                        <div>คืน: {{ booking.dropoff_datetime|date:"d M Y H:i" }}</div>
+                                    </td>
+                                    <td class="p-4 font-bold text-[#47B3C4]">
+                                        ฿{{ booking.total_price|intcomma }}
+                                    </td>
+                                    <td class="p-4 text-center space-x-2">
+                                        <a href="{% url 'update_booking_status' booking.id 'approve' %}" 
+                                           class="inline-block bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600 transition shadow-sm">
+                                            ✅ อนุมัติ
+                                        </a>
+                                        <a href="{% url 'update_booking_status' booking.id 'reject' %}" 
+                                           class="inline-block bg-red-100 text-red-600 px-3 py-1 rounded text-sm hover:bg-red-200 transition"
+                                           onclick="return confirm('แน่ใจหรือไม่ที่จะปฏิเสธคำขอนี้?');">
+                                            ❌ ปฏิเสธ
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="p-12 text-center text-gray-400">
+                        <i class="fas fa-clipboard-check text-6xl mb-4 text-gray-200"></i>
+                        <p>ไม่มีคำขอเช่าที่รอการอนุมัติในขณะนี้</p>
+                    </div>
+                {% endif %}
+            </div>
+
+        </main>
+    </div>
+</body>
+</html>

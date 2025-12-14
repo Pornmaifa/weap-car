@@ -14,12 +14,4 @@ urlpatterns = [
     path('search/', views.search_cars, name='search_cars'),
     path('detail/<int:car_id>/', views.car_detail, name='car_detail'),
     path("review/<int:review_id>/reply/", views.submit_reply, name="submit_reply"),
-    path('book/user-info/<int:car_id>/', views.user_info, name='user_info'),
-    path('book/checkout/<int:car_id>/', views.checkout, name='checkout'),
-    path('book/payment/<int:car_id>/', views.payment, name='payment'),
-    path('book/process/<int:car_id>/', views.process_payment, name='process_payment'),
-    path('book/booking_success/<int:booking_id>/', views.booking_success, name='booking_success'),
-    path('manage-booking/', views.manage_booking, name='manage_booking'),
-    path('car/<int:car_id>/apply-promo/', views.apply_promotion, name='apply_promotion'),
-    path('my-bookings/', views.booking_history, name='booking_history'),
 ]

@@ -83,7 +83,8 @@
                 <div id="guest-form-mode" class="hidden">
                     <h2 class="text-2xl font-medium text-gray-800 mb-6">กรอกข้อมูลลูกค้าทั่วไป</h2>
                     
-                    <form method="POST" action=""> {% csrf_token %}
+                    <form method="POST" action="" class="flex gap-2">
+                         {% csrf_token %}
                         <div class="space-y-5 max-w-md">
                             
                             <div>
@@ -118,6 +119,8 @@
                 </div>
             </div>
 
+            <div id="guest-form-mode" class="hidden">
+            </div>
             <div class="lg:col-span-5">
                 <div class="bg-gray-100/70 p-8 rounded-lg border border-gray-300 h-full relative">
                     
@@ -133,17 +136,14 @@
                     <p class="text-gray-600 font-medium mb-4">รายละเอียดรถ</p>
 
                     <div class="space-y-2 mb-6 text-sm text-gray-700 font-medium">
-
                         <div class="flex items-start gap-2">
                             <i class="fas fa-check text-green-700 mt-0.5"></i>
                             <span>ประเภทบริการ: {{ car.get_service_type_display }}</span>
                         </div>
-
                         <div class="flex items-start gap-2">
                             <i class="fas fa-check text-green-700 mt-0.5"></i>
                             <span>ประเภทรถ: {{ car.get_car_type_display }}</span>
                         </div>
-
                         <div class="flex items-start gap-2">
                             <i class="fas fa-check text-green-700 mt-0.5"></i>
                             <span>เกียร์: {{ car.get_transmission_display }}</span>
@@ -171,7 +171,7 @@
                         </div>
                         {% endif %}
                         
-                        <p class="text-gray-600 font-medium mb-4">รายละเอียดรถเพิ่มเติม</p>
+                        <p class="text-gray-600 font-medium mb-4 mt-4">รายละเอียดรถเพิ่มเติม</p>
                         {% if car.description %}
                         <div class="flex items-start gap-2">
                             <i class="fas fa-check text-green-700 mt-0.5"></i>
@@ -181,15 +181,70 @@
                         </div>
                         {% endif %}
 
-                    </div>
+                        </div>
 
-
-                    <div class="text-4xl font-medium text-red-600 mb-6">
-                        {{ total_price|intcomma }} THB
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-600">ค่าเช่ารวม ({{ rental_days }} วัน)</span>
+                        <span class="text-xl font-bold {% if discount_amount > 0 %}line-through text-gray-400 text-base{% else %}text-gray-800{% endif %}">
+                            {{ original_total_price|intcomma }} THB
+                        </span>
                     </div>
+            
+                    {% if discount_amount > 0 %}
+                    <div class="flex justify-between items-center mb-2 text-green-600">
+                        <span>
+                            <i class="fas fa-tag mr-1"></i> ส่วนลด ({{ applied_code }})
+                        </span>
+                        <span class="font-bold">-{{ discount_amount|intcomma }} THB</span>
+                    </div>
+                    {% endif %}
+            
+                    <div class="flex justify-between items-center mb-6 pt-2 border-t border-gray-300">
+                        <span class="text-lg font-bold text-gray-800">ราคาสุทธิ</span>
+                        <span class="text-4xl font-medium text-red-600">
+                            {{ total_price|intcomma }} THB
+                        </span>
+                    </div>
+            
+                    {% if user.is_authenticated %}
+                        <div class="mb-8 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">มีรหัสโปรโมชั่น?</label>
+                            <form method="POST" action="{% url 'apply_promotion' car.id %}" class="flex gap-2">
+                                {% csrf_token %}
+                                <input type="text" name="promo_code" 
+                                    value="{{ applied_code }}"
+                                    placeholder="กรอกโค้ดส่วนลด" 
+                                    class="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-[#48a9b9]">
+                                <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded text-sm hover:bg-gray-700 transition">
+                                    ใช้โค้ด
+                                </button>
+                            </form>
+                            
+                            {% if messages %}
+                                <div class="mt-2 space-y-1">
+                                    {% for message in messages %}
+                                        <div class="text-xs {% if message.tags == 'error' %}text-red-500{% else %}text-green-600{% endif %}">
+                                            <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i> 
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                    {% else %}
+                        <div class="mb-8 p-4 bg-gray-50 rounded-lg border border-dashed border-gray-300 text-center">
+                            <p class="text-sm text-gray-500 mb-2">
+                                <i class="fas fa-lock mr-1"></i> โค้ดส่วนลดสำหรับสมาชิกเท่านั้น
+                            </p>
+                            <button type="button" onclick="showMemberLogin()" class="text-xs text-[#48a9b9] hover:underline font-bold">
+                                เข้าสู่ระบบเพื่อใช้สิทธิ์
+                            </button>
+                        </div>
+                    {% endif %}
 
                     <h2 class="text-xl font-bold mb-4 text-gray-800">การรับและคืนรถ</h2>
-
+                    
                     <div class="space-y-6 border-l-2 border-dashed border-gray-400 pl-4">
                         <div class="relative">
                             <span class="absolute -left-5 top-0 w-4 h-4 bg-gray-600 rounded-full border-2 border-white"></span>
@@ -207,8 +262,9 @@
                     </div>
 
                 </div>
-            </div>
-
+            </div> 
+        </div> 
+    </div >
         </div>
     </div>
 </div>

@@ -4,9 +4,7 @@ from datetime import timezone
 import uuid
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
-from users import models
-from .forms import CarForm
-from .models import Car , CarImage, PlatformSetting, ReviewReply
+from .models import Car , CarImage,  ReviewReply
 from django.contrib import messages
 import os
 from django.core.files.storage import default_storage
@@ -16,13 +14,16 @@ from django.core.files.base import ContentFile
 import base64
 from django.db.models import Q # ใช้สำหรับ query ขั้นสูง
 from car_rental.utils import build_rental_context 
-from .models import GuestCustomer
-import uuid
 from datetime import datetime # อย่าลืม import ตัวนี้ข้างบนไฟล์
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Car, Booking, GuestCustomer
 from django.contrib import messages
-from .models import Promotion # อย่าลืม import
+from django.db.models import Count, Sum, Q            # ✅ Import เพิ่ม
+from django.db.models.functions import Coalesce       # ✅ Import เพิ่ม
+from django.utils import timezone
+from car_rental.models import Car, CarImage
+from django.db.models import Count, Sum, Q, DecimalField  # ✅ เพิ่ม DecimalField
+from django.db.models.functions import Coalesce
+from django.db.models import Value
 # (เพิ่มฟังก์ชันนี้เข้าไปใน views.py)
 @login_required
 def add_car_preview(request):
@@ -79,10 +80,30 @@ def dashboard(request):
             car.save()
             messages.success(request, 'แก้ไขข้อมูลรถเรียบร้อยแล้ว')
             return redirect("dashboard")
+        
+    now = timezone.now()
 
-    # =========== ส่วนแสดงผล (GET) ===========
-    my_cars = Car.objects.filter(owner=request.user).order_by('-id')
-
+    # ดึงรถของเจ้าของ + คำนวณข้อมูลสรุป (ยอดจอง, รายได้, สถานะเช่า)
+    my_cars = Car.objects.filter(owner=request.user).annotate(
+        
+        # A. นับจำนวนการจอง (เหมือนเดิม)
+        booking_count=Count('booking', filter=Q(booking__status__in=['confirmed', 'completed'])),
+        
+        # B. รวมรายได้ทั้งหมด (✅ แก้ไขจุดนี้)
+        total_income=Coalesce(
+            Sum('booking__total_price', filter=Q(booking__status__in=['confirmed', 'completed'])),
+            Value(0),                # ใช้ Value(0) แทน 0.0
+            output_field=DecimalField() # บังคับให้ผลลัพธ์เป็น Decimal
+        ),
+        
+        # C. เช็คสถานะเช่า (เหมือนเดิม)
+        active_booking_count=Count('booking', filter=Q(
+            booking__status='confirmed',
+            booking__pickup_datetime__lte=now,
+            booking__dropoff_datetime__gte=now
+        ))
+    ).order_by('-id')
+    
     context = {
         'cars': my_cars
     }
@@ -377,287 +398,5 @@ def submit_reply(request, review_id):
 
 # car_rental/views.py
 
-def user_info(request, car_id):
-    car = get_object_or_404(Car, id=car_id)
-
-    # รับค่าจาก URL (Query Params)
-    pickup_str = request.GET.get("pickup_datetime")
-    dropoff_str = request.GET.get("dropoff_datetime")
-    location = request.GET.get("location", "กรุงเทพฯ")
-
-    # แปลง String เป็น DateTime
-    try:
-        pickup_datetime = datetime.fromisoformat(pickup_str)
-        dropoff_datetime = datetime.fromisoformat(dropoff_str)
-    except (ValueError, TypeError):
-        pickup_datetime = datetime.now() + timedelta(days=1)
-        dropoff_datetime = datetime.now() + timedelta(days=4)
-
-    # คำนวณวันและราคา
-    rental_duration = dropoff_datetime - pickup_datetime
-    rental_days = rental_duration.days + (1 if rental_duration.seconds > 0 else 0)
-    total_price = car.price_per_day * rental_days
-
-    # 📌 จุดสำคัญ 1: บันทึก "บริบทการจอง" ลง Session เสมอ
-    request.session['booking_context'] = {
-        'car_id': car.id,
-        'pickup_datetime': pickup_datetime.isoformat(),
-        'dropoff_datetime': dropoff_datetime.isoformat(),
-        'location': location,
-        'total_price': float(total_price),
-        'rental_days': rental_days
-    }
-
-    # กรณีลูกค้ากด Submit (POST)
-    if request.method == "POST":
-        
-        
-        # 2. จำ ID ลูกค้าไว้ใน Session
-        request.session['guest_info_temp'] = {
-            'first_name': request.POST.get("first_name"),
-            'last_name': request.POST.get("last_name"),
-            'email': request.POST.get("email"),
-            'phone_number': request.POST.get("phone_number"),
-            'license_number': request.POST.get("license_number")
-        }
-
-        # 3. ไปหน้า Checkout (หน้าสรุปก่อนจ่าย)
-        return redirect('checkout', car_id=car.id)
-
-    context = {
-        "car": car,
-        "pickup_datetime": pickup_datetime,
-        "dropoff_datetime": dropoff_datetime,
-        "location": location,
-        "rental_days": rental_days,
-        "total_price": total_price,
-    }
-    return render(request, "car_rental/user_info.html", context)
 
 
-# 2. หน้าสรุปรายการ (Checkout)
-def checkout(request, car_id):
-    car = get_object_or_404(Car, id=car_id)
-    
-    # 📌 จุดสำคัญ 2: ดึงข้อมูลจาก Session มาแสดง (ไม่ใช่ค่าจำลอง)
-    booking_data = request.session.get('booking_context')
-
-    # ถ้าไม่มีข้อมูลใน Session หรือเป็นรถคนละคัน ให้กลับไปหน้า Detail
-    if not booking_data or booking_data['car_id'] != car.id:
-        return redirect('car_detail', car_id=car.id)
-
-    context = {
-        'car': car,
-        'pickup_datetime': datetime.fromisoformat(booking_data['pickup_datetime']),
-        'dropoff_datetime': datetime.fromisoformat(booking_data['dropoff_datetime']),
-        'location': booking_data['location'],
-        'rental_days': booking_data['rental_days'],
-        'total_price': booking_data['total_price'],
-    }
-    return render(request, 'car_rental/checkout.html', context)
-
-
-# 3. หน้าเลือกวิธีชำระเงิน (Payment - มัดจำ)
-def payment(request, car_id):
-    car = get_object_or_404(Car, id=car_id)
-    booking_data = request.session.get('booking_context')
-    
-    # ถ้าไม่มีข้อมูล ดีดกลับหน้า Detail (นี่คือสาเหตุที่คุณเด้งกลับ เพราะ session หาย)
-    if not booking_data or booking_data['car_id'] != car.id:
-        return redirect('car_detail', car_id=car.id)
-
-    total_price = float(booking_data['total_price'])
-    
-    # คำนวณยอดมัดจำ 30%
-    commission_rate = get_commission_rate()
-    deposit_amount = total_price * commission_rate
-
-    pay_on_arrival = total_price - deposit_amount
-
-    context = {
-        'car': car,
-        'total_price': total_price,
-        'deposit_amount': deposit_amount,
-        'pay_on_arrival': pay_on_arrival,
-        'commission_percent': int(commission_rate * 100)
-    }
-    return render(request, 'car_rental/payment.html', context)
-
-
-
-def process_payment(request, car_id):
-    if request.method == 'POST':
-        car = get_object_or_404(Car, id=car_id)
-        
-        # 1. ดึงข้อมูลจาก Session
-        booking_data = request.session.get('booking_context')
-        guest_data = request.session.get('guest_info_temp')
-        discount_val = booking_data.get('discount_amount', 0)
-
-        # ถ้า Session หาย ให้เริ่มใหม่
-        if not booking_data:
-            return redirect('car_detail', car_id=car_id)
-
-        # 2. คำนวณยอดเงิน
-        total_price = float(booking_data['total_price'])
-        commission_rate = get_commission_rate()
-        deposit_amount = total_price * commission_rate
-
-        # 3. สร้างเลข Booking Ref
-        ref_code = f"BK-{uuid.uuid4().hex[:8].upper()}"
-
-        # 4. บันทึกข้อมูลการจองลง Database
-        guest_instance = None
-        if not request.user.is_authenticated and guest_data:
-            # ✅ แก้จุดที่ 3: ต้อง Create ใหม่ ไม่ใช่ Get
-            # (เพราะเราเพิ่งหอบข้อมูลมาจากหน้าแรก ยังไม่ได้บันทึก)
-            guest_instance = GuestCustomer.objects.create(
-                first_name=guest_data['first_name'],
-                last_name=guest_data['last_name'],
-                email=guest_data['email'],
-                phone_number=guest_data['phone_number'],
-                license_number=guest_data['license_number']
-            )
-
-        # ✅ แก้ไข: แปลง String กลับเป็น Datetime เพื่อความชัวร์
-        try:
-            pickup_dt = datetime.fromisoformat(booking_data['pickup_datetime'])
-            dropoff_dt = datetime.fromisoformat(booking_data['dropoff_datetime'])
-        except ValueError:
-            # กันเหนียวเผื่อ format ผิด
-            return redirect('car_detail', car_id=car_id)
-
-        booking = Booking.objects.create(
-            car=car,
-            user=request.user if request.user.is_authenticated else None,
-            guest=guest_instance,
-            
-            # ✅ แก้ไข: เอา # ออก และใช้ตัวแปรที่แปลงเป็น datetime แล้ว
-            pickup_datetime=pickup_dt,
-            dropoff_datetime=dropoff_dt,
-            
-            location=booking_data['location'],
-            total_price=total_price,
-            deposit_amount=deposit_amount,
-            status='confirmed', 
-            booking_ref=ref_code,
-            discount_amount=discount_val,
-        )
-
-        # 5. ล้าง Session ทิ้ง
-        if 'booking_context' in request.session:del request.session['booking_context']
-        if 'guest_customer_id' in request.session:del request.session['guest_customer_id']
-
-        # 6. ส่งไปหน้าสำเร็จ
-        return redirect('booking_success', booking_id=booking.id)
-
-    # ถ้าไม่ใช่ POST ให้กลับไปหน้า Payment
-    return redirect('payment', car_id=car_id)
-
-def booking_success(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id)
-    return render(request, 'car_rental/booking_success.html', {'booking': booking})
-
-
-# Helper Function ดึงค่าคอมมิชชั่น
-def get_commission_rate():
-    try:
-        setting = PlatformSetting.objects.first()
-        if setting:
-            return float(setting.commission_rate)
-    except:
-        pass
-    return 0.15 # ค่า Default กรณีลืมตั้งค่าใน Admin (กันระบบพัง)
-
-
-def manage_booking(request):
-    if request.method == 'POST':
-        # รับค่าจากฟอร์ม
-        ref_code = request.POST.get('booking_ref', '').strip()
-        email_or_phone = request.POST.get('email_or_phone', '').strip()
-
-        try:
-            # 🔍 ค้นหา Booking ที่ตรงกับรหัส AND (อีเมล OR เบอร์โทร)
-            # เราใช้ Q object เพื่อช่วยทำเงื่อนไข OR (ต้อง import Q ข้างบนก่อนนะครับ)
-            from django.db.models import Q
-            
-            booking = Booking.objects.get(
-                Q(guest__email=email_or_phone) | Q(guest__phone_number=email_or_phone),
-                booking_ref=ref_code
-            )
-            
-            # ถ้าเจอ -> ส่งไปหน้ารายละเอียด (หรือจะแสดงหน้านี้เลยก็ได้)
-            return render(request, 'car_rental/booking_detail.html', {'booking': booking})
-
-        except Booking.DoesNotExist:
-            # ถ้าไม่เจอ -> แจ้งเตือน
-            error_message = "ไม่พบข้อมูลการจอง หรือข้อมูลยืนยันตัวตนไม่ถูกต้อง"
-            return render(request, 'car_rental/manage_booking.html', {'error': error_message})
-
-    # ถ้าเป็น GET (เปิดหน้าเว็บเฉยๆ)
-    return render(request, 'car_rental/manage_booking.html')
-
-# car_rental/views.py
-
-
-
-def apply_promotion(request, car_id):
-    if request.method == 'POST':
-        code = request.POST.get('promo_code').strip()
-        booking_data = request.session.get('booking_context')
-        
-        # ถ้าไม่มีข้อมูลการจอง ให้กลับไปเริ่มใหม่
-        if not booking_data:
-            return redirect('car_detail', car_id=car_id)
-
-        try:
-            # 1. ค้นหาโปรโมชั่นจาก Code และต้องยังไม่หมดอายุ
-            from django.utils import timezone
-            now = timezone.now().date()
-            
-            promo = Promotion.objects.get(
-                code=code, 
-                start_date__lte=now, 
-                end_date__gte=now
-            )
-            
-            # 2. ตรวจสอบว่าเจ้าของรถคนนี้ร่วมโปรนี้ไหม (ถ้าโปรเป็นของเจ้าของรถ)
-            # ถ้าโปรเป็นของระบบกลาง (Platform) ให้ข้ามเช็ค owner ไปได้เลย
-            car = Car.objects.get(id=car_id)
-            if promo.owner != car.owner:
-                messages.error(request, "รหัสส่วนลดนี้ใช้ไม่ได้กับรถคันนี้")
-                return redirect('payment', car_id=car_id)
-
-            # 3. คำนวณส่วนลด
-            # สมมติ discount_rate คือเปอร์เซ็นต์ (เช่น 10.00 คือ 10%)
-            original_price = float(booking_data.get('original_total_price', booking_data['total_price'])) # ใช้ราคาเต็มตั้งต้น
-            discount_value = original_price * (float(promo.discount_rate) / 100)
-            
-            new_total = original_price - discount_value
-            
-            # 4. อัปเดตลง Session
-            booking_data['discount_amount'] = discount_value
-            booking_data['total_price'] = new_total # ราคาสุทธิหลังลด
-            booking_data['applied_promo_code'] = code
-            
-            # เก็บ original_price ไว้กันเหนียว เผื่อลูกค้ากรอก code ผิดแล้วอยาก reset
-            if 'original_total_price' not in booking_data:
-                booking_data['original_total_price'] = original_price
-                
-            request.session['booking_context'] = booking_data
-            messages.success(request, f"ใช้รหัส {code} ลดราคา {discount_value:,.2f} บาท!")
-
-        except Promotion.DoesNotExist:
-            messages.error(request, "รหัสโปรโมชั่นไม่ถูกต้อง หรือหมดอายุแล้ว")
-        
-        return redirect('payment', car_id=car_id)
-        
-    return redirect('payment', car_id=car_id)
-
-
-@login_required
-def booking_history(request):
-    # ดึงการจองของ user คนนี้ + เรียงจากล่าสุดไปเก่าสุด
-    bookings = Booking.objects.filter(user=request.user).order_by('-created_at')
-    
-    return render(request, 'car_rental/booking_history.html', {'bookings': bookings})

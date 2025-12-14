@@ -52,14 +52,41 @@
                                         </div>
                                     </div>
                                     
-                                    <div>
-                                        {% if booking.status == 'confirmed' %}
-                                            <span class="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">ยืนยันแล้ว</span>
+                                    <div class="flex flex-col items-end gap-2"> {% if booking.status == 'confirmed' %}
+                                            <span class="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
+                                                <i class="fas fa-check-circle mr-1"></i> จองสำเร็จ
+                                            </span>
+                                        {% elif booking.status == 'approved' or booking.status == 'waiting_payment' %}
+                                            <span class="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">
+                                                <i class="fas fa-clock mr-1"></i> รอชำระเงิน
+                                            </span>
                                         {% elif booking.status == 'pending' %}
-                                            <span class="px-3 py-1 bg-yellow-100 text-yellow-700 text-sm font-medium rounded-full">รอชำระเงิน</span>
+                                            <span class="px-3 py-1 bg-yellow-100 text-yellow-700 text-sm font-medium rounded-full">
+                                                <i class="fas fa-hourglass-half mr-1"></i> รออนุมัติ
+                                            </span>
+                                        {% elif booking.status == 'rejected' %}
+                                            <span class="px-3 py-1 bg-red-100 text-red-700 text-sm font-medium rounded-full">
+                                                <i class="fas fa-times-circle mr-1"></i> ถูกปฏิเสธ
+                                            </span>
                                         {% else %}
-                                            <span class="px-3 py-1 bg-gray-100 text-gray-600 text-sm font-medium rounded-full">{{ booking.status }}</span>
+                                            <span class="px-3 py-1 bg-gray-100 text-gray-600 text-sm font-medium rounded-full">
+                                                {{ booking.get_status_display }}
+                                            </span>
                                         {% endif %}
+
+                                        {% if booking.status == 'approved' or booking.status == 'waiting_payment' %}
+                                            <a href="{% url 'payment' booking.id %}" 
+                                            class="inline-block bg-[#48a9b9] hover:bg-[#3ba0b0] text-white text-sm font-bold py-2 px-4 rounded-lg shadow transition">
+                                                <i class="fas fa-credit-card mr-1"></i> ชำระเงิน
+                                            </a>
+                                        
+                                        {% elif booking.status == 'confirmed' %}
+                                            <a href="{% url 'booking_success' booking.id %}" 
+                                            class="text-[#48a9b9] text-sm hover:underline font-medium">
+                                                ดูรายละเอียดการจอง
+                                            </a>
+                                        {% endif %}
+
                                     </div>
                                 </div>
 

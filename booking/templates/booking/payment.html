@@ -1,0 +1,130 @@
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+{% include 'car_rental/navbar_detail.html' %}
+
+<div class="min-h-screen font-sarabun pt-20 pb-12 bg-gray-50">
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 pt-6">
+        <div class="flex justify-between items-center bg-white rounded-lg shadow-sm p-4 border border-gray-300">
+            <div class="flex flex-col items-center flex-1 text-[#48a9b9]">
+                <i class="fas fa-check-circle text-2xl mb-1"></i>
+                <span class="text-xs font-bold">ผลการค้นหา</span>
+            </div>
+            <div class="flex flex-col items-center flex-1 text-[#48a9b9]">
+                <i class="fas fa-check-circle text-2xl mb-1"></i>
+                <span class="text-xs font-bold">รายละเอียดรถ</span>
+            </div>
+            <div class="flex flex-col items-center flex-1 text-[#48a9b9]">
+                <i class="fas fa-check-circle text-2xl mb-1"></i>
+                <span class="text-xs font-bold">ข้อมูลผู้ใช้</span>
+            </div>
+            <div class="flex flex-col items-center flex-1 text-[#48a9b9]"> <i class="fas fa-circle text-2xl mb-1"></i>
+                <span class="text-xs font-bold">ชำระเงิน</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">เลือกวิธีการชำระเงิน</h2>
+        
+        {% if user.is_authenticated and booking.discount_amount > 0 %}
+        <div class="mb-6 border-b border-gray-200 pb-6 bg-green-50 p-4 rounded-lg border border-green-200">
+            <h3 class="text-lg font-bold mb-2 text-green-800"><i class="fas fa-tags mr-2"></i> โปรโมชั่นที่ใช้</h3>
+            <div class="flex justify-between text-green-700 font-bold">
+                <span>ส่วนลด</span>
+                <span>-{{ booking.discount_amount|intcomma }} THB</span>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
+                <h3 class="text-xl font-bold mb-4">สรุปยอดที่ต้องชำระ</h3>
+                
+                <div class="flex items-center gap-4 mb-4 pb-4 border-b border-gray-100">
+                    {% if booking.car.images.first %}
+                        <img src="{{ booking.car.images.first.image.url }}" class="w-16 h-16 rounded object-cover">
+                    {% else %}
+                        <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center text-xs">No Img</div>
+                    {% endif %}
+                    <div>
+                        <div class="font-bold">{{ booking.car.brand }} {{ booking.car.model }}</div>
+                        <div class="text-xs text-gray-500">Ref: <span class="font-mono bg-gray-100 px-1 rounded">{{ booking.booking_ref }}</span></div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between mb-2 text-gray-500">
+                    <span>ค่าเช่าทั้งหมด</span>
+                    <span class="{% if booking.discount_amount > 0 %}line-through{% endif %}">{{ booking.total_price|add:booking.discount_amount|intcomma }} THB</span>
+                </div>
+
+                {% if booking.discount_amount > 0 %}
+                <div class="flex justify-between mb-2 text-green-600 font-bold">
+                    <span>ส่วนลด</span>
+                    <span>-{{ booking.discount_amount|intcomma }} THB</span>
+                </div>
+                {% endif %}
+
+                <div class="flex justify-between mb-4 text-lg font-medium">
+                    <span>ราคาสุทธิ</span>
+                    <span class="text-gray-800">{{ booking.total_price|intcomma }} THB</span>
+                </div>
+
+                <hr class="my-4 border-dashed">
+
+                <div class="flex justify-between items-center mb-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <div>
+                        <span class="block font-bold text-gray-800">ยอดมัดจำ (15%)</span>
+                        <span class="text-xs text-blue-600">ชำระตอนนี้</span>
+                    </div>
+                    <span class="text-3xl font-bold text-blue-600">{{ deposit_amount|intcomma }} THB</span>
+                </div>
+
+                <div class="flex justify-between text-sm text-gray-500 mt-2">
+                    <span>* ยอดคงเหลือจ่ายหน้างาน</span>
+                    <span class="font-bold text-gray-700">{{ pay_on_arrival|intcomma }} THB</span>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                
+                <form method="POST" action="{% url 'process_payment' booking.id %}">
+                    {% csrf_token %}
+                    
+                    <label class="flex items-center p-4 bg-white border rounded-lg cursor-pointer hover:shadow-md transition mb-3 border-blue-200 ring-1 ring-blue-100">
+                        <input type="radio" name="payment_method" value="credit_card" checked class="w-5 h-5 text-blue-600">
+                        <div class="ml-4 flex-1">
+                            <span class="block font-medium">บัตรเครดิต / เดบิต</span>
+                            <span class="text-xs text-gray-500">Visa, Mastercard, JCB</span>
+                        </div>
+                        <i class="fas fa-credit-card text-2xl text-gray-400"></i>
+                    </label>
+
+                    <label class="flex items-center p-4 bg-white border rounded-lg cursor-pointer hover:shadow-md transition mb-6">
+                        <input type="radio" name="payment_method" value="qrcode" class="w-5 h-5 text-blue-600">
+                        <div class="ml-4 flex-1">
+                            <span class="block font-medium">QR Code PromptPay</span>
+                            <span class="text-xs text-gray-500">สแกนจ่ายผ่านแอปธนาคาร</span>
+                        </div>
+                        <i class="fas fa-qrcode text-2xl text-gray-400"></i>
+                    </label>
+
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xl font-bold py-4 rounded-lg shadow-lg transition transform hover:-translate-y-1">
+                        ยืนยันการชำระเงิน {{ deposit_amount|intcomma }} THB
+                    </button>
+                    
+                    <p class="text-xs text-center text-gray-400 mt-4">
+                        <i class="fas fa-lock text-green-500"></i> ข้อมูลการชำระเงินของคุณปลอดภัย 100%
+                    </p>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

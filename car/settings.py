@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'users',
     'django.contrib.humanize',
     'car_rental',
+    'booking',
     
 ]
 

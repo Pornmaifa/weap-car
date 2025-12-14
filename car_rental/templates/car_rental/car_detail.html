@@ -212,10 +212,17 @@
                         <p class="text-3xl font-extrabold text-red-600">฿{{ total_price|intcomma }}</p>
                     </div>
 
+                    {% if user == car.owner %}
+                        <button disabled 
+                                class="block w-full mt-6 bg-gray-300 text-gray-500 font-bold py-4 rounded-lg shadow-none cursor-not-allowed text-center text-xl">
+                            🚫 นี่คือรถของคุณ (ไม่สามารถจองได้)
+                        </button>
+                    {% else %}
                     <a href="{% url 'user_info' car.id %}?pickup_datetime={{ pickup_datetime|date:'c' }}&dropoff_datetime={{ dropoff_datetime|date:'c' }}&location={{ location|urlencode }}"
                        class="block w-full mt-6 bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-lg shadow-lg transition text-center text-2xl">
                         จอง {{ total_price|intcomma }} THB
                     </a>
+                    {% endif %}
                 </div>
 
             </div>

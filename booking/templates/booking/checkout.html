@@ -52,9 +52,16 @@
                     สแกน Line OA เพื่อรับการแจ้งเตือนสถานะการจองและการชำระเงิน
                 </p>
 
-                <a href="{% url 'payment' car.id %}"class="w-full bg-[#48a9b9] hover:bg-[#3ba0b0] text-white text-xl font-medium py-3 shadow-lg transition">
-                    <i class="fas fa-money-bill-wave mr-2"></i> จ่ายเงิน
-                </a>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full bg-[#48a9b9] hover:bg-[#3ba0b0] text-white text-xl font-medium py-3 shadow-lg transition rounded-lg">
+                        <i class="fas fa-check-circle mr-2"></i> ยืนยันการจอง
+                    </button>
+                </form>
+
+                <p class="text-xs text-gray-500 mt-2 text-center">
+                    * เมื่อกดปุ่มนี้ สถานะจะรอการอนุมัติจากเจ้าของรถ
+                </p>
                 
             </div>
         </div>
@@ -125,8 +132,28 @@
                     </div>
 
 
-                    <div class="text-4xl font-medium text-red-600 mb-6">
-                        {{ total_price|intcomma }} THB
+                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">สรุปยอดเงิน</h3>
+
+                        <div class="flex justify-between mb-2 text-gray-600">
+                            <span>ค่าเช่า ({{ rental_days }} วัน)</span>
+                            <span class="{% if discount_amount > 0 %}line-through text-gray-400{% endif %}">
+                                {{ original_total_price|intcomma }} THB
+                            </span>
+                        </div>
+
+                        {% if discount_amount > 0 %}
+                        <div class="flex justify-between mb-2 text-green-600 font-medium">
+                            <span><i class="fas fa-tag"></i> ส่วนลด ({{ applied_code }})</span>
+                            <span>-{{ discount_amount|intcomma }} THB</span>
+                        </div>
+                        <div class="border-b border-gray-300 my-2"></div>
+                        {% endif %}
+
+                        <div class="flex justify-between items-center text-xl font-bold text-red-600">
+                            <span>ยอดรวมสุทธิ</span>
+                            <span>{{ total_price|intcomma }} THB</span>
+                        </div>
                     </div>
 
                     <h2 class="text-xl font-bold mb-4 text-gray-800">การรับและคืนรถ</h2>
