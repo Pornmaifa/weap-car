@@ -45,7 +45,7 @@
 
             <!-- Profile / Login Icon -->
             {% if user.is_authenticated %}
-                <a href="{% url 'dashboard' %}" class="relative group">
+                <a href="{% url 'profile' %}" class="relative group">
                     {% if user.profile.image %}
                         <!-- User has a profile image -->
                         <img src="{{ user.profile.image.url }}" 

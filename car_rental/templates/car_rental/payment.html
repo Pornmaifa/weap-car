@@ -9,6 +9,29 @@
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">เลือกวิธีการชำระเงิน</h2>
+        {% if user.is_authenticated %}
+        <div class="mb-6 border-b border-gray-200 pb-6">
+            <h3 class="text-lg font-bold mb-3 text-gray-700">ส่วนลด / โปรโมชั่น</h3>
+            <form method="POST" action="{% url 'apply_promotion' car.id %}" class="flex gap-2">
+                {% csrf_token %}
+                <input type="text" name="promo_code" placeholder="กรอกรหัสส่วนลด" 
+                    class="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-blue-500"
+                    value="{{ request.session.booking_context.applied_promo_code|default:'' }}">
+                
+                <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-700 transition">
+                    ใช้รหัส
+                </button>
+            </form>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="mt-2 text-xs font-medium {% if message.tags == 'error' %}text-red-500{% else %}text-green-600{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        {% endif %}
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             
@@ -20,8 +43,15 @@
                     <span class="line-through">{{ total_price|intcomma }} THB</span>
                 </div>
 
+                {% if request.session.booking_context.discount_amount %}
+                <div class="flex justify-between mb-2 text-green-600 font-bold">
+                    <span>ส่วนลด ({{ request.session.booking_context.applied_promo_code }})</span>
+                    <span>-{{ request.session.booking_context.discount_amount|intcomma }} THB</span>
+                </div>
+                {% endif %}
+
                 <div class="flex justify-between mb-4 text-lg font-medium">
-                    <span>ยอดมัดจำออนไลน์ (30%)</span>
+                    <span>ยอดมัดจำออนไลน์ (15%)</span>
                     <span class="text-blue-600">{{ deposit_amount|intcomma }} THB</span>
                 </div>
 

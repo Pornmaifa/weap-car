@@ -166,10 +166,12 @@ class CarImage(models.Model):
 # ตาราง Booking
 class Booking(models.Model):
     STATUS_CHOICES = [
-        ('pending', 'รอชำระเงิน'),
-        ('confirmed', 'ยืนยันแล้ว (มัดจำแล้ว)'),
-        ('completed', 'จบงาน (คืนรถแล้ว)'),
-        ('cancelled', 'ยกเลิก'),
+        ('pending', 'รออนุมัติจากเจ้าของรถ'),    # 1. จองมา
+        ('approved', 'อนุมัติแล้ว (รอชำระเงิน)'), # 2. เจ้าของกดรับ
+        ('confirmed', 'จองสำเร็จ'),             # 3. จ่ายเงินแล้ว
+        ('rejected', 'ปฏิเสธ'),                 # เจ้าของไม่รับ
+        ('cancelled', 'ยกเลิก'),                # ลูกค้ายกเลิกเอง
+        ('completed', 'จบการเช่า'),              # คืนรถแล้ว
     ]
 
     car = models.ForeignKey('Car', on_delete=models.CASCADE)
@@ -188,7 +190,8 @@ class Booking(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     booking_ref = models.CharField(max_length=20, unique=True, null=True, blank=True) # เลขที่ใบจอง เช่น BK-20251214-XXXX
-
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    
     def __str__(self):
         return f"Booking {self.booking_ref} - {self.car.brand}"
 
@@ -202,6 +205,7 @@ class Promotion(models.Model):
     discount_rate = models.DecimalField(max_digits=5, decimal_places=2) # เช่น 15.00 สำหรับ 15%
     start_date = models.DateField()
     end_date = models.DateField()
+    code = models.CharField(max_length=20, unique=True, null=True, blank=True)
 
     def __str__(self):
         return self.title

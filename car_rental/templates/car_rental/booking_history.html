@@ -1,0 +1,99 @@
+{% load static %}
+{% load humanize %}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประวัติการเช่ารถ - WarpCar</title>
+    <link href="{% static 'dist/styles.css' %}?v=4" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+
+    {% include 'car_rental/navbar_detail.html' %}
+
+    <div class="container mx-auto flex flex-col md:flex-row p-4 md:p-8 gap-8 pt-24">
+
+        
+            
+        <main class="flex-1">
+            
+            <div class="flex items-center justify-between gap-4 mb-6">
+                <h1 class="text-3xl font-bold text-gray-800">ประวัติการเช่ารถ</h1>
+                <a href="{% url 'car_list' %}" class="text-[#47B3C4] hover:underline text-sm font-semibold">
+                    + จองรถเพิ่ม
+                </a>
+            </div>
+
+            <div class="space-y-6">
+                {% if bookings %}
+                    {% for booking in bookings %}
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden p-6 hover:shadow-lg transition duration-200">
+                        <div class="flex flex-col md:flex-row gap-6 items-start">
+                            
+                            <div class="w-full md:w-1/4">
+                                {% if booking.car.images.first %}
+                                    <img src="{{ booking.car.images.first.image.url }}" alt="{{ booking.car.model }}" class="w-full h-32 object-cover rounded-lg">
+                                {% else %}
+                                    <div class="h-32 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">No Image</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="w-full md:w-3/4">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <h3 class="text-xl font-bold text-gray-800 uppercase">
+                                            {{ booking.car.brand }} {{ booking.car.model }}
+                                        </h3>
+                                        <div class="text-gray-500 text-sm mt-1">
+                                            Ref: #{{ booking.booking_ref }}
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        {% if booking.status == 'confirmed' %}
+                                            <span class="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">ยืนยันแล้ว</span>
+                                        {% elif booking.status == 'pending' %}
+                                            <span class="px-3 py-1 bg-yellow-100 text-yellow-700 text-sm font-medium rounded-full">รอชำระเงิน</span>
+                                        {% else %}
+                                            <span class="px-3 py-1 bg-gray-100 text-gray-600 text-sm font-medium rounded-full">{{ booking.status }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 bg-gray-50 p-4 rounded-lg border border-gray-100">
+                                    <div>
+                                        <p class="text-xs text-gray-500 mb-1">รับรถ</p>
+                                        <p class="font-semibold text-gray-800 text-sm">{{ booking.location }}</p>
+                                        <p class="text-sm text-gray-600">{{ booking.pickup_datetime|date:"d M Y, H:i" }} น.</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500 mb-1">คืนรถ</p>
+                                        <p class="font-semibold text-gray-800 text-sm">{{ booking.location }}</p>
+                                        <p class="text-sm text-gray-600">{{ booking.dropoff_datetime|date:"d M Y, H:i" }} น.</p>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                {% else %}
+                    <div class="bg-white rounded-lg p-12 text-center shadow-sm border border-dashed border-gray-300">
+                        <i class="fas fa-car text-6xl text-gray-200 mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-400">ยังไม่มีประวัติการเช่ารถ</h3>
+                        <a href="{% url 'car_list' %}" class="inline-block mt-4 px-6 py-2 bg-[#47B3C4] text-white rounded-full hover:bg-[#3a9faa] transition">
+                            เริ่มจองรถคันแรก
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+        </main>
+    </div>
+
+</body>
+</html>
