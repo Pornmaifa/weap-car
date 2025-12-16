@@ -17,17 +17,17 @@
        {% else %}
            bg-gray-200 text-gray-800 hover:bg-gray-300
        {% endif %}">
-       การจอง
+       คำขอเช่ารถ
     </a>
 
-    <a href="#" 
+    <a href="{% url 'manage_bookings' %}" 
        class="p-3 rounded-lg font-semibold
-       {% if request.resolver_match.url_name == 'my_income' %}
+       {% if request.resolver_match.url_name == 'manage_bookings' %}
            bg-warp-blue text-white
        {% else %}
            bg-gray-200 text-gray-800 hover:bg-gray-300
        {% endif %}">
-       รายได้
+       จัดการรายการจองทั้งหมด
     </a>
 
 </aside>

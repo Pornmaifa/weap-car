@@ -21,4 +21,7 @@ urlpatterns = [
     # ส่วนของเจ้าของรถ (Host) จัดการคำขอเช่า
     path('booking-requests/', views.booking_requests, name='booking_requests'),
     path('update/<int:booking_id>/<str:action>/', views.update_booking_status, name='update_booking_status'),
+
+    # urls.py
+    path('manage-bookings/', views.manage_bookings, name='manage_bookings'),
 ]

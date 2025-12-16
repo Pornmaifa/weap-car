@@ -426,4 +426,13 @@ def booking_requests(request):
         'pending_bookings': pending_bookings
     })
 
+@login_required
+def manage_bookings(request):
+    # ดึง Booking ทั้งหมดของรถเรา (ไม่กรองสถานะ) เรียงจากใหม่ไปเก่า
+    all_bookings = Booking.objects.filter(car__owner=request.user).order_by('-created_at')
+    
+    return render(request, 'booking/manage_bookings.html', {
+        'bookings': all_bookings
+    })
+
 
