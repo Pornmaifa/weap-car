@@ -24,4 +24,6 @@ urlpatterns = [
 
     # urls.py
     path('manage-bookings/', views.manage_bookings, name='manage_bookings'),
+
+    path('booking/inspection/<int:booking_id>/', views.inspection_page, name='inspection_page'),
 ]

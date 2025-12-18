@@ -283,3 +283,14 @@ class PlatformSetting(models.Model):
             self.pk = PlatformSetting.objects.first().pk
         super().save(*args, **kwargs)
 
+
+# car_rental/models.py
+
+class BookingInspection(models.Model):
+    booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name='inspections')
+    image = models.ImageField(upload_to='inspection_photos/')
+    description = models.CharField(max_length=200, blank=True, null=True, help_text="ระบุตำแหน่ง เช่น กันชนหน้าขวาบุบ")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Inspection for {self.booking.booking_ref}"

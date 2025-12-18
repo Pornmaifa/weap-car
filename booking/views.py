@@ -7,6 +7,8 @@ from django.contrib import messages
 from django.db.models import Q
 from django.utils import timezone
 from datetime import datetime, timedelta
+from car_rental.forms import InspectionForm
+from car_rental.models import BookingInspection
 
 # --- Import ข้าม App (ดึง Model จากแอป car_rental) ---
 from car_rental.models import Car, GuestCustomer, Promotion, PlatformSetting, Booking
@@ -436,3 +438,37 @@ def manage_bookings(request):
     })
 
 
+# ยืนยันสภาพและส่งมอบรถ
+@login_required
+def inspection_page(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, car__owner=request.user)
+    
+    # ถ้ามีการอัปโหลดรูป (POST)
+    if request.method == 'POST':
+        if 'upload_image' in request.POST:
+            form = InspectionForm(request.POST, request.FILES)
+            if form.is_valid():
+                inspection = form.save(commit=False)
+                inspection.booking = booking
+                inspection.save()
+                messages.success(request, "บันทึกรูปภาพแล้ว")
+                return redirect('inspection_page', booking_id=booking.id)
+        
+        elif 'confirm_delivery' in request.POST:
+            # กดปุ่มยืนยัน -> เปลี่ยนสถานะเป็น picked_up
+            booking.status = 'picked_up'
+            booking.save()
+            messages.success(request, "ยืนยันการส่งมอบรถเรียบร้อยแล้ว")
+            return redirect('manage_bookings') # กลับไปหน้าจัดการ
+
+    else:
+        form = InspectionForm()
+
+    # ดึงรูปที่เคยอัปโหลดไว้แล้วมาโชว์
+    existing_inspections = booking.inspections.all()
+
+    return render(request, 'booking/inspection.html', {
+        'booking': booking,
+        'form': form,
+        'existing_inspections': existing_inspections
+    })
