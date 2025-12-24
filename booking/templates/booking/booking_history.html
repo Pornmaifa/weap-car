@@ -1,15 +1,7 @@
-{% load static %}
+{% extends 'basereview.html' %}{% load static %}
 {% load humanize %}
 
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ประวัติการเช่ารถ - WarpCar</title>
-    <link href="{% static 'dist/styles.css' %}?v=4" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
+{% block content %}
 <body class="bg-gray-100">
 
     {% include 'car_rental/navbar_detail.html' %}
@@ -87,6 +79,8 @@
                                             </a>
                                         {% endif %}
 
+                                        
+
                                     </div>
                                 </div>
 
@@ -139,6 +133,22 @@
                                             </div>
                                         </details>
 
+                                        {% if booking.status == 'completed' %}
+                                            <div class="ml-4 flex justify-end mt-4">
+                                                {% if not booking.review %}
+                                                    <button onclick="openReviewModal('{{ booking.id }}', '{{ booking.car.brand }} {{ booking.car.model }}', 'car')" 
+                                                            class="bg-yellow-400 text-white px-4 py-2 rounded-lg text-sm font-bold shadow hover:bg-yellow-500 transition flex items-center gap-2">
+                                                        <i class="fas fa-star"></i> ให้คะแนนรถ
+                                                    </button>
+                                                {% else %}
+                                                    <div class="text-yellow-500 font-bold text-sm flex items-center gap-1">
+                                                        <i class="fas fa-check-circle"></i> ให้คะแนนแล้ว
+                                                        <span class="text-gray-400 font-normal">({{ booking.review.rating }}/5)</span>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                        
                                     </div>
                                 {% endif %}
                             </div>
@@ -160,5 +170,4 @@
         </main>
     </div>
 
-</body>
-</html>
+{% endblock %}

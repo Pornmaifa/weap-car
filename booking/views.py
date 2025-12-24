@@ -1,6 +1,5 @@
 import random
 import string
-from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -12,9 +11,16 @@ from car_rental.models import BookingInspection
 
 # --- Import ข้าม App (ดึง Model จากแอป car_rental) ---
 from car_rental.models import Car, GuestCustomer, Promotion, PlatformSetting, Booking
+# users/views.py (หรือ booking/views.py)
 
+from django.shortcuts import get_object_or_404, redirect
+from car_rental.models import Booking
 # --- Import ใน App ตัวเอง (ดึง Model Booking) ---
-
+from car_rental.models import Booking, Review, RenterReview
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from car_rental.models import Booking, Review, RenterReview # อย่าลืม import ให้ครบ
 
 def user_info(request, car_id):
     car = get_object_or_404(Car, id=car_id)
@@ -438,6 +444,37 @@ def manage_bookings(request):
     })
 
 
+# ฟังก์ชันนี้รองรับการกดปุ่มทุกปุ่ม (อนุมัติ, ปฏิเสธ, รับรถ, คืนรถ)
+@login_required
+def update_booking_status(request, booking_id, action):
+    # ดึง Booking และตรวจสอบว่าเป็นรถของเราจริงไหม
+    booking = get_object_or_404(Booking, id=booking_id, car__owner=request.user)
+
+    # 1. กรณีเจ้าของกด "อนุมัติ"
+    if action == 'approve':
+        booking.status = 'approved'
+        messages.success(request, f"อนุมัติการจอง {booking.booking_ref} แล้ว (รอลูกค้าชำระเงิน)")
+
+    # 2. กรณีเจ้าของกด "ปฏิเสธ"
+    elif action == 'reject':
+        booking.status = 'rejected'
+        messages.warning(request, f"ปฏิเสธการจอง {booking.booking_ref} แล้ว")
+
+    # 3. กรณีเจ้าของกด "รับรถแล้ว" (ปกติจะผ่านหน้า Inspection มา แต่เผื่อไว้)
+    elif action == 'picked_up':
+        booking.status = 'picked_up'
+        messages.info(request, "บันทึกสถานะ: ลูกค้ารับรถไปแล้ว")
+
+    # 4. ✅ กรณีเจ้าของกด "จบงาน" (คืนรถ) ** จุดที่คุณขาดไป **
+    elif action == 'completed':
+        booking.status = 'completed'
+        messages.success(request, "บันทึกสถานะ: คืนรถเรียบร้อย (จบงาน)")
+
+    booking.save()
+    
+    # ทำเสร็จแล้วให้เด้งกลับไปหน้าตารางจัดการ
+    return redirect('manage_bookings')
+
 # ยืนยันสภาพและส่งมอบรถ
 @login_required
 def inspection_page(request, booking_id):
@@ -472,3 +509,69 @@ def inspection_page(request, booking_id):
         'form': form,
         'existing_inspections': existing_inspections
     })
+
+
+
+
+
+# 1. ฟังก์ชันลูกค้ารีวิวรถ
+@login_required
+def submit_car_review(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
+    
+    # 1. เช็คสถานะ
+    if booking.status != 'completed':
+        messages.error(request, "ต้องจบงานก่อนจึงจะรีวิวได้")
+        return redirect('booking_history')
+
+    # 2. ✅ เช็คว่าเคยรีวิวไปแล้วหรือยัง? (กัน Error 500)
+    # ใช้ hasattr เช็คว่า booking ก้อนนี้มี review ผูกอยู่ไหม
+    if hasattr(booking, 'review'): 
+        messages.warning(request, "คุณได้รีวิวรายการนี้ไปแล้ว")
+        return redirect('booking_history')
+        
+    if request.method == "POST":
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+        
+        Review.objects.create(
+            booking=booking,
+            car=booking.car,
+            user=request.user,
+            rating=rating,
+            comment=comment
+        )
+        messages.success(request, "รีวิวรถเรียบร้อยแล้ว!")
+        
+    return redirect('booking_history')
+
+
+# 2. ฟังก์ชันเจ้าของรีวิวลูกค้า
+@login_required
+def submit_renter_review(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, car__owner=request.user)
+    
+    # 1. เช็คสถานะ
+    if booking.status != 'completed':
+        messages.error(request, "ต้องจบงานก่อนจึงจะรีวิวลูกค้าได้")
+        return redirect('manage_bookings') # ⚠️ เช็คชื่อ URL ให้ตรงกับ urls.py ของคุณ (มี s หรือไม่มี s)
+
+    # 2. ✅ เช็คว่าเคยรีวิวไปแล้วหรือยัง?
+    if hasattr(booking, 'renter_review'):
+        messages.warning(request, "คุณได้รีวิวลูกค้ารายนี้ไปแล้ว")
+        return redirect('manage_bookings')
+        
+    if request.method == "POST":
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+        
+        RenterReview.objects.create(
+            booking=booking,
+            renter=booking.user,
+            owner=request.user,
+            rating=rating,
+            comment=comment
+        )
+        messages.success(request, "รีวิวลูกค้าเรียบร้อยแล้ว!")
+        
+    return redirect('manage_bookings')

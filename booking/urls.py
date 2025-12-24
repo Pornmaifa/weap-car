@@ -24,6 +24,13 @@ urlpatterns = [
 
     # urls.py
     path('manage-bookings/', views.manage_bookings, name='manage_bookings'),
+    path('booking/update/<int:booking_id>/<str:action>/', views.update_booking_status, name='update_booking_status'),
 
     path('booking/inspection/<int:booking_id>/', views.inspection_page, name='inspection_page'),
+    
+    # Path สำหรับลูกค้ารีวิว
+    path('review/car/<int:booking_id>/', views.submit_car_review, name='submit_car_review'),
+    
+    # Path สำหรับเจ้าของรีวิว
+    path('review/renter/<int:booking_id>/', views.submit_renter_review, name='submit_renter_review'),
 ]

@@ -3,6 +3,8 @@
 from django.db import models
 from django.contrib.auth.models import User # ดึงโมเดล User ของ Django มาใช้
 from django.conf import settings
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 # ตาราง Profile ที่รวม Owner และ Member เข้าด้วยกัน
 class Profile(models.Model):
     ROLE_CHOICES = (
@@ -231,11 +233,14 @@ class Payment(models.Model):
 
 
 class Review(models.Model):
+    booking = models.OneToOneField('Booking', on_delete=models.CASCADE, related_name='review', null=True)
     car = models.ForeignKey(Car, related_name="reviews", on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    stars = models.IntegerField(default=5)
+    rating = models.IntegerField(default=5, validators=[MinValueValidator(1), MaxValueValidator(5)])
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"Review for {self.car.brand} by {self.user.username}"
 
 class ReviewReply(models.Model):
     review = models.ForeignKey(Review, related_name="replies", on_delete=models.CASCADE)
@@ -245,6 +250,20 @@ class ReviewReply(models.Model):
 
     def __str__(self):
         return f"Reply by {self.user.username}"
+    
+# 2.  RenterReview (สำหรับเจ้าของรีวิวลูกค้า)
+class RenterReview(models.Model):
+    booking = models.OneToOneField('Booking', on_delete=models.CASCADE, related_name='renter_review')
+    renter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_reviews') # ผู้เช่า
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='given_reviews')   # เจ้าของรถ
+    
+    rating = models.IntegerField(default=5, validators=[MinValueValidator(1), MaxValueValidator(5)])
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Owner {self.owner.username} reviewed {self.renter.username}"
+    
 #ลูกค้าทั่วไป
 class GuestCustomer(models.Model):
     first_name = models.CharField(max_length=100)

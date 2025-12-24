@@ -29,6 +29,21 @@
                                 <th class="p-4 border-b">ผู้เช่า</th>
                                 <th class="p-4 border-b">สถานะ</th> <th class="p-4 border-b">วันใช้งาน</th>
                                 <th class="p-4 border-b text-center">จัดการ</th>
+                                
+                                {% if booking.status == 'completed' %}
+                                    {% if not booking.renter_review %}
+                                        <button onclick="openReviewModal('{{ booking.id }}', '{{ booking.user.first_name }}', 'renter')" 
+                                        class="bg-blue-400 text-white px-3 py-1 rounded text-xs hover:bg-blue-500 ml-2">
+                                        <i class="fas fa-user-check"></i> รีวิวลูกค้า
+                                        </button>
+                                    {% else %}
+                                        <span class="text-xs text-green-600 block mt-1">
+                                            <i class="fas fa-check"></i> รีวิวลูกค้าแล้ว
+                                        </span>
+                                    {% endif %}
+
+                                {% endif %}
+
                             </tr>
                         </thead>
                         <tbody class="text-gray-700">
@@ -103,7 +118,7 @@
                                 <td class="p-4 text-center">
                                     {% if booking.status == 'confirmed' %}
                                         <a href="{% url 'inspection_page' booking.id %}" 
-                                            class="inline-block bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded text-xs shadow transition">
+                                            class="inline-block bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-xs shadow transition">
                                                 <i class="fas fa-camera mr-1"></i> ตรวจรถ/ส่งมอบ
                                             </a>
 

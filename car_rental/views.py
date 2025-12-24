@@ -22,7 +22,7 @@ from django.db.models.functions import Coalesce       # ✅ Import เพิ่�
 from django.utils import timezone
 from car_rental.models import Car, CarImage
 from django.db.models import Count, Sum, Q, DecimalField  # ✅ เพิ่ม DecimalField
-from django.db.models.functions import Coalesce
+
 from django.db.models import Value
 # (เพิ่มฟังก์ชันนี้เข้าไปใน views.py)
 @login_required
@@ -87,21 +87,24 @@ def dashboard(request):
     my_cars = Car.objects.filter(owner=request.user).annotate(
         
         # A. นับจำนวนการจอง (เหมือนเดิม)
-        booking_count=Count('booking', filter=Q(booking__status__in=['confirmed', 'completed'])),
+        booking_count=Count('booking', filter=Q(booking__status__in=['confirmed', 'picked_up', 'completed'])),
         
-        # B. รวมรายได้ทั้งหมด (✅ แก้ไขจุดนี้)
+        # B. รวมรายได้ทั้งหมด 
         total_income=Coalesce(
-            Sum('booking__total_price', filter=Q(booking__status__in=['confirmed', 'completed'])),
+            Sum('booking__total_price', filter=Q(booking__status__in=['confirmed', 'picked_up', 'completed'])),
             Value(0),                # ใช้ Value(0) แทน 0.0
             output_field=DecimalField() # บังคับให้ผลลัพธ์เป็น Decimal
         ),
         
         # C. เช็คสถานะเช่า (เหมือนเดิม)
-        active_booking_count=Count('booking', filter=Q(
-            booking__status='confirmed',
-            booking__pickup_datetime__lte=now,
-            booking__dropoff_datetime__gte=now
-        ))
+        active_booking_count=Count('booking', filter=
+            # กรณี 1: ถ้ารับรถไปแล้ว (picked_up) -> ให้ถือว่า "ไม่ว่างทันที" (ไม่ต้องสนเวลาเริ่ม)
+            Q(booking__status='picked_up') | 
+            
+            # กรณี 2: ถ้าจ่ายเงินแล้ว (confirmed) -> ต้องรอให้ถึงเวลาเริ่มก่อน ถึงจะนับว่าไม่ว่าง
+            Q(booking__status='confirmed', booking__pickup_datetime__lte=now, booking__dropoff_datetime__gte=now)
+        )
+        
     ).order_by('-id')
     
     context = {
