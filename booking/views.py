@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.utils import timezone
 from datetime import datetime, timedelta
 from car_rental.forms import InspectionForm
-from car_rental.models import BookingInspection
+from car_rental.models import BookingInspection, RenterReply, ReviewReply
 
 # --- Import ข้าม App (ดึง Model จากแอป car_rental) ---
 from car_rental.models import Car, GuestCustomer, Promotion, PlatformSetting, Booking
@@ -543,7 +543,7 @@ def submit_car_review(request, booking_id):
         )
         messages.success(request, "รีวิวรถเรียบร้อยแล้ว!")
         
-    return redirect('booking_history')
+    return redirect('car_detail', car_id=booking.car.id)
 
 
 # 2. ฟังก์ชันเจ้าของรีวิวลูกค้า
@@ -574,4 +574,6 @@ def submit_renter_review(request, booking_id):
         )
         messages.success(request, "รีวิวลูกค้าเรียบร้อยแล้ว!")
         
-    return redirect('manage_bookings')
+    return redirect('public_profile', user_id=booking.user.id)
+
+

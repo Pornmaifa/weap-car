@@ -8,7 +8,7 @@
 
     <div class="container mx-auto flex flex-col md:flex-row p-4 md:p-8 gap-8 pt-24">
 
-        
+        {% include 'booking/sidebar.html' %}
             
         <main class="flex-1">
             
@@ -137,11 +137,11 @@
                                             <div class="ml-4 flex justify-end mt-4">
                                                 {% if not booking.review %}
                                                     <button onclick="openReviewModal('{{ booking.id }}', '{{ booking.car.brand }} {{ booking.car.model }}', 'car')" 
-                                                            class="bg-yellow-400 text-white px-4 py-2 rounded-lg text-sm font-bold shadow hover:bg-yellow-500 transition flex items-center gap-2">
+                                                            class="bg-[#47B3C4] text-white px-4 py-2 rounded-lg text-sm font-bold shadow hover:bg-[#48a9b9] transition flex items-center gap-2">
                                                         <i class="fas fa-star"></i> ให้คะแนนรถ
                                                     </button>
                                                 {% else %}
-                                                    <div class="text-yellow-500 font-bold text-sm flex items-center gap-1">
+                                                    <div class="text-[#47B3C4] font-bold text-sm flex items-center gap-1">
                                                         <i class="fas fa-check-circle"></i> ให้คะแนนแล้ว
                                                         <span class="text-gray-400 font-normal">({{ booking.review.rating }}/5)</span>
                                                     </div>

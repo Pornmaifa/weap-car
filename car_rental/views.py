@@ -4,7 +4,7 @@ from datetime import timezone
 import uuid
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Car , CarImage,  ReviewReply
+from .models import Car , CarImage, RenterReply, RenterReview, Review,  ReviewReply
 from django.contrib import messages
 import os
 from django.core.files.storage import default_storage
@@ -399,7 +399,49 @@ def submit_reply(request, review_id):
         )
     return redirect(request.META.get("HTTP_REFERER"))
 
-# car_rental/views.py
+@login_required
+def reply_to_car_review(request, review_id):
+    review = get_object_or_404(Review, id=review_id)
+    
+    # ✅ Security Check: คนตอบต้องเป็น "เจ้าของรถ" เท่านั้น
+    if request.user != review.car.owner:
+        messages.error(request, "คุณไม่มีสิทธิ์ตอบกลับรีวิวนี้")
+        return redirect('car_detail', car_id=review.car.id)
+
+    if request.method == "POST":
+        comment = request.POST.get('comment')
+        ReviewReply.objects.create(
+            review=review,
+            user=request.user,
+            comment=comment
+        )
+        messages.success(request, "ตอบกลับรีวิวเรียบร้อย")
+
+    return redirect('car_detail', car_id=review.car.id)
+
+# car_rental/views.py หรือ users/views.py
+
+@login_required
+def reply_to_owner_review(request, review_id):
+    # ดึงรีวิวที่เจ้าของเขียนด่าเรา
+    review = get_object_or_404(RenterReview, id=review_id)
+    
+    # ✅ Security Check: คนตอบต้องเป็น "ผู้เช่า (คนถูกรีวิว)" เท่านั้น
+    if request.user != review.renter:
+        messages.error(request, "คุณไม่มีสิทธิ์ตอบกลับ")
+        return redirect('public_profile', user_id=review.renter.id)
+
+    if request.method == "POST":
+        comment = request.POST.get('comment')
+        RenterReply.objects.create(
+            renter_review=review,
+            user=request.user,
+            comment=comment
+        )
+        messages.success(request, "บันทึกคำตอบกลับแล้ว")
+
+    return redirect('public_profile', user_id=review.renter.id)
+
 
 
 

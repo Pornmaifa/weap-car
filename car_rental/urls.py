@@ -14,4 +14,6 @@ urlpatterns = [
     path('search/', views.search_cars, name='search_cars'),
     path('detail/<int:car_id>/', views.car_detail, name='car_detail'),
     path("review/<int:review_id>/reply/", views.submit_reply, name="submit_reply"),
+    path('review/<int:review_id>/reply/', views.reply_to_car_review, name='reply_to_car_review'),
+    path('renter-review/<int:review_id>/reply/', views.reply_to_owner_review, name='reply_to_owner_review'),
 ]

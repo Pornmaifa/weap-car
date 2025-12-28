@@ -231,7 +231,7 @@ class Payment(models.Model):
     def __str__(self):
         return f'Payment for Booking #{self.booking.id}'
 
-
+# ส่วนที่ 1: ผู้เช่า รีวิว รถ (และเจ้าของตอบกลับ)
 class Review(models.Model):
     booking = models.OneToOneField('Booking', on_delete=models.CASCADE, related_name='review', null=True)
     car = models.ForeignKey(Car, related_name="reviews", on_delete=models.CASCADE)
@@ -239,6 +239,10 @@ class Review(models.Model):
     rating = models.IntegerField(default=5, validators=[MinValueValidator(1), MaxValueValidator(5)])
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at'] # เรียงใหม่ไปเก่า
+
     def __str__(self):
         return f"Review for {self.car.brand} by {self.user.username}"
 
@@ -261,9 +265,20 @@ class RenterReview(models.Model):
     comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-created_at']
     def __str__(self):
         return f"Owner {self.owner.username} reviewed {self.renter.username}"
     
+class RenterReply(models.Model):
+    # ลูกค้ามาเขียนแก้ต่าง/ตอบกลับรีวิวข้างบน
+    renter_review = models.ForeignKey(RenterReview, related_name="replies", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE) # ผู้ตอบ (Renter)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Renter Reply by {self.user.username}"
 #ลูกค้าทั่วไป
 class GuestCustomer(models.Model):
     first_name = models.CharField(max_length=100)

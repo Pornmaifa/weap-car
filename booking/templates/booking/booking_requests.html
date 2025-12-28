@@ -1,22 +1,16 @@
+{% extends 'basereview.html' %}
 {% load static %}
 {% load humanize %}
 
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>คำขอเช่าที่รออนุมัติ - WarpCar</title>
-    <link href="{% static 'dist/styles.css' %}?v=4" rel="stylesheet">
-</head>
-<body class="bg-gray-100">
-
+{% block content %}
+    
     {% include 'car_rental/navbar_detail.html' %}
-     <div class="container mx-auto flex flex-col md:flex-row p-4 md:p-8 gap-8">
+
+    <div class="container mx-auto flex flex-col md:flex-row p-4 md:p-8 gap-8 pt-24">
+        
         {% include 'users/sidebar.html' %} 
         
         <main class="flex-1 p-4 md:p-8">
-            
             <h1 class="text-3xl font-bold text-gray-800 mb-6">คำขอเช่าที่รออนุมัติ</h1>
 
             <div class="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -44,34 +38,31 @@
                                             <div class="text-xs text-gray-500">{{ booking.car.license_plate }}</div>
                                         </div>
                                     </td>
+                                    
                                     <td class="p-4">
                                         <button type="button" onclick="openDetailModal(this)" 
                                             class="group text-left focus:outline-none"
                                             
-                                            
                                             data-id="{{ booking.id }}"
                                             data-ref="{{ booking.booking_ref }}" 
                                             
-                                           
                                             data-name="{% if booking.user %}{{ booking.user.first_name }} {{ booking.user.last_name }}{% else %}{{ booking.guest.first_name }} {{ booking.guest.last_name }}{% endif %}"
                                             data-phone="{% if booking.user %}{{ booking.user.profile.phone|default:'-' }}{% else %}{{ booking.guest.phone_number }}{% endif %}"
                                             data-email="{% if booking.user %}{{ booking.user.email }}{% else %}{{ booking.guest.email }}{% endif %}"
                                             data-license="{% if booking.user %}{{ booking.user.profile.license_number|default:'-' }}{% else %}{{ booking.guest.license_number }}{% endif %}"
                                             
-                                           
+                                            data-profile-url="{% if booking.user %}{% url 'public_profile' booking.user.id %}{% endif %}"
+
                                             data-car="{{ booking.car.brand }} {{ booking.car.model }}"
                                             data-plate="{{ booking.car.license_plate }}"
                                             data-pickup="{{ booking.pickup_datetime|date:'d M Y, H:i' }}"
                                             data-dropoff="{{ booking.dropoff_datetime|date:'d M Y, H:i' }}"
                                             data-location="{{ booking.location }}"
-                                            
-                                           
                                             data-total="{{ booking.total_price }}"
                                             
-                                            #5. ลิงก์สำหรับปุ่ม Action 
                                             data-approve-url="{% url 'update_booking_status' booking.id 'approve' %}"
-                                            data-reject-url="{% url 'update_booking_status' booking.id 'reject' %}">
-                                        
+                                            data-reject-url="{% url 'update_booking_status' booking.id 'reject' %}"
+                                        >
                                             <div class="font-semibold text-gray-800 group-hover:text-[#47B3C4] transition flex items-center gap-1">
                                                 {% if booking.user %}
                                                     {{ booking.user.first_name }} {{ booking.user.last_name }}
@@ -80,23 +71,21 @@
                                                 {% endif %}
                                                 <i class="fas fa-search-plus text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                             </div>
-                                            <div class="text-xs text-gray-500">
-                                                Ref: <span class="font-mono text-gray-600">{{ booking.booking_ref }}</span>
-                                            </div>
                                             <div class="text-[10px] text-[#47B3C4] mt-1 group-hover:underline">
                                                 คลิกดูรายละเอียด
                                             </div>
                                         </button>
                                     </td>
-                                        </a>
-                                    </td>
+
                                     <td class="p-4 text-sm">
-                                        <div>รับ: {{ booking.pickup_datetime|date:"d M Y H:i" }}</div>
-                                        <div>คืน: {{ booking.dropoff_datetime|date:"d M Y H:i" }}</div>
+                                        <div>รับ: {{ booking.pickup_datetime|date:"d M H:i" }}</div>
+                                        <div>คืน: {{ booking.dropoff_datetime|date:"d M H:i" }}</div>
                                     </td>
+                                    
                                     <td class="p-4 font-bold text-[#47B3C4]">
                                         ฿{{ booking.total_price|intcomma }}
                                     </td>
+                                    
                                     <td class="p-4 text-center space-x-2">
                                         <a href="{% url 'update_booking_status' booking.id 'approve' %}" 
                                            class="inline-block bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600 transition shadow-sm">
@@ -105,7 +94,7 @@
                                         <a href="{% url 'update_booking_status' booking.id 'reject' %}" 
                                            class="inline-block bg-red-100 text-red-600 px-3 py-1 rounded text-sm hover:bg-red-200 transition"
                                            onclick="return confirm('แน่ใจหรือไม่ที่จะปฏิเสธคำขอนี้?');">
-                                             ปฏิเสธ
+                                            ปฏิเสธ
                                         </a>
                                     </td>
                                 </tr>
@@ -120,141 +109,158 @@
                     </div>
                 {% endif %}
             </div>
-
         </main>
     </div>
+
     <div id="detailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden transform scale-95 transition-transform duration-200" id="detailModalContent">
-        
-        <div class="bg-[#47B3C4] px-6 py-4 flex justify-between items-center text-white">
-            <div>
-                <h3 class="text-lg font-bold">รายละเอียดคำขอเช่า</h3>
-                <p class="text-sm opacity-90">Ref Code: <span id="modal_ref" class="font-mono font-bold bg-white/20 px-2 py-0.5 rounded"></span></p>
-            </div>
-            <button onclick="closeDetailModal()" class="text-white hover:text-gray-200 text-2xl font-bold">&times;</button>
-        </div>
-
-        <div class="p-6 overflow-y-auto max-h-[70vh]">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden transform scale-95 transition-transform duration-200" id="detailModalContent">
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                    <h4 class="text-gray-800 font-bold mb-3 border-b pb-1"><i class="fas fa-user mr-2 text-gray-400"></i>ผู้เช่า</h4>
-                    <p class="text-sm text-gray-500">ชื่อ: <span id="modal_name" class="font-medium text-gray-800 text-base"></span></p>
-                    <p class="text-sm text-gray-500 mt-1">เบอร์: <span id="modal_phone" class="font-medium text-gray-800"></span></p>
-                    <p class="text-sm text-gray-500 mt-1">Email: <span id="modal_email" class="font-medium text-gray-800"></span></p>
-                    <p class="text-sm text-gray-500 mt-1">ใบขับขี่: <span id="modal_license" class="font-medium text-gray-800"></span></p>
+            <div class="bg-[#47B3C4] px-6 py-4 flex justify-between items-center text-white">
+                <div>
+                    <h3 class="text-lg font-bold">รายละเอียดคำขอเช่า</h3>
+                    <p class="text-sm opacity-90">Ref Code: <span id="modal_ref" class="font-mono font-bold bg-white/20 px-2 py-0.5 rounded"></span></p>
                 </div>
+                <button onclick="closeDetailModal()" class="text-white hover:text-gray-200 text-2xl font-bold">&times;</button>
+            </div>
 
-                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                    <h4 class="text-gray-800 font-bold mb-3 border-b pb-1"><i class="fas fa-car mr-2 text-gray-400"></i>ข้อมูลการเช่า</h4>
-                    <p class="text-sm text-gray-500">รถ: <span id="modal_car" class="font-medium text-gray-800"></span></p>
-                    <p class="text-xs text-gray-400 mb-2">(<span id="modal_plate"></span>)</p>
+            <div class="p-6 overflow-y-auto max-h-[70vh]">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     
-                    <p class="text-xs text-gray-500">รับ: <span id="modal_pickup" class="font-medium text-gray-800"></span></p>
-                    <p class="text-xs text-gray-500">คืน: <span id="modal_dropoff" class="font-medium text-gray-800"></span></p>
-                    <p class="text-xs text-gray-500 mt-1">สถานที่: <span id="modal_location" class="font-medium text-gray-800"></span></p>
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                        <div class="flex justify-between items-center border-b pb-2 mb-3">
+                            <h4 class="text-gray-800 font-bold"><i class="fas fa-user mr-2 text-gray-400"></i>ผู้เช่า</h4>
+                            
+                            <a id="modal_profile_link" href="#" target="_blank" class="hidden text-xs bg-white border border-[#47B3C4] text-[#47B3C4] px-2 py-1 rounded hover:bg-[#47B3C4] hover:text-white transition shadow-sm">
+                                <i class="fas fa-star mr-1"></i> ดูรีวิวลูกค้า
+                            </a>
+                        </div>
+
+                        <p class="text-sm text-gray-500">ชื่อ: <span id="modal_name" class="font-medium text-gray-800 text-base"></span></p>
+                        <p class="text-sm text-gray-500 mt-1">เบอร์: <span id="modal_phone" class="font-medium text-gray-800"></span></p>
+                        <p class="text-sm text-gray-500 mt-1">Email: <span id="modal_email" class="font-medium text-gray-800"></span></p>
+                        <p class="text-sm text-gray-500 mt-1">ใบขับขี่: <span id="modal_license" class="font-medium text-gray-800"></span></p>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                        <h4 class="text-gray-800 font-bold mb-3 border-b pb-1"><i class="fas fa-car mr-2 text-gray-400"></i>ข้อมูลการเช่า</h4>
+                        <p class="text-sm text-gray-500">รถ: <span id="modal_car" class="font-medium text-gray-800"></span></p>
+                        <p class="text-xs text-gray-400 mb-2">(<span id="modal_plate"></span>)</p>
+                        
+                        <p class="text-xs text-gray-500">รับ: <span id="modal_pickup" class="font-medium text-gray-800"></span></p>
+                        <p class="text-xs text-gray-500">คืน: <span id="modal_dropoff" class="font-medium text-gray-800"></span></p>
+                        <p class="text-xs text-gray-500 mt-1">สถานที่: <span id="modal_location" class="font-medium text-gray-800"></span></p>
+                    </div>
+                </div>
+
+                <div class="bg-white border-2 border-dashed border-[#47B3C4] rounded-lg p-4 mb-6">
+                    <h4 class="text-center text-gray-600 font-bold mb-4">สรุปรายได้</h4>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-600">ยอดชำระจากลูกค้า</span>
+                        <span class="font-bold text-lg" id="modal_total"></span>
+                    </div>
+                    <div class="flex justify-between items-center mb-2 text-red-500 text-sm">
+                        <span>หักค่าธรรมเนียมระบบ (15%)</span>
+                        <span id="modal_fee"></span>
+                    </div>
+                    <div class="border-t pt-2 flex justify-between items-center mt-2">
+                        <span class="font-bold text-gray-800">รายได้สุทธิที่คุณได้รับ</span>
+                        <span class="text-2xl font-bold text-green-600" id="modal_net"></span>
+                    </div>
                 </div>
             </div>
 
-            <div class="bg-white border-2 border-dashed border-[#47B3C4] rounded-lg p-4 mb-6">
-                <h4 class="text-center text-gray-600 font-bold mb-4">สรุปรายได้</h4>
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-gray-600">ยอดชำระจากลูกค้า</span>
-                    <span class="font-bold text-lg" id="modal_total"></span>
-                </div>
-                <div class="flex justify-between items-center mb-2 text-red-500 text-sm">
-                    <span>หักค่าธรรมเนียมระบบ (15%)</span>
-                    <span id="modal_fee"></span>
-                </div>
-                <div class="border-t pt-2 flex justify-between items-center mt-2">
-                    <span class="font-bold text-gray-800">รายได้สุทธิที่คุณได้รับ</span>
-                    <span class="text-2xl font-bold text-green-600" id="modal_net"></span>
-                </div>
+            <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t">
+                <button onclick="closeDetailModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition">
+                    ปิดหน้าต่าง
+                </button>
+                
+                <a id="btn_reject" href="#" onclick="return confirm('ยืนยันที่จะปฏิเสธ?');" 
+                   class="px-4 py-2 border border-red-500 text-red-500 hover:bg-red-50 rounded-lg font-bold transition flex items-center">
+                   <i class="fas fa-times mr-2"></i> ปฏิเสธ
+                </a>
+
+                <a id="btn_approve" href="#" 
+                   class="px-6 py-2 bg-[#47B3C4] hover:bg-[#3a9faa] text-white rounded-lg font-bold shadow-lg transition transform hover:-translate-y-0.5 flex items-center">
+                   <i class="fas fa-check mr-2"></i> อนุมัติการจอง
+                </a>
             </div>
-
-        </div>
-
-        <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t">
-            <button onclick="closeDetailModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition">
-                ปิดหน้าต่าง
-            </button>
-            
-            <a id="btn_reject" href="#" onclick="return confirm('ยืนยันที่จะปฏิเสธ?');" 
-               class="px-4 py-2 border border-red-500 text-red-500 hover:bg-red-50 rounded-lg font-bold transition flex items-center">
-               <i class="fas fa-times mr-2"></i> ปฏิเสธ
-            </a>
-
-            <a id="btn_approve" href="#" 
-               class="px-6 py-2 bg-[#47B3C4] hover:bg-[#3a9faa] text-white rounded-lg font-bold shadow-lg transition transform hover:-translate-y-0.5 flex items-center">
-               <i class="fas fa-check mr-2"></i> อนุมัติการจอง
-            </a>
         </div>
     </div>
-</div>
 
-<script>
-    function openDetailModal(btn) {
-        // 1. ดึงข้อมูลจากปุ่ม
-        const d = btn.dataset;
+    <script>
+        function openDetailModal(btn) {
+            const d = btn.dataset;
 
-        // 2. ใส่ข้อมูลลงใน Modal
-        document.getElementById('modal_ref').innerText = '#' + d.ref;
-        document.getElementById('modal_name').innerText = d.name;
-        document.getElementById('modal_phone').innerText = d.phone;
-        document.getElementById('modal_email').innerText = d.email;
-        document.getElementById('modal_license').innerText = d.license;
+            // 1. ใส่ข้อมูลพื้นฐาน
+            document.getElementById('modal_ref').innerText = '#' + d.ref;
+            document.getElementById('modal_name').innerText = d.name;
+            document.getElementById('modal_phone').innerText = d.phone;
+            document.getElementById('modal_email').innerText = d.email;
+            document.getElementById('modal_license').innerText = d.license;
 
-        document.getElementById('modal_car').innerText = d.car;
-        document.getElementById('modal_plate').innerText = d.plate;
-        document.getElementById('modal_pickup').innerText = d.pickup;
-        document.getElementById('modal_dropoff').innerText = d.dropoff;
-        document.getElementById('modal_location').innerText = d.location;
+            // 2. จัดการลิงก์ Profile (ปุ่มดูรีวิว)
+            const profileLink = document.getElementById('modal_profile_link');
+            if (profileLink) {
+                if (d.profileUrl && d.profileUrl.trim() !== "") {
+                    profileLink.href = d.profileUrl;
+                    profileLink.classList.remove('hidden');
+                    profileLink.style.display = 'inline-flex';
+                } else {
+                    profileLink.classList.add('hidden');
+                    profileLink.style.display = 'none';
+                }
+            }
 
-        // 3. คำนวณเงิน (Javascript)
-        const total = parseFloat(d.total);
-        const fee = total * 0.15;
-        const net = total - fee;
+            // 3. ข้อมูลรถ และสถานที่ (Location แก้แล้วที่นี่)
+            document.getElementById('modal_car').innerText = d.car;
+            document.getElementById('modal_plate').innerText = d.plate;
+            document.getElementById('modal_pickup').innerText = d.pickup;
+            document.getElementById('modal_dropoff').innerText = d.dropoff;
+            
+            // ✅ แก้ไข: อัปเดต Location ให้ถูกต้อง
+            if (document.getElementById('modal_location')) {
+                document.getElementById('modal_location').innerText = d.location; 
+            }
 
-        // ฟอร์แมตตัวเลขให้มีลูกน้ำ และทศนิยม
-        const fmt = (num) => '฿' + num.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            // 4. คำนวณเงิน
+            const total = parseFloat(d.total);
+            const fee = total * 0.15;
+            const net = total - fee;
+            const fmt = (num) => '฿' + num.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
-        document.getElementById('modal_total').innerText = fmt(total);
-        document.getElementById('modal_fee').innerText = '-' + fmt(fee);
-        document.getElementById('modal_net').innerText = fmt(net);
+            document.getElementById('modal_total').innerText = fmt(total);
+            document.getElementById('modal_fee').innerText = '-' + fmt(fee);
+            document.getElementById('modal_net').innerText = fmt(net);
 
-        // 4. อัปเดตปุ่ม Action
-        document.getElementById('btn_approve').href = d.approveUrl;
-        document.getElementById('btn_reject').href = d.rejectUrl;
+            // 5. อัปเดตปุ่ม Action
+            document.getElementById('btn_approve').href = d.approveUrl;
+            document.getElementById('btn_reject').href = d.rejectUrl;
 
-        // 5. แสดง Modal
-        const modal = document.getElementById('detailModal');
-        const content = document.getElementById('detailModalContent');
-        modal.classList.remove('hidden');
-        setTimeout(() => {
-            content.classList.remove('scale-95');
-            content.classList.add('scale-100');
-        }, 10);
-    }
-
-    function closeDetailModal() {
-        const modal = document.getElementById('detailModal');
-        const content = document.getElementById('detailModalContent');
-        
-        content.classList.remove('scale-100');
-        content.classList.add('scale-95');
-        
-        setTimeout(() => {
-            modal.classList.add('hidden');
-        }, 200);
-    }
-
-    // ปิดเมื่อคลิกพื้นหลัง
-    window.onclick = function(event) {
-        const modal = document.getElementById('detailModal');
-        if (event.target == modal) {
-            closeDetailModal();
+            // 6. เปิด Modal
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('detailModalContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            }, 10);
         }
-    }
-</script>
-</body>
-</html>
+
+        function closeDetailModal() {
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('detailModalContent');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('detailModal');
+            if (event.target == modal) {
+                closeDetailModal();
+            }
+        }
+    </script>
+{% endblock %}

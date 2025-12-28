@@ -1,14 +1,7 @@
-{% load static %}
+{% extends 'basereview.html' %}{% load static %}
 {% load humanize %}
 
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <title>จัดการการจองทั้งหมด - WarpCar</title>
-    <link href="{% static 'dist/styles.css' %}?v=4" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
+{% block content %}
 <body class="bg-gray-100 font-sarabun">
 
     {% include 'car_rental/navbar_detail.html' %}
@@ -18,7 +11,7 @@
         
         <main class="flex-1 p-4 md:p-8">
             
-            <h1 class="text-3xl font-bold text-gray-800 mb-6">จัดการการจองทั้งหมด</h1>
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">จัดการรายการจองทั้งหมด</h1>
 
             <div class="bg-white rounded-lg shadow-lg overflow-hidden">
                 <div class="overflow-x-auto">
@@ -29,22 +22,7 @@
                                 <th class="p-4 border-b">ผู้เช่า</th>
                                 <th class="p-4 border-b">สถานะ</th> <th class="p-4 border-b">วันใช้งาน</th>
                                 <th class="p-4 border-b text-center">จัดการ</th>
-                                
-                                {% if booking.status == 'completed' %}
-                                    {% if not booking.renter_review %}
-                                        <button onclick="openReviewModal('{{ booking.id }}', '{{ booking.user.first_name }}', 'renter')" 
-                                        class="bg-blue-400 text-white px-3 py-1 rounded text-xs hover:bg-blue-500 ml-2">
-                                        <i class="fas fa-user-check"></i> รีวิวลูกค้า
-                                        </button>
-                                    {% else %}
-                                        <span class="text-xs text-green-600 block mt-1">
-                                            <i class="fas fa-check"></i> รีวิวลูกค้าแล้ว
-                                        </span>
-                                    {% endif %}
-
-                                {% endif %}
-
-                            </tr>
+                                </tr>
                         </thead>
                         <tbody class="text-gray-700">
                             {% for booking in bookings %}
@@ -64,7 +42,7 @@
                                     <button type="button" onclick="openDetailModal(this)" 
                                         class="group text-left focus:outline-none"
                                         
-                                        /* ส่ง Status ไปเช็คใน JS ด้วย */
+                                       
                                         data-status="{{ booking.status }}"
                                         
                                         data-id="{{ booking.id }}"
@@ -73,6 +51,7 @@
                                         data-phone="{% if booking.user %}{{ booking.user.profile.phone|default:'-' }}{% else %}{{ booking.guest.phone_number }}{% endif %}"
                                         data-email="{% if booking.user %}{{ booking.user.email }}{% else %}{{ booking.guest.email }}{% endif %}"
                                         data-license="{% if booking.user %}{{ booking.user.profile.license_number|default:'-' }}{% else %}{{ booking.guest.license_number }}{% endif %}"
+                                        data-profile-url="{% if booking.user %}{% url 'public_profile' booking.user.id %}{% endif %}"
                                         data-car="{{ booking.car.brand }} {{ booking.car.model }}"
                                         data-plate="{{ booking.car.license_plate }}"
                                         data-pickup="{{ booking.pickup_datetime|date:'d M Y, H:i' }}"
@@ -84,7 +63,10 @@
                                     >
                                         <div class="font-semibold text-gray-800 group-hover:text-[#47B3C4] transition flex items-center gap-1">
                                             {% if booking.user %}
-                                                {{ booking.user.first_name }} {{ booking.user.last_name }}
+                                                <a href="{% url 'public_profile' booking.user.id %}" target="_blank" onclick="event.stopPropagation()" class="hover:underline flex items-center gap-1 z-10 relative">
+                                                    {{ booking.user.first_name }} {{ booking.user.last_name }}
+                                                    <i class="fas fa-external-link-alt text-[10px] text-gray-400 ml-1"></i>
+                                                </a>
                                             {% else %}
                                                 {{ booking.guest.first_name }} {{ booking.guest.last_name }}
                                             {% endif %}
@@ -116,25 +98,41 @@
                                 </td>
 
                                 <td class="p-4 text-center">
+    
                                     {% if booking.status == 'confirmed' %}
                                         <a href="{% url 'inspection_page' booking.id %}" 
-                                            class="inline-block bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-xs shadow transition">
-                                                <i class="fas fa-camera mr-1"></i> ตรวจรถ/ส่งมอบ
-                                            </a>
+                                        class="inline-block bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-xs shadow transition">
+                                            <i class="fas fa-camera mr-1"></i> ตรวจรถ/ส่งมอบ
+                                        </a>
 
                                     {% elif booking.status == 'picked_up' %}
                                         <a href="{% url 'update_booking_status' booking.id 'completed' %}" 
-                                           class="inline-block bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-xs shadow transition"
-                                           onclick="return confirm('ยืนยันรับรถคืนและจบงาน?');">
+                                        class="inline-block bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-xs shadow transition"
+                                        onclick="return confirm('ยืนยันรับรถคืนและจบงาน?');">
                                             <i class="fas fa-flag-checkered mr-1"></i> จบงาน
                                         </a>
-                                        
+                                    
                                     {% elif booking.status == 'pending' %}
                                         <span class="text-xs text-yellow-600">กดที่ชื่อเพื่ออนุมัติ</span>
+
+                                    {% elif booking.status == 'completed' %}
                                         
+                                        {% if not booking.renter_review %}
+                                            <button onclick="openReviewModal('{{ booking.id }}', '{{ booking.user.first_name }} {{ booking.user.last_name }}', 'renter')" 
+                                                class="bg-blue-400 text-white px-3 py-1 rounded text-xs hover:bg-blue-500 ml-2 shadow transition">
+                                                <i class="fas fa-user-check mr-1"></i> รีวิวลูกค้า
+                                            </button>
+                                        {% else %}
+                                            <div class="text-xs text-green-600 font-bold mt-1">
+                                                <i class="fas fa-check-circle mr-1"></i> รีวิวลูกค้าแล้ว
+                                                <span class="text-gray-400 font-normal">({{ booking.renter_review.rating }}/5)</span>
+                                            </div>
+                                        {% endif %}
+
                                     {% else %}
                                         <span class="text-xs text-gray-400">-</span>
                                     {% endif %}
+
                                 </td>
 
                             </tr>
@@ -162,7 +160,13 @@
             <div class="p-6 overflow-y-auto max-h-[70vh]">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                        <h4 class="text-gray-800 font-bold mb-3 border-b pb-1"><i class="fas fa-user mr-2 text-gray-400"></i>ผู้เช่า</h4>
+                        <div class="flex justify-between items-center border-b pb-2 mb-3">
+                            <h4 class="text-gray-800 font-bold"><i class="fas fa-user mr-2 text-gray-400"></i>ผู้เช่า</h4>
+                            
+                            <a id="modal_profile_link" href="#" target="_blank" class="hidden text-xs bg-white border border-[#47B3C4] text-[#47B3C4] px-2 py-1 rounded hover:bg-[#47B3C4] hover:text-white transition shadow-sm">
+                                <i class="fas fa-star mr-1"></i> ดูรีวิวลูกค้า
+                            </a>
+                        </div>
                         <p class="text-sm">ชื่อ: <span id="modal_name" class="font-medium"></span></p>
                         <p class="text-sm mt-1">เบอร์: <span id="modal_phone" class="font-medium"></span></p>
                         <p class="text-sm mt-1">Email: <span id="modal_email" class="font-medium"></span></p>
@@ -222,6 +226,18 @@
             document.getElementById('modal_phone').innerText = d.phone;
             document.getElementById('modal_email').innerText = d.email;
             document.getElementById('modal_license').innerText = d.license;
+            const profileLink = document.getElementById('modal_profile_link');
+            if (profileLink) {
+                if (d.profileUrl && d.profileUrl.trim() !== "") {
+                    profileLink.href = d.profileUrl;
+                    profileLink.classList.remove('hidden');
+                    profileLink.style.display = 'inline-flex';
+                } else {
+                    profileLink.classList.add('hidden');
+                    profileLink.style.display = 'none';
+                }
+            }
+            // ลิงก์รีวิวลูกค้า
             document.getElementById('modal_car').innerText = d.car;
             document.getElementById('modal_plate').innerText = d.plate;
             document.getElementById('modal_pickup').innerText = d.pickup;
@@ -269,5 +285,4 @@
             if (event.target == document.getElementById('detailModal')) closeDetailModal();
         }
     </script>
-</body>
-</html>
+{% endblock %}

@@ -1,14 +1,15 @@
-@import "tailwindcss";
+/* --- ส่วนที่แก้: ใช้ Directives ของ v3 --- */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
+/* ถ้าต้องการกำหนดตัวแปรสี ใช้ :root แทน @theme ใน v3 */
+:root {
   --color-warp-blue: #47B3C4;
   --color-warp-blue-dark: #3a9faa;
 }
 
-/* นี่คือโค้ดที่จะเข้าไปจัดสไตล์ให้
-  {{ form.username }} และ {{ form.password }} 
-  ในไฟล์ login.html โดยอัตโนมัติ
-*/
+/* --- ส่วนเดิมของคุณ (ใช้งานได้ปกติ) --- */
 form input[type="text"],
 form input[type="email"],
 form input[type="password"] {

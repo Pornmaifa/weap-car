@@ -1,0 +1,119 @@
+{% extends 'basereview.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+{% include 'car_rental/navbar_detail.html' %}
+<div class="container mx-auto p-6 pt-24 max-w-4xl">
+    
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-8 flex flex-col md:flex-row items-center gap-8">
+        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md">
+            {% if profile_user.profile.image %}
+                <img src="{{ profile_user.profile.image.url }}" class="w-full h-full object-cover">
+            {% else %}
+                <div class="w-full h-full bg-gray-200 flex items-center justify-center text-4xl text-gray-400">
+                    <i class="fas fa-user"></i>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="text-center md:text-left flex-1">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">
+                {{ profile_user.first_name }} {{ profile_user.last_name }}
+            </h1>
+            <p class="text-gray-500 mb-4">สมาชิกเมื่อ: {{ profile_user.date_joined|date:"d M Y" }}</p>
+            
+            <div class="flex items-center justify-center md:justify-start gap-4">
+                <div class="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-lg font-bold flex items-center gap-2">
+                    <i class="fas fa-star text-yellow-500"></i>
+                    <span class="text-xl">{{ avg_rating }}</span>
+                    <span class="text-sm font-normal text-yellow-600">/ 5.0</span>
+                </div>
+                <div class="text-gray-500">
+                    จาก {{ review_count }} รีวิว
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 border-l-4 border-[#47B3C4] pl-4">
+        ประวัติรีวิวจากเจ้าของรถ
+    </h2>
+
+    <div class="space-y-4">
+        {% for review in reviews %}
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition">
+            <div class="flex justify-between items-start mb-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gray-100 overflow-hidden">
+                        {% if review.owner.profile.image %}
+                            <img src="{{ review.owner.profile.image.url }}" class="w-full h-full object-cover">
+                        {% else %}
+                            <i class="fas fa-user text-gray-300 m-2"></i>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-800">{{ review.owner.first_name }} (เจ้าของรถ)</p>
+                        <p class="text-xs text-gray-400">{{ review.created_at|date:"d M Y" }}</p>
+                    </div>
+                </div>
+                <div class="flex text-yellow-400 text-sm">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= review.rating %}
+                            <i class="fas fa-star"></i>
+                        {% else %}
+                            <i class="far fa-star text-gray-300"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="pl-14">
+                <p class="text-gray-600 italic">"{{ review.comment|default:'ไม่ได้ระบุความคิดเห็น' }}"</p>
+                
+                <div class="mt-2 text-xs text-gray-400 bg-gray-50 inline-block px-2 py-1 rounded mb-2">
+                    เช่ารถ: {{ review.booking.car.brand }} {{ review.booking.car.model }}
+                </div>
+
+                {% for reply in review.replies.all %}
+                    <div class="mt-2 bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                        <p class="text-xs font-bold text-blue-600 flex items-center gap-1">
+                            <i class="fas fa-user-check"></i> คำชี้แจงจากลูกค้า:
+                        </p>
+                        <p class="text-sm text-gray-700 mt-1">{{ reply.comment }}</p>
+                    </div>
+                {% endfor %}
+
+                {% if request.user == profile_user and review.replies.count == 0 %}
+                    <form action="{% url 'reply_to_owner_review' review.id %}" method="POST" class="mt-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        {% csrf_token %}
+                        <label class="text-xs font-bold text-gray-600 mb-1 block">ชี้แจง/ตอบกลับรีวิวนี้:</label>
+                        <div class="flex gap-2">
+                            <textarea name="comment" rows="2" required placeholder="อธิบายเพิ่มเติม..." 
+                                    class="w-full text-sm border border-gray-300 rounded p-2 focus:ring-1 focus:ring-blue-400 outline-none resize-none bg-white"></textarea>
+                        </div>
+                        <div class="text-right mt-2">
+                            <button type="submit" class="bg-blue-500 text-white text-xs px-4 py-2 rounded-lg font-bold hover:bg-blue-600 transition shadow-sm">
+                                <i class="fas fa-paper-plane mr-1"></i> ส่งคำชี้แจง
+                            </button>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+
+        {% empty %}
+            <div class="text-center py-12 bg-white rounded-lg border border-dashed text-gray-400">
+                <i class="fas fa-user-clock text-4xl mb-3"></i>
+                <p>ยังไม่มีรีวิวจากเจ้าของรถ</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="mt-8 text-center">
+        <button onclick="history.back()" class="text-gray-500 hover:text-gray-800 underline">
+            &larr; ย้อนกลับ
+        </button>
+    </div>
+</div>
+{% endblock %}

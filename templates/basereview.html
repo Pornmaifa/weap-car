@@ -7,17 +7,41 @@
     <title>{% block title %}Warp Car Rental{% endblock %}</title>
     
     <link href="{% static 'dist/styles.css' %}?v=4" rel="stylesheet">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <script src="//unpkg.com/alpinejs" defer></script> 
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
+
+    <style>
+        /* ซ่อนปุ่ม Radio */
+        .rating-group input { display: none; }
+        
+        /* สตาร์ทปกติเป็นสีเทา */
+        .rating-group label { 
+            color: #d1d5db; /* สีเทา */
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        /* 1. เมื่อกดเลือก (Checked): ให้ตัวมันและดาวที่ตามหลังเปลี่ยนเป็นสีเหลือง */
+        .rating-group input:checked ~ label,
+        .rating-group input:checked + label { 
+            color: #facc15; /* สีเหลือง */
+        }
+
+        /* 2. เมื่อเอาเมาส์ชี้ (Hover): */
+        /* รีเซ็ตสีทั้งหมดก่อน */
+        .rating-group:hover label { color: #d1d5db; }
+        /* แล้วเปลี่ยนสีเฉพาะตัวที่ชี้และตัวที่ตามหลัง */
+        .rating-group label:hover ~ label, 
+        .rating-group label:hover { 
+            color: #facc15 !important; 
+        }
+    </style>
 </head>
 <body class="bg-gray-100 font-sarabun text-gray-800">
-
 
     <main>
         {% block content %}
@@ -27,7 +51,7 @@
     <div id="genericReviewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center transition-opacity backdrop-blur-sm">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 overflow-hidden transform scale-95 transition-transform duration-200" id="reviewModalContent">
             
-            <div class="bg-gradient-to-r from-yellow-400 to-orange-500 px-6 py-4 flex justify-between items-center text-white">
+            <div class="bg-[#47B3C4] px-6 py-4 flex justify-between items-center text-white">
                 <h3 class="text-lg font-bold"><i class="fas fa-star mr-2"></i>ให้คะแนนความพึงพอใจ</h3>
                 <button onclick="closeReviewModal()" class="text-white hover:text-gray-100 text-2xl font-bold">&times;</button>
             </div>
@@ -39,21 +63,22 @@
                 <form id="genericReviewForm" method="POST">
                     {% csrf_token %}
                     
-                    <div class="flex flex-row-reverse justify-center gap-2 mb-6 group">
-                        <input type="radio" name="rating" id="st5" value="5" class="peer/5 hidden" required checked />
-                        <label for="st5" class="text-4xl text-gray-300 peer-checked/5:text-yellow-400 hover:text-yellow-400 cursor-pointer transition"><i class="fas fa-star"></i></label>
+                    <div class="rating-group flex flex-row-reverse justify-center gap-2 mb-6">
                         
-                        <input type="radio" name="rating" id="st4" value="4" class="peer/4 hidden" />
-                        <label for="st4" class="text-4xl text-gray-300 peer-checked/4:text-yellow-400 peer-hover/5:text-yellow-400 hover:text-yellow-400 cursor-pointer transition"><i class="fas fa-star"></i></label>
-                        
-                        <input type="radio" name="rating" id="st3" value="3" class="peer/3 hidden" />
-                        <label for="st3" class="text-4xl text-gray-300 peer-checked/3:text-yellow-400 peer-hover/4:text-yellow-400 peer-hover/5:text-yellow-400 hover:text-yellow-400 cursor-pointer transition"><i class="fas fa-star"></i></label>
-                        
-                        <input type="radio" name="rating" id="st2" value="2" class="peer/2 hidden" />
-                        <label for="st2" class="text-4xl text-gray-300 peer-checked/2:text-yellow-400 peer-hover/3:text-yellow-400 peer-hover/4:text-yellow-400 peer-hover/5:text-yellow-400 hover:text-yellow-400 cursor-pointer transition"><i class="fas fa-star"></i></label>
-                        
-                        <input type="radio" name="rating" id="st1" value="1" class="peer/1 hidden" />
-                        <label for="st1" class="text-4xl text-gray-300 peer-checked/1:text-yellow-400 peer-hover/2:text-yellow-400 peer-hover/3:text-yellow-400 peer-hover/4:text-yellow-400 peer-hover/5:text-yellow-400 hover:text-yellow-400 cursor-pointer transition"><i class="fas fa-star"></i></label>
+                        <input type="radio" name="rating" id="st5" value="5" required />
+                        <label for="st5" class="text-4xl"><i class="fas fa-star"></i></label>
+
+                        <input type="radio" name="rating" id="st4" value="4" />
+                        <label for="st4" class="text-4xl"><i class="fas fa-star"></i></label>
+
+                        <input type="radio" name="rating" id="st3" value="3" />
+                        <label for="st3" class="text-4xl"><i class="fas fa-star"></i></label>
+
+                        <input type="radio" name="rating" id="st2" value="2" />
+                        <label for="st2" class="text-4xl"><i class="fas fa-star"></i></label>
+
+                        <input type="radio" name="rating" id="st1" value="1" />
+                        <label for="st1" class="text-4xl"><i class="fas fa-star"></i></label>
                     </div>
     
                     <div class="mb-4">
@@ -61,7 +86,7 @@
                         <textarea name="comment" rows="3" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-yellow-400 outline-none transition" placeholder="บอกเล่าประสบการณ์ของคุณ..."></textarea>
                     </div>
     
-                    <button type="submit" class="w-full bg-yellow-400 text-white py-3 rounded-lg font-bold hover:bg-yellow-500 shadow-lg transition transform hover:scale-[1.02]">
+                    <button type="submit" class="w-full bg-[#47B3C4] text-white py-3 rounded-lg font-bold hover:bg-[#48a9b9] shadow-lg transition transform hover:scale-[1.02]">
                         ส่งรีวิว
                     </button>
                 </form>
@@ -76,11 +101,11 @@
             const modal = document.getElementById('genericReviewModal');
             const content = document.getElementById('reviewModalContent');
             
-            // กำหนด URL ปลายทาง (เช็คว่ารีวิวคน หรือ รีวิวรถ)
+            // กำหนด URL
             if (type === 'renter') {
-                form.action = "/review/renter/" + id + "/"; 
+                form.action = "/booking/review/renter/" + id + "/"; 
             } else {
-                form.action = "/review/car/" + id + "/";   
+                form.action = "/booking/review/car/" + id + "/"; 
             }
             
             modal.classList.remove('hidden');
@@ -93,14 +118,18 @@
         function closeReviewModal() {
             const modal = document.getElementById('genericReviewModal');
             const content = document.getElementById('reviewModalContent');
+            
             content.classList.remove('scale-100');
             content.classList.add('scale-95');
+            
+            // รีเซ็ตดาวเมื่อปิด
+            document.getElementById('genericReviewForm').reset();
+
             setTimeout(() => {
                 modal.classList.add('hidden');
             }, 200);
         }
         
-        // ปิดเมื่อคลิกพื้นหลัง
         window.onclick = function(event) {
             const modal = document.getElementById('genericReviewModal');
             if (event.target == modal) {

@@ -47,7 +47,11 @@
                             <div class="h-16 w-24 bg-gray-200 rounded-md flex items-center justify-center text-xs text-gray-500">ไม่มีรูป</div>
                         {% endif %}
 
-                        <span class="font-bold text-lg text-gray-800">{{ car.brand }} {{ car.model }}</span>
+                        <td>
+                            <a href="{% url 'car_detail' car.id %}" class="font-bold text-blue-600 hover:underline">
+                                {{ car.brand }} {{ car.model }}
+                            </a>
+                        </td>
                     </div>
 
                     <div class="col-span-3">

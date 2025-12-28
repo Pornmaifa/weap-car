@@ -5,7 +5,10 @@ from django.contrib import messages
 from .forms import UserRegisterForm, ProfileUpdateForm, UserUpdateForm  # เราจะต้องสร้างไฟล์ forms.py ด้วย
 from django.contrib.auth.decorators import login_required
 from car_rental.models import Profile
-
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.models import User
+from car_rental.models import RenterReview # อย่าลืม import
+from django.db.models import Avg
 
 def become_owner(request):
     # นี่คือหน้าเปล่าๆ สำหรับให้ลิงก์ทำงานได้ก่อน
@@ -76,3 +79,21 @@ def profile(request):
 # @login_required
 # def change_password(request):
 #    ... (Logic การเปลี่ยนรหัสผ่าน) ...
+
+def public_profile(request, user_id):
+    # ดึงข้อมูลผู้ใช้คนนั้น
+    profile_user = get_object_or_404(User, id=user_id)
+    
+    # ดึงรีวิวที่คนนี้ "ถูกกระทำ" (received_reviews)
+    reviews = RenterReview.objects.filter(renter=profile_user).order_by('-created_at')
+    
+    # หาคะแนนเฉลี่ย
+    avg_rating = reviews.aggregate(Avg('rating'))['rating__avg'] or 0
+    
+    context = {
+        'profile_user': profile_user,
+        'reviews': reviews,
+        'avg_rating': round(avg_rating, 1),
+        'review_count': reviews.count()
+    }
+    return render(request, 'users/public_profile.html', context)
