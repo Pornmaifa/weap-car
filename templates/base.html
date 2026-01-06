@@ -10,13 +10,13 @@
 
     <script src="//unpkg.com/alpinejs" defer></script> 
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 font-sarabun text-gray-800">
 
     <header class="absolute top-0 left-0 right-0 z-50 p-4">
         <nav class="container mx-auto flex justify-between items-center">
             
             <a href="{% url 'car_list' %}">
-                <img src="{% static 'images/logo.png' %}" alt="WARPCAR" class="h-25">
+                <img src="{% static 'images/logo.png' %}" alt="WARPCAR" class="h-16">
             </a>
 
             <div class="flex items-center space-x-4">
@@ -46,7 +46,7 @@
                             x-show="open"
                             x-transition
                             class="absolute right-0 mt-3
-                                w-[28rem]
+                                w-[16rem]
                                 bg-white rounded-2xl shadow-2xl
                                 py-3 text-gray-700
                                 ring-1 ring-black ring-opacity-5

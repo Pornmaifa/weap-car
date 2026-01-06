@@ -67,7 +67,7 @@
                                         {% endif %}
 
                                         {% if booking.status == 'approved' or booking.status == 'waiting_payment' %}
-                                            <a href="{% url 'payment' booking.id %}" 
+                                            <a href="{% url 'payment_page' booking.id %}" 
                                             class="inline-block bg-[#48a9b9] hover:bg-[#3ba0b0] text-white text-sm font-bold py-2 px-4 rounded-lg shadow transition">
                                                 <i class="fas fa-credit-card mr-1"></i> ชำระเงิน
                                             </a>

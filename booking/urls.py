@@ -7,7 +7,7 @@ urlpatterns = [
     path('checkout/<int:car_id>/', views.checkout, name='checkout'),
     
     # Flow การจ่ายเงิน
-    path('payment/<int:booking_id>/', views.payment, name='payment'), # แก้ชื่อ view ให้ตรงกับที่ย้ายมา
+    path('payment/<int:booking_id>/', views.payment_page, name='payment_page'), # แก้ชื่อ view ให้ตรงกับที่ย้ายมา
     path('payment/process/<int:booking_id>/', views.process_payment, name='process_payment'),
     
     # หลังจองเสร็จ / ประวัติ / จัดการ
@@ -33,4 +33,10 @@ urlpatterns = [
     
     # Path สำหรับเจ้าของรีวิว
     path('review/renter/<int:booking_id>/', views.submit_renter_review, name='submit_renter_review'),
+    
+    # Path สำหรับกดใช้โค้ด
+    path('apply-promotion/<int:car_id>/', views.apply_promotion, name='apply_promotion'),
+    
+    # Path สำหรับกดยกเลิกโค้ด (ถ้าต้องการ)
+    path('remove-promotion/<int:car_id>/', views.remove_promotion, name='remove_promotion'),
 ]

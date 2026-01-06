@@ -1,0 +1,293 @@
+{% extends 'admincar/admin_base.html' %}
+{% load humanize %}
+
+{% block title %}Dashboard | Admin{% endblock %}
+
+{% block content %}
+
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
+    <p class="text-gray-500 mt-1">ภาพรวมระบบเช่ารถ WarpCar</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+    <div onclick="showSection('bookings', this)" id="card-bookings" class="bg-white p-6 rounded-lg shadow cursor-pointer border-b-4 border-[#17a2b8] ring-2 ring-[#17a2b8] ring-opacity-40">
+        <p class="text-sm text-gray-500 font-semibold mb-1">ยอดจอง</p>
+        <p class="text-3xl font-bold text-gray-800">{{ total_bookings|intcomma }}</p>
+    </div>
+    <div onclick="showSection('users', this)" id="card-users" class="bg-white p-6 rounded-lg shadow cursor-pointer border-b-4 border-transparent hover:border-[#17a2b8]">
+        <p class="text-sm text-gray-500 font-semibold mb-1">ผู้ใช้งาน</p>
+        <p class="text-3xl font-bold text-gray-800">{{ total_users|intcomma }}</p>
+    </div>
+    <div onclick="showSection('cars', this)" id="card-cars" class="bg-white p-6 rounded-lg shadow cursor-pointer border-b-4 border-transparent hover:border-[#17a2b8]">
+        <p class="text-sm text-gray-500 font-semibold mb-1">รถทั้งหมด</p>
+        <p class="text-3xl font-bold text-gray-800">{{ total_cars|intcomma }}</p>
+    </div>
+    <div onclick="showSection('revenue', this)" id="card-revenue" class="bg-white p-6 rounded-lg shadow cursor-pointer border-b-4 border-transparent hover:border-[#17a2b8]">
+        <p class="text-sm text-gray-500 font-semibold mb-1">รายได้</p>
+        <p class="text-3xl font-bold text-green-600">{{ total_revenue|intcomma }} ฿</p>
+    </div>
+</div>
+
+<div class="bg-white rounded-lg shadow p-6 ">
+
+    <div id="section-bookings" class="tab-content">
+        <div class="flex justify-between items-center mb-4 border-l-4 border-[#17a2b8] pl-3">
+            <h2 class="text-xl font-bold">รายการจองล่าสุด</h2>
+            <button onclick="toggleChart('chart-container-bookings')" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1 rounded transition">
+                <i class="fas fa-chart-line mr-1"></i> ดูแนวโน้ม
+            </button>
+        </div>
+
+        <div id="chart-container-bookings" class="hidden mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <h3 class="text-sm font-bold text-gray-500 mb-2">สถิติการจอง 6 เดือนล่าสุด</h3>
+            <div class="h-64"><canvas id="bookingsChart"></canvas></div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-50 text-gray-600 uppercase">
+                    <tr>
+                        <th class="p-3 text-left">Ref</th>
+                        <th class="p-3 text-left">ข้อมูลลูกค้า</th> <th class="p-3 text-left">รถที่จอง</th>
+                        <th class="p-3 text-left">วันที่</th>
+                        <th class="p-3 text-left">สถานะ</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y">
+                    {% for b in all_bookings %}
+                    <tr class="hover:bg-gray-50 align-top">
+                        <td class="p-3 font-mono text-gray-500 pt-4">{{ b.booking_ref }}</td>
+                        
+                        <td class="p-3">
+                            <div class="flex flex-col">
+                                <span class="font-bold text-gray-800 text-base">
+                                    {% if b.user %}
+                                        {{ b.user.first_name }} {{ b.user.last_name }}
+                                    {% else %}
+                                        {{ b.guest.first_name }} {{ b.guest.last_name }}
+                                    {% endif %}
+                                </span>
+                                <span class="text-xs text-gray-500 mt-1">
+                                    {% if b.user %}
+                                        <i class="fas fa-user-check text-blue-500 mr-1"></i> สมาชิก ({{ b.user.username }})
+                                    {% else %}
+                                        <i class="fas fa-user-clock text-orange-500 mr-1"></i> ลูกค้าทั่วไป (Guest)
+                                    {% endif %}
+                                </span>
+                                
+                            </div>
+                        </td>
+
+                        <td class="p-3 pt-4">{{ b.car.brand }} {{ b.car.model }}<br><span class="text-xs text-gray-400">{{ b.car.license_plate }}</span></td>
+                        <td class="p-3 pt-4">{{ b.created_at|date:"d/m/Y" }}</td>
+                        <td class="p-3 pt-4">
+                            <span class="px-2 py-1 rounded text-xs font-bold
+                                {% if b.status == 'confirmed' %}bg-green-100 text-green-700
+                                {% elif b.status == 'pending' %}bg-yellow-100 text-yellow-700
+                                {% else %}bg-gray-100 text-gray-700{% endif %}">
+                                {{ b.get_status_display }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="p-6 text-center text-gray-400">ไม่มีข้อมูล</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="section-users" class="tab-content hidden">
+        <div class="flex justify-between items-center mb-4 border-l-4 border-[#17a2b8] pl-3">
+            <h2 class="text-xl font-bold">ผู้ใช้งานทั้งหมด</h2>
+            <button onclick="toggleChart('chart-container-users')" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1 rounded transition">
+                <i class="fas fa-chart-pie mr-1"></i> ดูสัดส่วน
+            </button>
+        </div>
+
+        <div id="chart-container-users" class="hidden mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200 flex justify-center">
+            <div class="w-64 h-64"><canvas id="usersChart"></canvas></div>
+        </div>
+
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600 uppercase">
+                <tr>
+                    <th class="p-3 text-left">Username</th>
+                    <th class="p-3 text-left">ชื่อ-นามสกุล</th>
+                    <th class="p-3 text-left">สถานะ</th>
+                    <th class="p-3 text-right">จัดการ</th> </tr>
+            </thead>
+            <tbody class="divide-y">
+                {% for u in all_users %}
+                <tr class="hover:bg-gray-50 group">
+                    <td class="p-3">
+                        <span class="font-bold text-[#17a2b8]">{{ u.username }}</span><br>
+                        <span class="text-xs text-gray-400">{{ u.email }}</span>
+                    </td>
+                    <td class="p-3">{{ u.first_name }} {{ u.last_name }}</td>
+                    <td class="p-3">
+                        {% if u.is_staff %}
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">Admin</span>
+                        {% else %}
+                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">User</span>
+                        {% endif %}
+                    </td>
+                    
+                    <td class="p-3 text-right">
+                        {% if not u.is_superuser and u != request.user %} <form action="{% url 'delete_user' u.id %}" method="POST" onsubmit="return confirm('⚠️ คำเตือน: คุณต้องการลบบัญชี {{ u.username }} ใช่หรือไม่? \nข้อมูลการจองที่เกี่ยวข้องอาจได้รับผลกระทบ');" class="inline-block">
+                                {% csrf_token %}
+                                <button type="submit" class="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-full transition" title="ลบบัญชี">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        {% else %}
+                            <span class="text-gray-300 text-xs">-</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div id="section-cars" class="tab-content hidden">
+        <div class="flex justify-between items-center mb-4 border-l-4 border-[#17a2b8] pl-3">
+            <h2 class="text-xl font-bold">รถทั้งหมดในระบบ</h2>
+            <button onclick="toggleChart('chart-container-cars')" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1 rounded transition">
+                <i class="fas fa-chart-bar mr-1"></i> ดูสถานะ
+            </button>
+        </div>
+        <div id="chart-container-cars" class="hidden mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+             <div class="h-64"><canvas id="carsChart"></canvas></div>
+        </div>
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600 uppercase">
+                <tr><th class="p-3 text-left">รถ</th><th class="p-3 text-left">ทะเบียน</th><th class="p-3 text-left">เจ้าของรถ</th><th class="p-3 text-left">ราคา/วัน</th><th class="p-3 text-left">สถานะ</th></tr>
+            </thead>
+            <tbody class="divide-y">
+                {% for c in all_cars %}
+                <tr class="hover:bg-gray-50">
+                    <td class="p-3 font-bold">{{ c.brand }} {{ c.model }}</td>
+                    <td class="p-3">{{ c.license_plate }}</td>
+                    <td class="p-3">
+                        {% if c.owner %}
+                            <div class="text-gray-800">{{ c.owner.first_name }} {{ c.owner.last_name }}</div>
+                            <div class="text-xs text-gray-400">@{{ c.owner.username }}</div>
+                        {% else %}
+                            <span class="text-gray-400 italic">ระบบ (WarpCar)</span>
+                        {% endif %}
+                    </td>
+                    <td class="p-3">{{ c.price_per_day|intcomma }}</td>
+                    <td class="p-3">
+                        <span class="text-xs px-2 py-1 rounded {% if c.status == 'available' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">{{ c.get_status_display }}</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div id="section-revenue" class="tab-content hidden">
+        <div class="flex justify-between items-center mb-4 border-l-4 border-[#17a2b8] pl-3">
+            <h2 class="text-xl font-bold">รายได้ที่สำเร็จแล้ว</h2>
+            <button onclick="toggleChart('chart-container-revenue')" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1 rounded transition">
+                <i class="fas fa-chart-area mr-1"></i> ดูรายได้
+            </button>
+        </div>
+        <div id="chart-container-revenue" class="hidden mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <h3 class="text-sm font-bold text-gray-500 mb-2">รายได้รายเดือน</h3>
+            <div class="h-64"><canvas id="revenueChart"></canvas></div>
+        </div>
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600 uppercase">
+                <tr><th class="p-3 text-left">วันที่</th><th class="p-3 text-left">Booking</th><th class="p-3 text-left">ยอดเงิน</th><th class="p-3 text-left">วิธีชำระ</th></tr>
+            </thead>
+            <tbody class="divide-y">
+                {% for p in all_payments %}
+                <tr class="hover:bg-gray-50">
+                    <td class="p-3">{{ p.payment_date|date:"d/m/Y H:i" }}</td>
+                    <td class="p-3 font-mono">{{ p.booking.booking_ref }}</td>
+                    <td class="p-3 font-bold text-green-600">+{{ p.amount|intcomma }}</td>
+                    <td class="p-3">{{ p.payment_method }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+{{ month_labels|json_script:"month_labels_data" }}
+{{ booking_data|json_script:"booking_data_data" }}
+{{ revenue_data|json_script:"revenue_data_data" }}
+{{ user_pie_data|json_script:"user_pie_data_data" }}
+{{ car_status_data|json_script:"car_status_data_data" }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+function toggleChart(containerId) {
+    const el = document.getElementById(containerId);
+    el.classList.toggle('hidden');
+}
+
+function showSection(section, card) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.getElementById('section-' + section).classList.remove('hidden');
+    document.querySelectorAll('[id^="card-"]').forEach(el => {
+        el.classList.remove('border-[#17a2b8]', 'ring-2', 'ring-[#17a2b8]', 'ring-opacity-40');
+        el.classList.add('border-transparent');
+    });
+    card.classList.remove('border-transparent');
+    card.classList.add('border-[#17a2b8]', 'ring-2', 'ring-[#17a2b8]', 'ring-opacity-40');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // รับค่าจาก Django View
+    const monthLabels = JSON.parse(document.getElementById('month_labels_data').textContent);
+    const bookingData = JSON.parse(document.getElementById('booking_data_data').textContent);
+    const revenueData = JSON.parse(document.getElementById('revenue_data_data').textContent);
+    const userData = JSON.parse(document.getElementById('user_pie_data_data').textContent);
+    const carData = JSON.parse(document.getElementById('car_status_data_data').textContent);
+
+    // Chart 1: Bookings
+    new Chart(document.getElementById('bookingsChart'), {
+        type: 'line',
+        data: {
+            labels: monthLabels,
+            datasets: [{ label: 'จำนวนการจอง', data: bookingData, borderColor: '#17a2b8', backgroundColor: 'rgba(23, 162, 184, 0.2)', fill: true, tension: 0.4 }]
+        }, options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    // Chart 2: Users
+    new Chart(document.getElementById('usersChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Admin', 'User ทั่วไป', 'Guest'],
+            datasets: [{ data: userData, backgroundColor: ['#9333ea', '#22c55e', '#9ca3af'] }]
+        }, options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    // Chart 3: Cars
+    new Chart(document.getElementById('carsChart'), {
+        type: 'bar',
+        data: {
+            labels: ['ว่าง', 'ไม่ว่าง', 'ซ่อม'],
+            datasets: [{ label: 'จำนวนรถ', data: carData, backgroundColor: ['#22c55e', '#ef4444', '#f59e0b'] }]
+        }, options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    // Chart 4: Revenue
+    new Chart(document.getElementById('revenueChart'), {
+        type: 'line',
+        data: {
+            labels: monthLabels,
+            datasets: [{ label: 'รายได้', data: revenueData, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.2)', fill: true, tension: 0.3 }]
+        }, options: { responsive: true, maintainAspectRatio: false }
+    });
+});
+</script>
+{% endblock %}

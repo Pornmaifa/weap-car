@@ -11,5 +11,5 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
     path('become-owner/', user_views.become_owner, name='become_owner'),
     path('profile/view/<int:user_id>/', user_views.public_profile, name='public_profile'),
-    
+    path('login-redirect/', user_views.custom_login_redirect, name='login_redirect'),
 ]

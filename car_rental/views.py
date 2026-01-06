@@ -24,7 +24,8 @@ from car_rental.models import Car, CarImage
 from django.db.models import Count, Sum, Q, DecimalField  # ✅ เพิ่ม DecimalField
 
 from django.db.models import Value
-# (เพิ่มฟังก์ชันนี้เข้าไปใน views.py)
+
+    
 @login_required
 def add_car_preview(request):
     draft = request.session.get('car_draft')
@@ -223,67 +224,82 @@ def car_list(request):
 def add_car(request):
     if request.method == "POST":
         data = request.POST
+        files = request.FILES  # ✅ รับไฟล์เอกสารจากตรงนี้
 
-        # 1) สร้าง Car จริงในฐานข้อมูล
-        car = Car.objects.create(
-            owner=request.user,
-            brand=data.get("brand", ""),
-            model=data.get("model", ""),
-            car_type=data.get("car_type", "SEDAN"),
-            service_type=data.get("service_type", "SELF_DRIVE"),
+        # 1) สร้าง Car Object
+        try:
+            car = Car.objects.create(
+                owner=request.user,
+                brand=data.get("brand", ""),
+                model=data.get("model", ""),
+                year=data.get("year"), # ✅ เพิ่มปีรถ
+                car_type=data.get("car_type", "SEDAN"),
+                service_type=data.get("service_type", "SELF_DRIVE"),
 
-            # Address
-            country=data.get("country") or "ประเทศไทย",
-            street_address=data.get("street_address") or "",
-            city=data.get("city") or "",
-            state=data.get("state") or "",
-            zip_code=data.get("zip_code") or "",
-            num_seats=data.get("num_seats", 5), # ✅ เพิ่ม
-            rules=data.get("rules", ""),        # ✅ เพิ่ม
-
-            # รายละเอียดรถ
-            description=data.get("description", ""),
-            license_plate=data.get("license_plate", ""),
-            num_doors=data.get("num_doors") or 4,
-            num_luggage=data.get("num_luggage") or 2,
-            fuel_system=data.get("fuel_system") or "GASOLINE",
-            has_child_seat=(data.get("has_child_seat") == "true"),
-            accessory_price=data.get("accessory_price") or 0,
-
-            min_rental_days=data.get("min_rental_days") or 1,
-            max_rental_days=data.get("max_rental_days") or 30,
-
-            price_per_day=data.get("price") or 0,
-            discount_option=data.get("discount_option") or "NONE",
-
-            status="PENDING",
-            is_published=True,
-        )
-
-        # 2) รูปภาพ (รับเป็น data URL base64 จากฟอร์ม)
-        images = request.POST.getlist("images_base64[]")
-
-        for index, img64 in enumerate(images):
-            if not img64:
-                continue
-            if ";base64," in img64:
-                try:
-                    format, imgstr = img64.split(';base64,') 
-                    ext = format.split('/')[-1]  # ดึงนามสกุลไฟล์ เช่น png, jpeg
+                # Address
+                country=data.get("country") or "ประเทศไทย",
+                street_address=data.get("street_address") or "",
+                city=data.get("city") or "",
+                state=data.get("state") or "", # หรือ province=data.get("state") เช็คชื่อ field ใน model ดีๆ
+                zip_code=data.get("zip_code") or "",
                 
-                    img_binary = base64.b64decode(imgstr)
-                    CarImage.objects.create(
-                        car=car,
-                        image=ContentFile(img_binary, name=f"car_{car.id}_{index}.{ext}")
-                    )
-                except Exception as e:
-                    print(f"Error saving image {index}: {e}")
+                # รายละเอียด
+                num_seats=data.get("num_seats") or 5,
+                num_doors=data.get("num_doors") or 4,
+                num_luggage=data.get("num_luggage") or 2,
+                fuel_system=data.get("fuel_system") or "GASOLINE",
+                transmission=data.get("transmission") or "AUTO", # ✅ เพิ่มเกียร์ (ถ้ามีใน model)
+                
+                description=data.get("description", ""),
+                rules=data.get("rules", ""),
+                license_plate=data.get("license_plate", ""),
+                
+                # Options & Price
+                has_child_seat=(data.get("has_child_seat") == "true"),
+                accessory_price=data.get("accessory_price") or 0,
+                min_rental_days=data.get("min_rental_days") or 1,
+                max_rental_days=data.get("max_rental_days") or 30,
+                price_per_day=data.get("price") or 0,
+                discount_option=data.get("discount_option") or "NONE",
+
+                # ✅ ส่วนสำคัญ: รับไฟล์เอกสาร (ไม่ใช่ Base64)
+                doc_registration=files.get("doc_registration"),
+                doc_insurance=files.get("doc_insurance"),
+
+                status="PENDING",
+                is_published=True,
+            )
+
+            # 2) รูปภาพรถ (Images) - อันนี้รับเป็น Base64 ถูกแล้ว
+            images = request.POST.getlist("images_base64[]")
+
+            for index, img64 in enumerate(images):
+                if not img64:
                     continue
+                if ";base64," in img64:
+                    try:
+                        format, imgstr = img64.split(';base64,') 
+                        ext = format.split('/')[-1] 
+                        
+                        img_binary = base64.b64decode(imgstr)
+                        CarImage.objects.create(
+                            car=car,
+                            image=ContentFile(img_binary, name=f"car_{car.id}_{index}.{ext}")
+                        )
+                    except Exception as e:
+                        print(f"Error saving image {index}: {e}")
+                        continue
+            
+            messages.success(request, "ลงประกาศรถของคุณสำเร็จแล้ว! กรุณารอการตรวจสอบจากแอดมิน")
+            return redirect("dashboard") # หรือหน้าอื่นที่ต้องการ
 
-        messages.success(request, "ลงประกาศรถของคุณสำเร็จแล้ว! กรุณารอการตรวจสอบจากแอดมิน")
-        return redirect("dashboard")
+        except Exception as e:
+            # กรณีบันทึกไม่สำเร็จ ให้แจ้งเตือนและ print error ดูใน terminal
+            print(f"Error creating car: {e}")
+            messages.error(request, "เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง")
+            return redirect("add_car") # กลับมาหน้าเดิม
 
-    # GET: แสดงหน้า multi-step form
+    # GET Request
     return render(request, "car_rental/add_car.html")
 
 

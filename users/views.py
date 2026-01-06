@@ -9,7 +9,17 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from car_rental.models import RenterReview # อย่าลืม import
 from django.db.models import Avg
+from django.shortcuts import redirect
 
+def custom_login_redirect(request):
+    # เช็คบัตร: ถ้าเป็น Staff หรือ Superuser
+    if request.user.is_staff or request.user.is_superuser:
+        # เชิญไปห้อง Admin Car
+        return redirect('admincar_dashboard')
+    else:
+        # ถ้าเป็นลูกค้าทั่วไป เชิญไปหน้าแรก
+        return redirect('car_list')
+    
 def become_owner(request):
     # นี่คือหน้าเปล่าๆ สำหรับให้ลิงก์ทำงานได้ก่อน
     return render(request, 'users/become_owner.html')

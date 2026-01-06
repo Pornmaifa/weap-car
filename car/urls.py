@@ -26,6 +26,8 @@ urlpatterns = [
     path('user/', include('users.urls')),       # ชี้ URL ที่ขึ้นต้นด้วย /user/ ไปที่แอป users
     path('', include('car_rental.urls')), # ชี้ URL หลักไปที่แอป car_rental
     path('booking/', include('booking.urls')),   
+    path('line_app/', include('line_app.urls')),
+    path('system-admin/', include('admincar.urls')),
 ]
 
 if settings.DEBUG:

@@ -26,9 +26,12 @@ SECRET_KEY = 'django-insecure-zpgsbaa@xx+&1cg-r)4u^d(_6)!r-nt54ih@r9uee+ohn9t64-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+# settings.py
 
-
+CSRF_TRUSTED_ORIGINS = [
+    'https://5956919bcc4c.ngrok-free.app',
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -42,6 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'car_rental',
     'booking',
+    'line_app',
+    'admincar',
     
 ]
 
@@ -112,9 +117,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'th-th'        # (ตัวเลือก) เปลี่ยนภาษาแอดมินเป็นไทย
+TIME_ZONE = 'Asia/Bangkok'
 
 USE_I18N = True
 
@@ -132,8 +136,14 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/user/login/' # บอก Django ว่าหน้า login ของเราอยู่ที่นี่
 LOGOUT_REDIRECT_URL = '/' 
-LOGIN_REDIRECT_URL = 'car_list'
+LOGIN_REDIRECT_URL = 'login_redirect'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# เอา Access Token 
+LINE_CHANNEL_ACCESS_TOKEN = 'G8mr54humwhQ4IJqoHMSCEFk2aofJ9PCySZHsAtbm9XpM9ERF+jI21o4tPClDODP5/EVBdwk9iL/FxLThfoR0LDBgTp7U6lHns2IP9tFW0VicEHGkR6+D2sDFEfDb+dB7NuwICrwxBXtcYokEoPg6AdB04t89/1O/w1cDnyilFU='
+
+# เอา Channel Secret 
+LINE_CHANNEL_SECRET = '23053c393af3575a8edaa7d86a394df0'

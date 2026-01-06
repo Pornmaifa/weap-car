@@ -4,7 +4,8 @@ from django.db import models
 from django.contrib.auth.models import User # ดึงโมเดล User ของ Django มาใช้
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
-
+from django.utils import timezone
+import datetime
 # ตาราง Profile ที่รวม Owner และ Member เข้าด้วยกัน
 class Profile(models.Model):
     ROLE_CHOICES = (
@@ -25,7 +26,8 @@ class Profile(models.Model):
     approved_date = models.DateField(null=True, blank=True)
     # เพิ่ม field ใหม่สำหรับรูปโปรไฟล์
     image = models.ImageField(default='default.png', upload_to='profile_pics')
-    
+    #  (เอาไว้เก็บ LINE ID ของลูกค้า)
+    line_id = models.CharField(max_length=100, blank=True, null=True)
     def __str__(self):
         return f'{self.user.username} Profile'
 
@@ -170,6 +172,7 @@ class Booking(models.Model):
     STATUS_CHOICES = [
         ('pending', 'รออนุมัติจากเจ้าของรถ'),    # 1. จองมา
         ('approved', 'อนุมัติแล้ว (รอชำระเงิน)'), # 2. เจ้าของกดรับ
+        ('waiting_verify', 'แจ้งโอนแล้ว (รอตรวจสอบ)'),
         ('confirmed', 'จองสำเร็จ'),             # 3. จ่ายเงินแล้ว
         ('rejected', 'ปฏิเสธ'),                 # เจ้าของไม่รับ
         ('cancelled', 'ยกเลิก'),                # ลูกค้ายกเลิกเอง
@@ -208,7 +211,9 @@ class Promotion(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     code = models.CharField(max_length=20, unique=True, null=True, blank=True)
-
+    usage_limit = models.IntegerField(default=100, verbose_name="จำกัดสิทธิ์") 
+    used_count = models.IntegerField(default=0, verbose_name="ใช้ไปแล้ว")
+    is_active = models.BooleanField(default=True, verbose_name="สถานะ")
     def __str__(self):
         return self.title
 
@@ -217,9 +222,11 @@ class Promotion(models.Model):
 # ตาราง Payment (เชื่อมกับ Booking แบบ One-to-One)
 class Payment(models.Model):
     STATUS_CHOICES = (
-        ('PENDING', 'Pending'),
-        ('COMPLETED', 'Completed'),
-        ('FAILED', 'Failed'),
+        ('PENDING', 'รอชำระเงิน'),
+        ('WAITING_VERIFY', 'รอตรวจสอบสลิป'),
+        ('COMPLETED', 'ชำระเงินสำเร็จ'),
+        ('EXPIRED', 'หมดเวลา'),
+        ('FAILED', 'ล้มเหลว'),
     )
     booking = models.OneToOneField(Booking, on_delete=models.CASCADE)
     payment_date = models.DateTimeField(auto_now_add=True)
@@ -227,7 +234,19 @@ class Payment(models.Model):
     payment_method = models.CharField(max_length=50)
     payment_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     transaction_ref = models.CharField(max_length=255, blank=True, null=True)
+    slip_image = models.ImageField(upload_to='payment_slips/', blank=True, null=True)
+    expire_at = models.DateTimeField(blank=True, null=True)
 
+    def save(self, *args, **kwargs):
+        # ตั้งเวลาหมดอายุ 15 นาที ถ้ายังไม่มี
+        if not self.id and not self.expire_at:
+            self.expire_at = timezone.now() + datetime.timedelta(minutes=15)
+        super().save(*args, **kwargs)
+
+    @property
+    def is_expired(self):
+        return timezone.now() > self.expire_at
+    
     def __str__(self):
         return f'Payment for Booking #{self.booking.id}'
 
@@ -328,3 +347,5 @@ class BookingInspection(models.Model):
 
     def __str__(self):
         return f"Inspection for {self.booking.booking_ref}"
+    
+

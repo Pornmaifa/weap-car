@@ -1,0 +1,171 @@
+{% extends 'admincar/admin_base.html' %}
+{% load humanize %}
+
+{% block title %}อนุมัติรายการแจ้งโอน | Admin{% endblock %}
+
+{% block content %}
+
+<div class="mb-8 flex justify-between items-center">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-800">อนุมัติรายการแจ้งโอน</h1>
+        <p class="text-gray-500 mt-1">ตรวจสอบสลิปการโอนเงินจากลูกค้า</p>
+    </div>
+    <div class="text-gray-500">
+        รอตรวจสอบ: <span class="font-bold text-red-500 text-xl">{{ pending_payments.count }}</span> รายการ
+    </div>
+</div>
+
+<div class="space-y-6">
+
+    {% for payment in pending_payments %}
+    <div class="bg-white rounded-lg shadow-sm p-6 flex flex-col md:flex-row items-center gap-6 animate-fade-in-up border border-gray-100 hover:shadow-md transition-all">
+        
+        <div class="w-full md:w-48 flex-shrink-0 text-center md:text-left border-b md:border-b-0 md:border-r border-gray-100 pb-4 md:pb-0 md:pr-4">
+            <div class="inline-block p-3 bg-blue-50 text-blue-500 rounded-full mb-2 shadow-sm">
+                <i class="fas fa-file-invoice-dollar text-3xl"></i>
+            </div>
+            <p class="text-sm text-gray-500 font-medium">วันที่แจ้งโอน</p>
+            <p class="text-lg font-bold text-gray-700">{{ payment.payment_date|date:"d M Y" }}</p>
+            <p class="text-xs text-gray-400">{{ payment.payment_date|date:"H:i" }} น.</p>
+        </div>
+
+        <div class="flex-1 w-full">
+            <div class="flex justify-between items-start mb-2">
+                <div>
+                    <h3 class="text-xl font-bold text-[#17a2b8] font-mono">
+                        {{ payment.booking.booking_ref }}
+                    </h3>
+                    <p class="text-gray-600 text-sm mt-1">
+                        ลูกค้า: 
+                        <span class="font-semibold text-gray-800">
+                            {% if payment.booking.user %}
+                                {{ payment.booking.user.first_name }} {{ payment.booking.user.last_name }}
+                            {% else %}
+                                {{ payment.booking.guest.first_name }} (Guest)
+                            {% endif %}
+                        </span>
+                    </p>
+                </div>
+                <div class="text-right">
+                    <p class="text-2xl font-bold text-green-600">+{{ payment.amount|intcomma }}</p>
+                    <p class="text-xs text-gray-400">บาท</p>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 flex flex-wrap gap-4 text-sm text-gray-600 mt-2">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-car text-gray-400"></i> 
+                    รถ: <strong>{{ payment.booking.car.brand }} {{ payment.booking.car.model }}</strong>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-money-bill-wave text-gray-400"></i> 
+                    วิธี: {{ payment.payment_method }}
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button onclick="openModal('modal-{{ payment.id }}')" class="text-blue-600 hover:text-blue-800 text-sm font-semibold underline decoration-dotted flex items-center">
+                    <i class="fas fa-receipt mr-1"></i> กดดูหลักฐานการโอน (สลิป)
+                </button>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-3 w-full md:w-auto justify-center pl-0 md:pl-4">
+            <a href="{% url 'confirm_payment_action' payment.id %}" 
+               class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-bold shadow-sm hover:shadow-md transition-all text-center whitespace-nowrap"
+               onclick="return confirm('ยืนยันยอดเงินถูกต้อง?');">
+               <i class="fas fa-check-circle mr-1"></i> ยืนยันยอด
+            </a>
+
+            <form action="{% url 'reject_payment_action' payment.id %}" method="post" onsubmit="return confirm('ต้องการปฏิเสธรายการนี้?');">
+                {% csrf_token %}
+                <button type="submit" 
+                        class="bg-white border border-red-200 text-red-500 hover:bg-red-50 px-6 py-2 rounded-lg font-bold shadow-sm hover:shadow-md transition-all w-full whitespace-nowrap">
+                    <i class="fas fa-times-circle mr-1"></i> ปฏิเสธ
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-{{ payment.id }}" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-80 transition-opacity backdrop-blur-sm" onclick="closeModal('modal-{{ payment.id }}')"></div>
+
+        <div class="flex min-h-full items-center justify-center p-4 text-center">
+            <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md">
+                
+                <div class="bg-[#17a2b8] px-4 py-3 flex justify-between items-center">
+                    <h3 class="text-white font-bold text-lg">
+                        <i class="fas fa-receipt mr-2"></i> หลักฐานการโอนเงิน
+                    </h3>
+                    <button type="button" class="text-white hover:text-gray-200 text-2xl leading-none" onclick="closeModal('modal-{{ payment.id }}')">&times;</button>
+                </div>
+
+                <div class="p-4 bg-gray-100 flex justify-center">
+                    {% if payment.slip_image %}
+                        <img src="{{ payment.slip_image.url }}" alt="Slip" class="max-w-full max-h-[70vh] rounded shadow-lg object-contain">
+                    {% else %}
+                        <div class="py-12 text-gray-400 flex flex-col items-center">
+                            <i class="fas fa-image-slash text-4xl mb-2"></i>
+                            <p>ไม่พบไฟล์รูปภาพ</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="bg-white px-4 py-3 flex justify-between items-center border-t">
+                    <div class="text-sm text-gray-500">
+                        ยอด: <span class="font-bold text-black">{{ payment.amount|intcomma }}</span> บ.
+                    </div>
+                    <div class="flex gap-2">
+                        <a href="{{ payment.slip_image.url }}" target="_blank" class="text-blue-600 hover:underline text-sm mr-4">
+                            เปิดรูปเต็ม
+                        </a>
+                        <button type="button" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-1 rounded" onclick="closeModal('modal-{{ payment.id }}')">
+                            ปิด
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="bg-white rounded-lg shadow-sm p-12 text-center">
+        <div class="text-gray-300 mb-4">
+            <i class="fas fa-clipboard-check text-6xl"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-600">ไม่มีรายการแจ้งโอน</h3>
+        <p class="text-gray-400">รายการโอนเงินทั้งหมดได้รับการตรวจสอบแล้ว</p>
+    </div>
+    {% endfor %}
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; 
+        }
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === "Escape") {
+            document.querySelectorAll('[id^="modal-"]').forEach(modal => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -21,6 +21,29 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from car_rental.models import Booking, Review, RenterReview # อย่าลืม import ให้ครบ
+from django.conf import settings
+from linebot import LineBotApi
+from linebot.models import TextSendMessage
+import qrcode
+import base64
+from io import BytesIO
+from car_rental.models import Payment # เพิ่ม Payment เข้ามาด้วย
+# ดึงสูตรคำนวณ QR จากโฟลเดอร์ booking ที่เราย้ายไป
+from booking.utils import generate_promptpay_payload
+from datetime import timedelta
+
+# ✅ สร้างฟังก์ชันช่วยส่ง LINE (จะได้เรียกใช้ง่ายๆ)
+def send_line_push(user_line_id, message_text):
+    if not user_line_id:
+        return
+    
+    line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
+    try:
+        line_bot_api.push_message(user_line_id, TextSendMessage(text=message_text))
+        print(f"ส่ง LINE สำเร็จ: {user_line_id}")
+    except Exception as e:
+        print(f"ส่ง LINE ผิดพลาด: {e}")
+
 
 def user_info(request, car_id):
     car = get_object_or_404(Car, id=car_id)
@@ -46,23 +69,48 @@ def user_info(request, car_id):
     # คำนวณวันและราคา
     rental_duration = dropoff_datetime - pickup_datetime
     rental_days = rental_duration.days + (1 if rental_duration.seconds > 0 else 0)
+    if rental_days < 1: rental_days = 1 # กันติดลบ
     original_total_price = float(car.price_per_day * rental_days)
+    
     session_context = request.session.get('booking_context', {})
 
     discount_amount = 0
-    applied_code = ''
+    applied_code = request.session.get('booking_promo_code')
 
     # เช็คว่าส่วนลดใน session เป็นของรถคันนี้จริงๆ (กันลูกค้าเปลี่ยนรถแต่ส่วนลดค้าง)
-    if session_context.get('car_id') == car.id:
-        if session_context.get('car_id') == car.id:
-            discount_amount = session_context.get('discount_amount', 0)
-            applied_code = session_context.get('applied_promo_code', '')
-    else:
-        # ถ้าเป็น Guest ให้เคลียร์ส่วนลดทิ้ง (กันลักไก่)
-        discount_amount = 0
-        applied_code = ''
+    # 3. 🟢 ส่วนที่แก้ไข: คำนวณส่วนลดใหม่ (Re-calculate Logic)
+    discount_amount = 0
+    applied_code = request.session.get('booking_promo_code') # ดึงโค้ดที่เพิ่งใส่มาจาก Session
+
+    if applied_code:
+        try:
+            # ดึง Object จริงจาก DB มาคำนวณ
+            promo = Promotion.objects.get(code=applied_code, is_active=True)
+            
+            # เช็คเงื่อนไขซ้ำ (เผื่อหมดอายุระหว่างที่กดเล่น)
+            now = timezone.now().date()
+            valid_date = promo.start_date <= now <= promo.end_date
+            valid_limit = promo.used_count < promo.usage_limit
+
+            if valid_date and valid_limit:
+                # ✅ คำนวณยอดลดตามเปอร์เซ็นต์ (discount_rate)
+                # สูตร: ราคารวม x (เปอร์เซ็นต์ / 100)
+                discount_amount = original_total_price * (float(promo.discount_rate) / 100)
+                
+                # กันส่วนลดเกินราคาจริง
+                if discount_amount > original_total_price:
+                    discount_amount = original_total_price
+            else:
+                # ถ้าโค้ดไม่ผ่านเกณฑ์แล้ว ให้ลบออกจาก session เงียบๆ
+                del request.session['booking_promo_code']
+                applied_code = None
+                
+        except Promotion.DoesNotExist:
+            del request.session['booking_promo_code']
+            applied_code = None
 
     final_total_price = original_total_price - discount_amount
+
     if final_total_price < 0: final_total_price = 0
 
     # 📌 จุดสำคัญ 1: บันทึก "บริบทการจอง" ลง Session เสมอ
@@ -187,42 +235,95 @@ def checkout(request, car_id):
     return render(request, 'booking/checkout.html', context)
 
 # 3. หน้าเลือกวิธีชำระเงิน (Payment - มัดจำ)
-def payment(request, booking_id):
+# booking/views.py
+
+def payment_page(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
     
-    
-    # 2. (สำคัญ) เช็คความปลอดภัย
-    # ต้องเป็นคนจองตัวจริง + สถานะต้องเป็น 'approved' (รอจ่าย) หรือ 'waiting_payment'
+    # 1. ความปลอดภัย: เช็คว่าเป็นเจ้าของ Booking จริงไหม
     if request.user.is_authenticated:
-        # กรณีสมาชิก: ต้องเป็นคนจองตัวจริงเท่านั้น
         if booking.user != request.user:
             return redirect('booking_history')
     else:
-        # กรณี Guest: ต้องเป็น Booking ที่ไม่มี User ผูกมัด (booking.user เป็น None)
-        # ถ้า Booking นี้มีเจ้าของ (User) แต่คนเข้าไม่ได้ล็อกอิน -> ห้ามเข้า
         if booking.user is not None:
              return redirect('car_list')
     
-    # เช็คสถานะ: ต้องเป็นสถานะที่พร้อมจ่ายเท่านั้น
+    # 2. เช็คสถานะ: ต้องเป็นสถานะที่พร้อมจ่ายเท่านั้น
     if booking.status not in ['approved', 'waiting_payment']:
         messages.warning(request, "รายการนี้ไม่ได้อยู่ในสถานะรอชำระเงิน")
         return redirect('car_list')
-    
-    total_price = booking.total_price
-    deposit_amount = booking.deposit_amount
-    # คำนวณยอดมัดจำ 30%
 
-    pay_on_arrival = total_price - deposit_amount
+    # 3. สร้างหรือดึง Payment เดิม
+    deposit_amount = booking.deposit_amount
+    
+    payment_obj, created = Payment.objects.get_or_create(
+        booking=booking,
+        defaults={
+            'amount': deposit_amount,
+            'payment_method': 'QR_PROMPTPAY'
+        }
+    )
+
+    # =========================================================
+    # 🔴 จุดที่แก้ 1: รีเซ็ตเวลาใหม่ทุกครั้งที่กดเข้ามาดู (ถ้ายังไม่จ่าย)
+    # =========================================================
+    if payment_obj.payment_status in ['PENDING', 'EXPIRED']:
+        payment_obj.payment_status = 'PENDING' # เผื่อมันเป็น EXPIRED อยู่ ก็ปลุกให้ตื่น
+        payment_obj.expire_at = timezone.now() + timedelta(minutes=15)
+        payment_obj.save()
+
+    # =========================================================
+    # 🔴 จุดที่แก้ 2: เพิ่มส่วนรับไฟล์สลิป (POST Request)
+    # =========================================================
+    if request.method == "POST" and request.FILES.get('slip_image'):
+        # เช็คอีกรอบกันเหนียว (จริงๆ ไม่ต้องก็ได้เพราะเรารีเซ็ตเวลาไปแล้วข้างบน)
+        if payment_obj.is_expired:
+             messages.error(request, "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง")
+             return redirect('payment_page', booking_id=booking.id)
+        
+        # บันทึกรูปและเปลี่ยนสถานะ
+        payment_obj.slip_image = request.FILES['slip_image']
+        payment_obj.payment_status = 'WAITING_VERIFY'
+        payment_obj.save()
+        
+        # อัปเดต Booking ว่ารอลูกค้าจ่ายเงินแล้วนะ (รอแอดมินตรวจ)
+        booking.status = 'waiting_verify' 
+        booking.save()
+        
+        messages.success(request, "แจ้งชำระเงินเรียบร้อย รอเจ้าของรถตรวจสอบ")
+        
+        # ส่งไปหน้าประวัติการจอง
+        return redirect('booking_history')
+
+
+    # 5. สร้าง QR Code PromptPay
+    PROMPTPAY_ID = "0803508433" 
+    img_str = ""
+    try:
+        payload = generate_promptpay_payload(PROMPTPAY_ID, float(payment_obj.amount))
+        img = qrcode.make(payload)
+        buffer = BytesIO()
+        img.save(buffer, format="PNG")
+        img_str = base64.b64encode(buffer.getvalue()).decode()
+    except Exception as e:
+        print(f"QR Error: {e}")
+
+    # 6. คำนวณเวลาที่เหลือ
+    time_remaining = (payment_obj.expire_at - timezone.now()).total_seconds()
+    
+    pay_on_arrival = booking.total_price - deposit_amount
 
     context = {
         'booking': booking,
-        'total_price': total_price,
+        'payment': payment_obj, 
+        'total_price': booking.total_price,
         'deposit_amount': deposit_amount,
         'pay_on_arrival': pay_on_arrival,
-        'commission_percent': 15
+        'qr_image': img_str,
+        'time_remaining': int(time_remaining) if time_remaining > 0 else 0,
     }
+    
     return render(request, 'booking/payment.html', context)
-
 
 def process_payment(request, booking_id): # 1. เปลี่ยนจาก car_id เป็น booking_id
     # 2. ดึงข้อมูลการจองที่มีอยู่แล้วใน Database (ไม่ต้องดึงจาก Session)
@@ -257,6 +358,17 @@ def process_payment(request, booking_id): # 1. เปลี่ยนจาก ca
         # booking.payment_method = payment_method 
         
         booking.save()
+
+        #  แจ้งเตือนลูกค้าว่าจองสำเร็จแล้ว
+        if booking.user and hasattr(booking.user, 'profile') and booking.user.profile.line_id:
+            msg = (
+                f"🎉 การชำระเงินสำเร็จ!\n"
+                f"ยืนยันการจอง: {booking.booking_ref}\n"
+                f"วันที่รับรถ: {booking.pickup_datetime.strftime('%d/%m/%Y %H:%M')}\n"
+                f"สถานที่: {booking.location}\n"
+                f"ขอบคุณที่ใช้บริการครับ"
+            )
+            send_line_push(booking.user.profile.line_id, msg)
 
         # 4. แจ้งเตือนและกลับไปหน้าประวัติ
         messages.success(request, f"ชำระเงินสำเร็จ! การจองรถ {booking.car.brand} ของคุณได้รับการยืนยันแล้ว")
@@ -397,30 +509,6 @@ def booking_history(request):
 
 
 #(ตอนเจ้าของกดอนุมัติ)
-@login_required
-def update_booking_status(request, booking_id, action):
-    # ดึงข้อมูลการจองมา
-    booking = get_object_or_404(Booking, id=booking_id)
-    
-    # Security Check: เช็คว่าคนกด เป็นเจ้าของรถคันนี้จริงๆ มั้ย (ห้ามคนอื่นมั่วมากด)
-    if booking.car.owner != request.user:
-        return redirect('dashboard') # หรือแสดง error page
-
-    # อัปเดตสถานะ
-    if action == 'approve':
-        booking.status = 'approved'  # <--- แก้ตรงนี้ (จาก waiting_payment เป็น approved)
-        booking.save()
-        messages.success(request, f"อนุมัติการจองแล้ว ผู้เช่าสามารถชำระเงินได้ทันที")
-        
-    elif action == 'reject':
-        booking.status = 'rejected'
-        booking.save()
-        messages.warning(request, "ปฏิเสธคำขอจองแล้ว")        # ปฏิเสธ
-    
-    booking.save()
-    
-    # กลับไปหน้า Dashboard
-    return redirect('dashboard')   
 
 @login_required
 def booking_requests(request):
@@ -454,11 +542,23 @@ def update_booking_status(request, booking_id, action):
     if action == 'approve':
         booking.status = 'approved'
         messages.success(request, f"อนุมัติการจอง {booking.booking_ref} แล้ว (รอลูกค้าชำระเงิน)")
+        #แจ้งเตือนลูกค้าทาง LINE
+        if booking.user and hasattr(booking.user, 'profile') and booking.user.profile.line_id:
+            msg = (
+                f"✅ การจอง {booking.booking_ref} ได้รับการอนุมัติแล้ว!\n"
+                f"รถ: {booking.car.brand} {booking.car.model}\n"
+                f"กรุณาชำระเงินมัดจำเพื่อยืนยันการจองครับ"
+            )
+            send_line_push(booking.user.profile.line_id, msg)
 
     # 2. กรณีเจ้าของกด "ปฏิเสธ"
     elif action == 'reject':
         booking.status = 'rejected'
         messages.warning(request, f"ปฏิเสธการจอง {booking.booking_ref} แล้ว")
+        #  แจ้งเตือนลูกค้าว่าถูกปฏิเสธ
+        if booking.user and hasattr(booking.user, 'profile') and booking.user.profile.line_id:
+            msg = f"❌ ขออภัย การจอง {booking.booking_ref} ไม่ได้รับการอนุมัติจากเจ้าของรถครับ"
+            send_line_push(booking.user.profile.line_id, msg)
 
     # 3. กรณีเจ้าของกด "รับรถแล้ว" (ปกติจะผ่านหน้า Inspection มา แต่เผื่อไว้)
     elif action == 'picked_up':
@@ -576,4 +676,53 @@ def submit_renter_review(request, booking_id):
         
     return redirect('public_profile', user_id=booking.user.id)
 
+# 1. ฟังก์ชันรับค่าจากปุ่ม "ใช้โค้ด"
+def apply_promotion(request, car_id):
+    # เตรียม URL เดิมไว้รอ (เผื่อใช้ redirect กลับ)
+    previous_url = request.META.get('HTTP_REFERER')
 
+    if request.method == 'POST':
+        code = request.POST.get('promo_code', '').strip().upper()
+        
+        try:
+            # ค้นหาโปรโมชั่น
+            promo = Promotion.objects.get(code=code, is_active=True)
+            
+            # ตรวจสอบวันหมดอายุ
+            now = timezone.now().date() # วันนี้
+            
+            # Debug: ลอง print ดูใน Terminal ว่าค่าเป็นอะไร
+            print(f"----- DEBUG COUPON -----")
+            print(f"Coupon Code: {code}")
+            print(f"Server Date (Now): {now}") 
+            print(f"Start Date: {promo.start_date}")
+            print(f"End Date: {promo.end_date}")
+            print(f"------------------------")
+
+            if not (promo.start_date <= now <= promo.end_date):
+                messages.error(request, "คูปองนี้หมดอายุแล้ว หรือยังไม่ถึงกำหนดใช้")
+                # ❌ อย่าใช้ redirect('user_info'...)
+                return redirect(previous_url) 
+
+            # ตรวจสอบสิทธิ์การใช้งาน
+            elif promo.used_count >= promo.usage_limit:
+                messages.error(request, "คูปองนี้สิทธิ์เต็มแล้ว")
+                return redirect(previous_url)
+
+            else:
+                # ✅ ถ้าผ่านหมด: บันทึกโค้ดลง Session
+                request.session['booking_promo_code'] = promo.code
+                messages.success(request, f"ใช้โค้ด {promo.code} สำเร็จ!")
+            
+        except Promotion.DoesNotExist:
+            messages.error(request, "ไม่พบรหัสโปรโมชั่นนี้")
+            
+    # ✅ ใช้ตัวแปรนี้ เพื่อส่งกลับไปหน้าเดิมพร้อมวันที่ครบถ้วน
+    return redirect(previous_url)
+
+# 2. ฟังก์ชันยกเลิกโค้ด (เผื่อลูกค้าอยากเปลี่ยน)
+def remove_promotion(request, car_id):
+    if 'booking_promo_code' in request.session:
+        del request.session['booking_promo_code']
+        messages.info(request, "ยกเลิกการใช้คูปองแล้ว")
+    return redirect('user_info', car_id=car_id)

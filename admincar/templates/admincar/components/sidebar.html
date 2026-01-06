@@ -1,0 +1,70 @@
+<div class="bg-[#47B3C4] w-64 min-h-screen flex flex-col text-white shadow-xl font-sarabun fixed left-0 top-0 h-full z-50 transition-all duration-300">
+    
+    <div class="h-16 flex items-center justify-center border-b border-[#138496] bg-[#48a9b9]  shadow-sm">
+        <h1 class="text-2xl font-bold tracking-wider hover:scale-105 transition-transform cursor-default">
+            AdminCar
+        </h1>
+    </div>
+
+    <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-transparent">
+        
+        <p class="px-4 text-xs font-semibold text-blue-100 uppercase tracking-wider mb-2 mt-2 opacity-80">ภาพรวม</p>
+        
+        <a href="{% url 'admincar_dashboard' %}" 
+           class="flex items-center px-4 py-3 rounded-lg transition-all duration-200 group 
+           {% if request.resolver_match.url_name == 'admincar_dashboard' %}
+               bg-[#117a8b] shadow-inner 
+           {% else %}
+               hover:bg-[#138496] hover:translate-x-1
+           {% endif %}">
+            <span class="font-medium">Dashboard (รายงาน)</span>
+        </a>
+
+        <p class="px-4 text-xs font-semibold text-blue-100 uppercase tracking-wider mb-2 mt-6 opacity-80">การตรวจสอบ</p>
+
+        <a href="{% url 'approve_payments_list' %}" 
+           class="flex items-center px-4 py-3 rounded-lg transition-all duration-200 group 
+           {% if request.resolver_match.url_name == 'approve_payments_list' %}
+               bg-[#117a8b] shadow-inner 
+           {% else %}
+               hover:bg-[#138496] hover:translate-x-1
+           {% endif %}">
+            <span class="font-medium">อนุมัติรายการแจ้งโอน</span>
+        </a>
+
+        <a href="{% url 'approve_cars_list' %}" 
+        class="flex items-center px-4 py-3 rounded-lg transition-all duration-200 group 
+           {% if request.resolver_match.url_name == 'approve_cars_list' %}
+               bg-[#117a8b] shadow-inner 
+           {% else %}
+               hover:bg-[#138496] hover:translate-x-1
+           {% endif %}">
+            <span class="font-medium">อนุมัติรถเช่าใหม่</span>
+            
+        </a>
+
+        <a href="{% url 'promotion_list' %}" 
+        class="flex items-center px-4 py-3 rounded-lg transition-all duration-200 group 
+           {% if request.resolver_match.url_name == 'promotion_list' %}
+               bg-[#117a8b] shadow-inner 
+           {% else %}
+               hover:bg-[#138496] hover:translate-x-1
+           {% endif %}">
+            <span class="font-medium">จัดการโปรโมชั่น</span>
+            
+        </a>
+
+    </nav>
+
+    <div class="p-4 bg-[#47B3C4]">
+        
+        <form action="{% url 'logout' %}" method="post" class="w-full">
+            {% csrf_token %}
+            <button type="submit" class="w-full text-left flex items-center px-4 py-2 text-sm hover:text-white hover:bg-[#138496] rounded transition-colors mt-2">
+                <i class="fas fa-sign-out-alt mr-3"></i> 
+                ออกจากระบบ
+            </button>
+        </form>
+
+    </div>
+</div>

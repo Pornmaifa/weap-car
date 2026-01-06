@@ -1,0 +1,64 @@
+{% extends 'admincar/admin_base.html' %}
+{% load humanize %}
+
+{% block title %}จัดการโปรโมชั่น | Admin{% endblock %}
+
+{% block content %}
+<div class="mb-8"><h1 class="text-3xl font-bold text-gray-800">จัดการโปรโมชั่น (Coupon)</h1></div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+        <h3 class="text-lg font-bold mb-4">เพิ่มโค้ดส่วนลด</h3>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="space-y-4">
+                <input type="text" name="code" placeholder="รหัสโค้ด (เช่น SALE50)" required class="w-full p-2 border rounded uppercase">
+                <input type="text" name="title" placeholder="ชื่อโปรโมชั่น" required class="w-full p-2 border rounded">
+                <textarea name="description" placeholder="รายละเอียด" class="w-full p-2 border rounded"></textarea>
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-xs">ส่วนลด (%)</label>
+                        <input type="number" name="discount_rate" placeholder="10" required class="w-full p-2 border rounded">
+                    </div>
+                    <div>
+                        <label class="text-xs">จำกัดสิทธิ์ (คน)</label>
+                        <input type="number" name="usage_limit" value="100" required class="w-full p-2 border rounded">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="text-xs">เริ่ม</label><input type="date" name="start_date" required class="w-full p-2 border rounded"></div>
+                    <div><label class="text-xs">สิ้นสุด</label><input type="date" name="end_date" required class="w-full p-2 border rounded"></div>
+                </div>
+
+                <button type="submit" class="w-full bg-[#17a2b8] text-white py-2 rounded font-bold hover:bg-[#138496]">สร้างคูปอง</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+        <table class="w-full text-sm text-left">
+            <thead class="bg-gray-100 text-gray-600 uppercase">
+                <tr><th class="p-4">Code</th><th class="p-4">ชื่อ</th><th class="p-4">ลด</th><th class="p-4">ใช้แล้ว</th><th class="p-4 text-right">ลบ</th></tr>
+            </thead>
+            <tbody class="divide-y">
+                {% for p in promotions %}
+                <tr class="hover:bg-gray-50">
+                    <td class="p-4 font-bold text-[#17a2b8]">{{ p.code }}</td>
+                    <td class="p-4">{{ p.title }}<br><span class="text-xs text-gray-400">{{ p.start_date }} - {{ p.end_date }}</span></td>
+                    <td class="p-4 font-bold text-green-600">{{ p.discount_rate }}%</td>
+                    <td class="p-4 text-center">{{ p.used_count }}/{{ p.usage_limit }}</td>
+                    <td class="p-4 text-right">
+                        <form action="{% url 'delete_promotion' p.id %}" method="POST" onsubmit="return confirm('ลบจริงไหม?');">
+                            {% csrf_token %}
+                            <button class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
