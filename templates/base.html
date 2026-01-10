@@ -39,7 +39,14 @@
                             @click="open = !open"
                             @click.away="open = false"
                             class="fas fa-bars text-gray-500 text-sm ml-1">
-                            <img src="{{ user.profile.image.url }}"alt="Profile"class="h-10 w-10 rounded-full object-cover ring-2 ring-gray-200 shadow-md">
+                            {% if user.profile.image %}
+                                <img src="{{ user.profile.image.url }}" alt="Profile" 
+                                    class="h-10 w-10 rounded-full object-cover ring-2 ring-gray-200 shadow-md">
+                            {% else %}
+                                <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center ring-2 ring-gray-200 shadow-md">
+                                    <i class="fas fa-user text-gray-500 text-lg"></i>
+                                </div>
+                            {% endif %}
                         </button>
 
                         <div

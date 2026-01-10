@@ -228,23 +228,17 @@
                         <p class="font-bold text-green-500">฿0</p>
                     </div>
 
-                    <div class="flex justify-between border-t border-gray-200 pt-4">
-                        <p class="text-xl font-bold text-gray-800">ราคารวมสุทธิ</p>
+                    <div class="flex justify-between items-center border-t border-gray-200 pt-4">
+                        <p class="text-lg font-bold text-gray-800">ราคารวมสุทธิ</p>
                         <p class="text-3xl font-extrabold text-red-600">฿{{ total_price|intcomma }}</p>
                     </div>
 
-                    {% if user == car.owner %}
-                        <button disabled 
-                                class="block w-full mt-6 bg-gray-300 text-gray-500 font-bold py-4 rounded-lg shadow-none cursor-not-allowed text-center text-xl">
-                            🚫 นี่คือรถของคุณ (ไม่สามารถจองได้)
-                        </button>
-                    {% else %}
-                    <a href="{% url 'user_info' car.id %}?pickup_datetime={{ pickup_datetime|date:'c' }}&dropoff_datetime={{ dropoff_datetime|date:'c' }}&location={{ location|urlencode }}"
-                       class="block w-full mt-6 bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-lg shadow-lg transition text-center text-2xl">
-                        จอง {{ total_price|intcomma }} THB
-                    </a>
-                    {% endif %}
-                </div>
+                    <div class="mt-6">
+                        <a href="{% url 'user_info' car.id %}?pickup_datetime={{ pickup_datetime|date:'c' }}&dropoff_datetime={{ dropoff_datetime|date:'c' }}&location={{ location|urlencode }}"
+                        class="block w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-lg shadow-lg transition transform hover:-translate-y-1 text-center text-xl">
+                            จอง {{ total_price|intcomma }} THB
+                        </a>
+                    </div>
 
             </div>
         </div>

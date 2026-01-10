@@ -30,7 +30,7 @@ ALLOWED_HOSTS = ['*']
 # settings.py
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://5956919bcc4c.ngrok-free.app',
+    'https://b1a6770a08d7.ngrok-free.app',
 ]
 # Application definition
 

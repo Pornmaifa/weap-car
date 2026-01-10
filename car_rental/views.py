@@ -4,7 +4,7 @@ from datetime import timezone
 import uuid
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Car , CarImage, RenterReply, RenterReview, Review,  ReviewReply
+from .models import Booking, Car , CarImage, Promotion, RenterReply, RenterReview, Review,  ReviewReply
 from django.contrib import messages
 import os
 from django.core.files.storage import default_storage
@@ -193,10 +193,21 @@ def cancel_add_car(request):
     
 # View สำหรับแสดงรถทั้งหมด
 def car_list(request):
+    # 1. รับค่าเดิม
     province = request.GET.get('province', '').strip()
     service_type = request.GET.get('service_type', 'SELF_DRIVE')
     car_type = request.GET.get('car_type', '')
 
+    # 2. ✅ (เพิ่ม) รับค่าวันที่จากช่องค้นหา
+    pickup_str = request.GET.get('pickup_date')   # ชื่อ name ใน input html ต้องตรงกัน
+    dropoff_str = request.GET.get('dropoff_date') 
+
+    start_date = request.GET.get('start_date', '').strip()
+    start_time = request.GET.get('start_time', '').strip()
+    end_date = request.GET.get('end_date', '').strip()
+    end_time = request.GET.get('end_time', '').strip()
+
+    # 3. Query รถพื้นฐาน (เอารถที่สถานะว่าง และเปิดเผยแพร่)
     cars = Car.objects.filter(status='AVAILABLE', is_published=True)
 
     if service_type:
@@ -208,11 +219,56 @@ def car_list(request):
     if car_type:
         cars = cars.filter(car_type=car_type)
 
+    # 4. ✅ (เพิ่ม) Logic ตัดรถที่มีคนจองแล้วออก
+    if pickup_str and dropoff_str and start_date and start_time and end_date and end_time:
+        try:
+            # แปลง String เป็น Datetime (ปรับ format ตาม input ของคุณ)
+            # ถ้า input เป็น date (2024-01-01) ให้ระวังเรื่องเวลา
+            pickup_date = datetime.fromisoformat(pickup_str)
+            dropoff_date = datetime.fromisoformat(dropoff_str)
+
+            # ค้นหา Booking ที่ "ชน" กับช่วงเวลาที่ลูกค้าเลือก
+            # สถานะเหล่านี้ถือว่ารถไม่ว่าง
+            busy_statuses = ['approved', 'waiting_verify', 'confirmed', 'picked_up']
+            
+            # Logic: (Booking เริ่ม < วันคืนที่เลือก) AND (Booking จบ > วันรับที่เลือก)
+            unavailable_car_ids = Booking.objects.filter(
+                status__in=busy_statuses,
+                pickup_datetime__lt=dropoff_date,
+                dropoff_datetime__gt=pickup_date
+            ).values_list('car_id', flat=True)
+
+            # สั่ง Exclude (เอาออก) จากรายการรถ
+            cars = cars.exclude(id__in=unavailable_car_ids)
+
+        except ValueError:
+            pass # กรณีลูกค้ากรอกวันที่ผิด format ก็ปล่อยผ่านไป (โชว์รถทั้งหมด)
+
+    now = timezone.now().date()
+    active_promotions = Promotion.objects.filter(
+        is_active=True,
+        start_date__lte=now,  # เริ่มแล้ว
+        end_date__gte=now     # ยังไม่หมดอายุ
+    ).order_by('-id')
+
+    # หาตัวล่าสุดมา 1 อัน (สำหรับแสดงใน Banner ถ้ามี)
+    latest_promo = active_promotions.first() if active_promotions.exists() else None
     context = {
         'cars': cars,
         'province': province,
         'search_service': service_type,
         'search_category': car_type,
+        # ส่งค่ากลับไปเติมในฟอร์ม (เพื่อให้ User เห็นค่าเดิมที่เลือกไว้)
+        'start_date': start_date,
+        'start_time': start_time,
+        'end_date': end_date,
+        'end_time': end_time,
+        # ส่งค่าวันที่กลับไปเติมในฟอร์มด้วย ลูกค้าจะได้ไม่ต้องกรอกใหม่
+        'pickup_date': pickup_str,
+        'dropoff_date': dropoff_str,
+        # ✅ ส่งตัวแปรโปรโมชั่นไปให้หน้าเว็บ
+        'promotions': active_promotions, 
+        'latest_promo': latest_promo,
     }
     return render(request, 'car_rental/car_list.html', context)
 
@@ -265,7 +321,8 @@ def add_car(request):
                 # ✅ ส่วนสำคัญ: รับไฟล์เอกสาร (ไม่ใช่ Base64)
                 doc_registration=files.get("doc_registration"),
                 doc_insurance=files.get("doc_insurance"),
-
+                doc_id_card=files.get("doc_id_card"),           # บัตรประชาชน
+                
                 status="PENDING",
                 is_published=True,
             )
@@ -311,13 +368,16 @@ def search_cars(request):
     dropoff = request.GET.get('dropoff', '').strip()
     province = request.GET.get('province', '').strip()
 
-    start_date = request.GET.get('start_date', '')
-    start_time = request.GET.get('start_time', '')
-    end_date = request.GET.get('end_date', '')
-    end_time = request.GET.get('end_time', '')
+    s_date = request.GET.get('start_date', '').strip()
+    s_time = request.GET.get('start_time', '').strip()
+    e_date = request.GET.get('end_date', '').strip()
+    e_time = request.GET.get('end_time', '').strip()
 
     service_type = request.GET.get('service_type', 'SELF_DRIVE')
     car_type_filter = request.GET.get('car_type', '')
+
+    # 2. เริ่มต้น Query (เอารถที่สถานะว่าง และเปิดเผยแพร่)
+    cars = Car.objects.filter(status='AVAILABLE', is_published=True)
 
     if not pickup:
             province = ""
@@ -339,7 +399,28 @@ def search_cars(request):
     # 5. กรองตามประเภทรถ
     if car_type_filter:
         cars = cars.filter(car_type=car_type_filter)
+    if s_date and s_time and e_date and e_time:
+        try:
+            # แปลง format จาก d/m/Y H:i (เช่น 25/12/2025 10:00)
+            pickup_dt = datetime.strptime(f"{s_date} {s_time}", "%d/%m/%Y %H:%M")
+            dropoff_dt = datetime.strptime(f"{e_date} {e_time}", "%d/%m/%Y %H:%M")
 
+            # สถานะที่ถือว่ารถไม่ว่าง
+            busy_statuses = ['approved', 'waiting_verify', 'confirmed', 'picked_up']
+            
+            # ค้นหารถที่ชนช่วงเวลานี้
+            unavailable_ids = Booking.objects.filter(
+                status__in=busy_statuses,
+                pickup_datetime__lt=dropoff_dt,  # จองใหม่เริ่มก่อนจองเก่าจบ
+                dropoff_datetime__gt=pickup_dt   # จองใหม่จบหลังจองเก่าเริ่ม
+            ).values_list('car_id', flat=True)
+
+            # เอา ID รถที่ไม่ว่างออก
+            cars = cars.exclude(id__in=unavailable_ids)
+
+        except ValueError as e:
+            print(f"Date Error: {e}")
+            pass
     # 6. ส่งค่ากลับไปหน้า search_cars.html เพื่อใส่ค่ากลับลง input
     context = {
         'cars': cars,
@@ -348,11 +429,10 @@ def search_cars(request):
         'search_location': pickup,
         'pickup': pickup,
         'dropoff': dropoff,
-        'start_date': start_date,
-        'start_time': start_time,
-        'end_date': end_date,
-        'end_time': end_time,
-
+        'start_date': s_date,
+        'start_time': s_time,
+        'end_date': e_date,
+        'end_time': e_time,
         'search_service': service_type,
         'search_category': car_type_filter,
     }

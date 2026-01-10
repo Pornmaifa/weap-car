@@ -31,12 +31,17 @@ def register(request):
         form = UserRegisterForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save() # บันทึก User ก่อน
-            
+
+            phone = request.POST.get('phone')
+            license_no = request.POST.get('license_no')
+            image = form.cleaned_data.get('image')
             # สร้าง Profile และบันทึกรูปภาพ
-            profile = Profile.objects.create(user=user) # สร้าง profile ที่ผูกกับ user
-            if request.FILES.get('image'):
-                profile.image = request.FILES['image']
-                profile.save()
+            profile, created = Profile.objects.get_or_create(user=user)
+            profile.phone = phone
+            profile.license_no = license_no
+            if image:
+                profile.image = image
+            profile.save()
 
             username = form.cleaned_data.get('username')
             messages.success(request, f'สร้างบัญชีสำหรับ {username} สำเร็จแล้ว!')

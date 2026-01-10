@@ -10,17 +10,30 @@ from car_rental.models import Profile # (ต้อง import Profile Model ข�
 class UserRegisterForm(UserCreationForm):
     first_name = forms.CharField(label='ชื่อจริง', max_length=100)
     last_name = forms.CharField(label='นามสกุล', max_length=100)
-    email = forms.EmailField(label='อีเมล')
+    email = forms.EmailField(label='อีเมล (ใช้เป็นชื่อผู้ใช้สำหรับเข้าสู่ระบบ)', required=True)
+    phone = forms.CharField(label='เบอร์โทรศัพท์', max_length=20, required=True)
+    license_no = forms.CharField(label='เลขที่ใบขับขี่', max_length=50, required=True)
     image = forms.ImageField(label='รูปโปรไฟล์ (ไม่บังคับ)', required=False)
     
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ['first_name', 'last_name', 'email', 'username']
+        fields = ['image','email', 'first_name', 'last_name', 'phone', 'license_no' ]
 
-    def __init__(self, *args, **kwargs):
-        super(UserRegisterForm, self).__init__(*args, **kwargs)
-        self.fields['username'].label = "เบอร์โทรศัพท์ (ใช้เป็น Username)"
+    # ฟังก์ชันเช็คอีเมลซ้ำ (เพราะเราจะใช้แทน Username มันต้องห้ามซ้ำ)
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("อีเมลนี้มีผู้ใช้งานแล้ว กรุณาใช้อีเมลอื่น")
+        return email
 
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+        user.username = self.cleaned_data['email']  # <--- จุดสำคัญอยู่ตรงนี้!
+        
+        if commit:
+            user.save()
+        return user
 
 # --- 2. ฟอร์มสำหรับอัปเดต "User" (หน้าโปรไฟล์) ---
 # (นี่คือ u_form ที่ View ของเราต้องการ)
@@ -46,10 +59,12 @@ class ProfileUpdateForm(forms.ModelForm):
         model = Profile
         # (แก้ไข!) เอา 'phone_number' (ที่ไม่มีอยู่จริง) ออก
         # เหลือแค่ 'image'
-        fields = ['image'] 
+        fields = ['image', 'phone', 'license_no']
         
         labels = {
-            'image': 'เปลี่ยนรูปโปรไฟล์',
+            'image': 'รูปโปรไฟล์',
+            'phone': 'เบอร์โทรศัพท์',
+            'license_no': 'เลขที่ใบขับขี่',
         }
         widgets = {
             'image': forms.FileInput, 

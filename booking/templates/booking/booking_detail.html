@@ -1,4 +1,3 @@
-
 {% load humanize %}
 
 {% block content %}
@@ -15,7 +14,11 @@
                 <p class="mt-1 max-w-2xl text-sm text-gray-500">
                     สถานะ: 
                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                        {% if booking.status == 'confirmed' %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                        {% if booking.status == 'confirmed' or booking.status == 'completed' %}bg-green-100 text-green-800
+                        {% elif booking.status == 'approved' %}bg-blue-100 text-blue-800
+                        {% elif booking.status == 'waiting_verify' %}bg-orange-100 text-orange-800
+                        {% elif booking.status == 'rejected' or booking.status == 'cancelled' %}bg-red-100 text-red-800
+                        {% else %}bg-yellow-100 text-yellow-800{% endif %}">
                         {{ booking.get_status_display }}
                     </span>
                 </p>
@@ -53,12 +56,82 @@
                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt class="text-sm font-medium text-gray-500">การชำระเงิน</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                        <p>จ่ายมัดจำแล้ว: <span class="text-green-600 font-bold">{{ booking.deposit_amount|intcomma }} THB</span></p>
-                        <p>ค้างจ่ายหน้างาน: <span class="text-red-600 font-bold">{{ booking.total_price|add:"-"|add:booking.deposit_amount|intcomma }} THB</span></p>
+                        <p>ค่าเช่ารวม: <strong>{{ booking.total_price|intcomma }} THB</strong></p>
+                        <p class="text-green-600">มัดจำที่ต้องจ่าย (15%): <strong>{{ booking.deposit_amount|intcomma }} THB</strong></p>
+                        <p class="text-red-600 text-xs mt-1">*ส่วนที่เหลือจ่ายวันรับรถ
+                            <strong>
+                                {% if booking.remaining_balance %} 
+                                    {{ booking.remaining_balance|intcomma }} 
+                                {% else %}
+                                    - คำนวณหน้างาน -
+                                {% endif %}
+                                THB
+                            </strong>
+                        </p>
                     </dd>
                 </div>
             </dl>
         </div>
+
+        <div class="px-4 py-4 bg-gray-100 border-t border-gray-200 flex justify-end items-center gap-3">
+            
+            {% if booking.status == 'pending' %}
+                <span class="text-yellow-600 text-sm flex items-center">
+                    <i class="fas fa-hourglass-half mr-2"></i> รอเจ้าของรถอนุมัติ...
+                </span>
+
+            {% elif booking.status == 'approved' %}
+                <span class="text-sm text-gray-500 mr-2">เจ้าของรถอนุมัติแล้ว กรุณาชำระเงิน</span>
+                <a href="{% url 'payment_page' booking.id %}" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
+                    <i class="fas fa-file-invoice-dollar mr-2"></i> แจ้งชำระเงิน
+                </a>
+
+            {% elif booking.status == 'waiting_verify' %}
+                <span class="text-orange-600 text-sm flex items-center">
+                    <i class="fas fa-search-dollar mr-2"></i> แจ้งโอนแล้ว รอเจ้าของรถตรวจสอบสลิป
+                </span>
+
+            {% elif booking.status == 'confirmed' %}
+                <span class="text-green-600 text-sm flex items-center font-bold">
+                    <i class="fas fa-check-circle mr-2"></i> จองสำเร็จ! เตรียมเอกสารรับรถได้เลย
+                </span>
+
+            {% elif booking.status == 'rejected' %}
+                <span class="text-red-600 text-sm flex items-center font-bold">
+                    <i class="fas fa-times-circle mr-2"></i> การจองถูกปฏิเสธ
+                </span>
+            {% endif %}
+        </div>
+
+        {% if booking.status == 'picked_up' or booking.status == 'completed' %}
+        <div class="border-t border-gray-200 px-4 py-5 bg-white">
+            <h4 class="text-sm font-medium text-gray-500 mb-3">หลักฐานสภาพรถ (ส่งโดยเจ้าของรถ)</h4>
+            
+            {% if booking.inspections.all %}
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    {% for item in booking.inspections.all %}
+                        {% if item.image %}
+                        <div class="relative group">
+                            <a href="{{ item.image.url }}" target="_blank">
+                                <img src="{{ item.image.url }}" class="w-full h-24 object-cover rounded-md border shadow-sm hover:opacity-75 transition">
+                            </a>
+                            <p class="text-[10px] text-center mt-1 truncate">{{ item.description|default:"-" }}</p>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-sm text-gray-400 italic">- ไม่มีรูปภาพ -</p>
+            {% endif %}
+
+            {% if booking.status == 'completed' %}
+                <div class="mt-4 pt-4 border-t border-gray-100 text-center text-green-600 font-bold">
+                    <i class="fas fa-flag-checkered mr-2"></i> จบการเช่าเรียบร้อยแล้ว
+                </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
     </div>
 </div>
 {% endblock %}

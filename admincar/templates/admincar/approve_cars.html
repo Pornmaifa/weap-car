@@ -169,7 +169,7 @@
                         <h4 class="text-md font-bold text-gray-800 uppercase mb-4 flex items-center">
                             <i class="fas fa-file-contract text-yellow-500 mr-2"></i> เอกสารยืนยันรถ (Admin Only)
                         </h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="border rounded p-3 flex items-center justify-between">
                                 <div class="flex items-center">
                                     <i class="fas fa-book text-blue-500 text-xl mr-3"></i>
@@ -211,6 +211,26 @@
                                     <span class="text-xs text-red-400">ไม่ได้แนบ</span>
                                 {% endif %}
                             </div>
+
+                            <div class="border rounded p-3 flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <i class="fas fa-id-card text-purple-500 text-xl mr-3"></i>
+                                    <div>
+                                        <p class="text-sm font-semibold">บัตรประชาชน</p>
+                                        <p class="text-xs text-gray-400">
+                                            {% if car.doc_id_card %}
+                                                {{ car.doc_id_card.name|truncatechars:15 }}
+                                            {% else %} No File {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                                {% if car.doc_id_card %}
+                                    <a href="{{ car.doc_id_card.url }}" target="_blank" class="bg-purple-50 text-purple-600 text-xs px-3 py-1 rounded hover:bg-purple-100">เปิดดู</a>
+                                {% else %}
+                                    <span class="text-xs text-red-400">ขาด</span>
+                                {% endif %}
+                            </div>
+                            
                         </div>
                     </div>
 

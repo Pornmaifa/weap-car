@@ -25,7 +25,7 @@ class Profile(models.Model):
     approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_owners')
     approved_date = models.DateField(null=True, blank=True)
     # เพิ่ม field ใหม่สำหรับรูปโปรไฟล์
-    image = models.ImageField(default='default.png', upload_to='profile_pics')
+    image = models.ImageField(upload_to='profile_pics', null=True, blank=True)
     #  (เอาไว้เก็บ LINE ID ของลูกค้า)
     line_id = models.CharField(max_length=100, blank=True, null=True)
     def __str__(self):
@@ -112,7 +112,7 @@ class Car(models.Model):
     fuel_system = models.CharField(max_length=20, choices=FUEL_CHOICES, default='GASOLINE')
     num_doors = models.PositiveIntegerField(default=4, verbose_name="จำนวนประตู")
     num_luggage = models.PositiveIntegerField(default=2, verbose_name="จำนวนสัมภาระ")
-    
+    doc_id_card = models.ImageField(upload_to='car_documents/', null=True, blank=True, verbose_name="สำเนาบัตรประชาชน")
     # Accessories
     has_child_seat = models.BooleanField(default=False)
     accessory_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="ราคาอุปกรณ์เสริมต่อวัน")
@@ -141,14 +141,14 @@ class Car(models.Model):
     # ==========================
     # 7. DOCUMENTS (เอกสารยืนยัน - Admin Only)
     # ==========================
-    # ✅ เพิ่มใหม่: เอกสารสำคัญ (ใช้ FileField เผื่อเป็น PDF)
+    #  เอกสารสำคัญ (ใช้ FileField เผื่อเป็น PDF)
     doc_registration = models.FileField(upload_to='car_docs/registration/', null=True, blank=True, verbose_name="เล่มทะเบียน")
     doc_insurance = models.FileField(upload_to='car_docs/insurance/', null=True, blank=True, verbose_name="กรมธรรม์")
     
-    num_seats = models.PositiveIntegerField(default=5) # ✅ เพิ่ม
-    rules = models.TextField(blank=True, null=True)   # ✅ เพิ่ม
+    num_seats = models.PositiveIntegerField(default=5) 
+    rules = models.TextField(blank=True, null=True)   
 
-    #แอดมิน
+   
    
     def __str__(self):
         return f'{self.brand} {self.model} ({self.license_plate})'
@@ -199,7 +199,10 @@ class Booking(models.Model):
     
     def __str__(self):
         return f"Booking {self.booking_ref} - {self.car.brand}"
-
+    
+    @property
+    def remaining_balance(self):
+        return self.total_price - self.deposit_amount
 
 
 # ตาราง Promotion

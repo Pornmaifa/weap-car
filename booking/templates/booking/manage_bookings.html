@@ -50,7 +50,7 @@
                                         data-name="{% if booking.user %}{{ booking.user.first_name }} {{ booking.user.last_name }}{% else %}{{ booking.guest.first_name }} {{ booking.guest.last_name }}{% endif %}"
                                         data-phone="{% if booking.user %}{{ booking.user.profile.phone|default:'-' }}{% else %}{{ booking.guest.phone_number }}{% endif %}"
                                         data-email="{% if booking.user %}{{ booking.user.email }}{% else %}{{ booking.guest.email }}{% endif %}"
-                                        data-license="{% if booking.user %}{{ booking.user.profile.license_number|default:'-' }}{% else %}{{ booking.guest.license_number }}{% endif %}"
+                                        data-license="{% if booking.user %}{{ booking.user.profile.license_no|default:'-' }}{% else %}{{ booking.guest.license_number }}{% endif %}"
                                         data-profile-url="{% if booking.user %}{% url 'public_profile' booking.user.id %}{% endif %}"
                                         data-car="{{ booking.car.brand }} {{ booking.car.model }}"
                                         data-plate="{{ booking.car.license_plate }}"

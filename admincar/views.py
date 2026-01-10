@@ -6,7 +6,9 @@ from django.db.models import Sum
 from car_rental.models import GuestCustomer, Payment, Booking, Car, User, Promotion
 from django.utils import timezone
 from datetime import timedelta
-
+from django.conf import settings
+from linebot import LineBotApi
+from linebot.models import TextSendMessage
 
 @staff_member_required(login_url='login')
 def dashboard(request):
@@ -176,6 +178,7 @@ def approve_payments_list(request):
     return render(request, 'admincar/approve_payments.html', context)
 
 # 2. ฟังก์ชันกด "ยืนยันยอดเงิน" (อนุมัติ)
+line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 @staff_member_required(login_url='login')
 def confirm_payment_action(request, payment_id):
     payment = get_object_or_404(Payment, id=payment_id)
@@ -189,6 +192,36 @@ def confirm_payment_action(request, payment_id):
     booking.status = 'confirmed'
     booking.save()
     
+    # ---------------------------------------------------------
+    # ✅ 2. ส่วนแจ้งเตือน LINE (แก้ตรงนี้!)
+    # ---------------------------------------------------------
+    try:
+        # ตรวจสอบว่า Booking นี้เป็นของ "สมาชิก" (User) หรือไม่
+        if booking.user:
+            # ดึง Profile ของลูกค้าคนนี้ออกมา
+            user_profile = booking.user.profile
+            
+            # ตรวจสอบว่าลูกค้าคนนี้ "เคยเชื่อม LINE" ไว้หรือยัง (มี line_id ใน DB ไหม)
+            if user_profile.line_id:
+                
+                # ข้อความที่จะส่ง
+                msg_text = f"✅ อนุมัติการจองเรียบร้อย!\n\nBooking Ref: {booking.booking_ref}\nรถ: {booking.car.brand} {booking.car.model}\nวันที่รับรถ: {booking.pickup_date.strftime('%d/%m/%Y')}\n\nขอบคุณที่ใช้บริการครับ 🙏"
+                
+                # 🚀 คำสั่งสำคัญ: ส่งหา user_profile.line_id (คนเดียวเท่านั้น)
+                line_bot_api.push_message(
+                    user_profile.line_id, 
+                    TextSendMessage(text=msg_text)
+                )
+                print(f"Sent LINE to {booking.user.username}")
+            else:
+                print("User has not linked LINE account yet.")
+        else:
+            print("This is a Guest booking (No LINE notification).")
+            
+    except Exception as e:
+        print(f"LINE Notify Error: {e}")
+    # ---------------------------------------------------------
+
     messages.success(request, f"ยืนยันยอดเงิน Booking {booking.booking_ref} เรียบร้อยแล้ว")
     return redirect('approve_payments_list')
 
