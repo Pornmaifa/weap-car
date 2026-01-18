@@ -61,7 +61,7 @@
             </section>
 
             <section id="step-2" class="step min-h-[70vh] flex flex-col justify-center">
-                <h1 class="text-4xl font-bold text-center mb-12">เลือกประเภทบริการ</h1>
+                <h1 class="text-4xl font-bold text-center mb-12">ประเภทบริการ</h1>
                 <div class="flex flex-col items-center gap-8">
                     <div>
                         <input type="radio" name="service_type" value="SELF_DRIVE" id="service_self" class="hidden peer">
@@ -70,13 +70,7 @@
                             <span class="font-semibold text-2xl">ขับเอง</span>
                         </label>
                     </div>
-                    <div>
-                        <input type="radio" name="service_type" value="WITH_DRIVER" id="service_driver" class="hidden peer">
-                        <label for="service_driver" class="flex flex-col items-center justify-center w-64 h-48 p-6 bg-gray-100 text-gray-800 rounded-xl shadow-lg cursor-pointer transition-all hover:shadow-xl peer-checked:bg-warp-blue peer-checked:text-white peer-checked:ring-4 peer-checked:ring-offset-2 peer-checked:ring-warp-blue-dark">
-                            <img src="{% static 'car_rental/images/with_driver.png' %}" class="w-24 h-24 object-contain mb-2">
-                            <span class="font-semibold text-2xl">พร้อมคนขับ</span>
-                        </label>
-                    </div>
+                    
                 </div>
                 <div class="fixed bottom-8 left-8">
                     <button type="button" onclick="goPrevStep(2)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">ถอยกลับ</button>

@@ -6,7 +6,8 @@
 
     <div class="absolute inset-0">
         <img src="{% static 'images/background.jpeg' %}" alt="Background Car" class="w-full h-160 object-cover">
-        <div class="absolute inset-0 bg-black opacity-30"></div>
+        
+
     </div>
 
 
@@ -18,11 +19,6 @@
                 <button type="button" id="btn-self"
                     class="py-2 px-6 text-blue-600 border-b-2 border-blue-600 font-semibold text-lg">
                     เช่ารถขับเอง
-                </button>
-
-                <button type="button" id="btn-driver"
-                    class="py-2 px-6 text-gray-500 hover:text-gray-700 font-semibold text-lg">
-                    เช่ารถพร้อมคนขับ
                 </button>
 
                 <input type="hidden" name="service_type_form" id="service_type_form" value="SELF_DRIVE">
@@ -102,57 +98,59 @@
     </div>
 </div>
 
+
+{% endblock %} 
+{% block scripts %}
 {% if promotions %}
-<div class="bg-gradient-to-r from-blue-600 to-indigo-700 py-6 mb-8 shadow-lg">
-    <div class="container mx-auto px-4">
-        
-        <div class="flex items-center justify-between mb-4 text-white">
-            <h2 class="text-2xl font-bold flex items-center">
-                <i class="fas fa-tags mr-2 text-yellow-100"></i> โค้ดส่วนลดพิเศษ
-            </h2>
-            <span class="text-sm bg-white/20 px-3 py-1 rounded-full">
-                มี {{ promotions.count }} โปรโมชั่น
-            </span>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {% for promo in promotions %}
-            <div class="bg-white rounded-lg p-4 shadow-md flex justify-between items-center relative overflow-hidden group hover:shadow-xl transition transform hover:-translate-y-1">
+        <div class="bg-gradient-to-r bg-warp-blue to-indigo-700 py-6 mb-8 shadow-lg">
+            <div class="container mx-auto px-4">
                 
-                <div class="absolute -right-6 -top-6 w-20 h-20  rounded-full opacity-50 group-hover:bg-yellow-200 transition"></div>
-
-                <div>
-                    <h3 class="font-bold text-gray-800 text-lg">{{ promo.title }}</h3>
-                    <p class="text-sm text-gray-500 mb-2">{{ promo.description|truncatechars:40 }}</p>
-                    <div class="flex items-center gap-2">
-                        <span class="text-red-500 font-bold text-xl">ลด {{ latest_promo.discount_rate|floatformat:0 }}%</span>
-                        <span class="text-xs text-gray-400 border border-gray-200 px-2 py-0.5 rounded">
-                            หมดเขต {{ promo.end_date|date:"d M y" }}
-                        </span>
-                    </div>
+                <div class="flex items-center justify-between mb-4 text-white">
+                    <h2 class="text-2xl font-bold flex items-center">
+                        <i class="fas fa-tags mr-2 text-yellow-100"></i> โค้ดส่วนลดพิเศษ
+                    </h2>
+                    <span class="text-sm bg-white/20 px-3 py-1 rounded-full">
+                        มี {{ promotions.count }} โปรโมชั่น
+                    </span>
                 </div>
 
-                <div class="text-center z-10">
-                    <div class="bg-gray-100 border-2 border-dashed border-gray-400 rounded p-2 mb-1 cursor-pointer hover:bg-blue-50 hover:border-blue-400 transition"
-                         onclick="copyCode('{{ promo.code }}')">
-                        <span class="font-mono font-bold text-gray-700 text-lg tracking-wider block">
-                            {{ promo.code }}
-                        </span>
-                        <span class="text-[10px] text-gray-400">แตะเพื่อคัดลอก</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for promo in promotions %}
+                    <div class="bg-white rounded-lg p-4 shadow-md flex justify-between items-center relative overflow-hidden group hover:shadow-xl transition transform hover:-translate-y-1">
+                        
+                        <div class="absolute -right-6 -top-6 w-20 h-20  rounded-full opacity-50 group-hover:bg-yellow-200 transition"></div>
+
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-lg">{{ promo.title }}</h3>
+                            <p class="text-sm text-gray-500 mb-2">{{ promo.description|truncatechars:40 }}</p>
+                            <div class="flex items-center gap-2">
+                                <span class="text-red-500 font-bold text-xl">ลด {{ latest_promo.discount_rate|floatformat:0 }}%</span>
+                                <span class="text-xs text-gray-400 border border-gray-200 px-2 py-0.5 rounded">
+                                    หมดเขต {{ promo.end_date|date:"d M y" }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="text-center z-10">
+                            <div class="bg-gray-100 border-2 border-dashed border-gray-400 rounded p-2 mb-1 cursor-pointer hover:bg-blue-50 hover:border-blue-400 transition"
+                                onclick="copyCode('{{ promo.code }}')">
+                                <span class="font-mono font-bold text-gray-700 text-lg tracking-wider block">
+                                    {{ promo.code }}
+                                </span>
+                                <span class="text-[10px] text-gray-400">แตะเพื่อคัดลอก</span>
+                            </div>
+                        </div>
+
                     </div>
+                    {% endfor %}
                 </div>
 
             </div>
-            {% endfor %}
         </div>
-
-    </div>
-</div>
-{% endif %}
-{% endblock %} 
-{% block scripts %}
+        {% endif %}
 
 <script>
+    
     document.addEventListener("DOMContentLoaded", function() {
         // --- 1. ข้อมูลสถานที่ ---
         const locations = [
