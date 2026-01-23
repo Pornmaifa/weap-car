@@ -1,4 +1,5 @@
-{% extends 'basereview.html' %}{% load static %}
+{% extends 'basereview.html' %}
+{% load static %}
 {% load humanize %}
 
 {% block content %}
@@ -34,6 +35,7 @@
                             </div>
 
                             <div class="w-full md:w-3/4">
+                                
                                 <div class="flex justify-between items-start mb-2">
                                     <div>
                                         <h3 class="text-xl font-bold text-gray-800 uppercase">
@@ -44,21 +46,33 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="flex flex-col items-end gap-2"> {% if booking.status == 'confirmed' %}
+                                    <div class="flex flex-col items-end gap-2">
+                                        
+                                        {% if booking.status == 'confirmed' %}
                                             <span class="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
                                                 <i class="fas fa-check-circle mr-1"></i> จองสำเร็จ
                                             </span>
                                         {% elif booking.status == 'approved' or booking.status == 'waiting_payment' %}
-                                            <span class="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">
-                                                <i class="fas fa-clock mr-1"></i> รอชำระเงิน
+                                            {% if booking.payment and booking.payment.is_expired %}
+                                                <span class="px-3 py-1 bg-red-100 text-red-700 text-sm font-medium rounded-full border border-red-200">
+                                                    <i class="fas fa-exclamation-circle mr-1"></i> หมดเวลาชำระเงิน
+                                                </span>
+                                            {% else %}
+                                                <span class="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">
+                                                    <i class="fas fa-clock mr-1"></i> รอชำระเงิน
+                                                </span>
+                                            {% endif %}
+                                        {% elif booking.status == 'waiting_verify' %}
+                                            <span class="px-3 py-1 bg-purple-100 text-purple-700 text-sm font-medium rounded-full">
+                                                <i class="fas fa-search mr-1"></i> รอตรวจสอบสลิป
                                             </span>
                                         {% elif booking.status == 'pending' %}
                                             <span class="px-3 py-1 bg-yellow-100 text-yellow-700 text-sm font-medium rounded-full">
                                                 <i class="fas fa-hourglass-half mr-1"></i> รออนุมัติ
                                             </span>
-                                        {% elif booking.status == 'rejected' %}
+                                        {% elif booking.status == 'rejected' or booking.status == 'cancelled' %}
                                             <span class="px-3 py-1 bg-red-100 text-red-700 text-sm font-medium rounded-full">
-                                                <i class="fas fa-times-circle mr-1"></i> ถูกปฏิเสธ
+                                                <i class="fas fa-times-circle mr-1"></i> {{ booking.get_status_display }}
                                             </span>
                                         {% else %}
                                             <span class="px-3 py-1 bg-gray-100 text-gray-600 text-sm font-medium rounded-full">
@@ -66,20 +80,49 @@
                                             </span>
                                         {% endif %}
 
-                                        {% if booking.status == 'approved' or booking.status == 'waiting_payment' %}
-                                            <a href="{% url 'payment_page' booking.id %}" 
-                                            class="inline-block bg-[#48a9b9] hover:bg-[#3ba0b0] text-white text-sm font-bold py-2 px-4 rounded-lg shadow transition">
-                                                <i class="fas fa-credit-card mr-1"></i> ชำระเงิน
-                                            </a>
-                                        
-                                        {% elif booking.status == 'confirmed' %}
-                                            <a href="{% url 'booking_success' booking.id %}" 
-                                            class="text-[#48a9b9] text-sm hover:underline font-medium">
-                                                ดูรายละเอียดการจอง
-                                            </a>
-                                        {% endif %}
+                                        <div class="flex items-center gap-2 mt-1">
+                                            
+                                            {% if booking.status == 'approved' or booking.status == 'waiting_payment' %}
+                                                {% if booking.payment and booking.payment.is_expired %}
+                                                    {% else %}
+                                                    <a href="{% url 'payment_page' booking.id %}" 
+                                                    class="inline-block bg-[#47B3C4] hover:bg-[#3ba0b0] text-white text-sm font-bold py-2 px-4 rounded-lg shadow transition animate-pulse">
+                                                        <i class="fas fa-credit-card mr-1"></i> ชำระเงิน
+                                                    </a>
+                                                {% endif %}
+                                            
+                                            {% elif booking.status == 'confirmed' %}
+                                                <a href="{% url 'booking_success' booking.id %}" 
+                                                class="text-[#47B3C4] text-sm hover:underline font-medium">
+                                                    ดูรายละเอียด
+                                                </a>
+                                            {% endif %}
 
+                                            {% if booking.status in 'pending,approved,waiting_payment,waiting_verify,confirmed' %}
+                                                
+                                                {% if booking.status == 'confirmed' or booking.status == 'waiting_verify' %}
+                                                    <a href="{% url 'request_refund' booking.id %}" 
+                                                    onclick="return confirm('⚠️ คำเตือน: คุณได้ชำระเงินแล้ว \nการยกเลิกต้องรอการตรวจสอบเพื่อคืนเงิน \nยืนยันที่จะยกเลิกหรือไม่?');"
+                                                    class="bg-orange-100 text-orange-600 hover:bg-orange-200 text-sm font-bold py-2 px-4 rounded-lg transition">
+                                                        ขอยกเลิก / รับเงินคืน
+                                                    </a>
+                                                {% else %}
+                                                    <a href="{% url 'cancel_booking' booking.id %}" 
+                                                    onclick="return confirm('ยืนยันที่จะยกเลิกการจองนี้?');"
+                                                    class="text-gray-400 hover:text-red-500 text-sm underline px-2">
+                                                        ยกเลิก
+                                                    </a>
+                                                {% endif %}
+
+                                            {% endif %}
+                                        </div>
                                         
+                                        {% if booking.status == 'waiting_payment' and booking.payment.is_expired %}
+                                            <div class="text-xs text-red-500 font-medium text-right">
+                                                รายการนี้หมดอายุแล้ว <br>
+                                                <span class="text-gray-400">กรุณาทำรายการใหม่</span>
+                                            </div>
+                                        {% endif %}
 
                                     </div>
                                 </div>
@@ -96,6 +139,7 @@
                                         <p class="text-sm text-gray-600">{{ booking.dropoff_datetime|date:"d M Y, H:i" }} น.</p>
                                     </div>
                                 </div>
+
                                 {% if booking.status == 'picked_up' or booking.status == 'completed' %}
                                     <div class="mt-4 pt-4 border-t border-gray-100">
                                         
@@ -151,8 +195,8 @@
                                         
                                     </div>
                                 {% endif %}
-                            </div>
-                        </div>
+
+                            </div> </div>
                     </div>
                     {% endfor %}
 

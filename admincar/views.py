@@ -3,6 +3,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.db.models import Sum
 # ⚠️ Import Models ข้าม App (ต้องดึงมาจาก car_rental หรือที่ที่คุณเก็บ Model ไว้)
+from booking.views import send_line_push
 from car_rental.models import GuestCustomer, Payment, Booking, Car, User, Promotion
 from django.utils import timezone
 from datetime import timedelta
@@ -242,7 +243,7 @@ def reject_payment_action(request, payment_id):
 def promotion_list(request):
     if request.method == "POST":
         # รับค่าจากฟอร์ม
-        code = request.POST.get('code').strip().upper()
+        code = request.POST.get('code', '').strip().upper() # .get('key', '') กัน Error ถ้าไม่มีค่า
         title = request.POST.get('title')
         description = request.POST.get('description')
         discount_rate = request.POST.get('discount_rate')
@@ -251,17 +252,30 @@ def promotion_list(request):
         usage_limit = request.POST.get('usage_limit')
 
         try:
+            # 1. 🛡️ เช็คว่าโค้ดซ้ำไหม? (เพิ่มใหม่)
+            if Promotion.objects.filter(code=code).exists():
+                messages.error(request, f"โค้ด '{code}' มีอยู่ในระบบแล้ว กรุณาตั้งชื่ออื่น")
+                return redirect('promotion_list')
+
+            # 2. ✅ สร้าง Promotion (เพิ่ม int() และ default fields)
             Promotion.objects.create(
-                owner=request.user, # เจ้าของคือแอดมินคนปัจจุบัน
+                owner=request.user,
                 code=code,
                 title=title,
                 description=description,
-                discount_rate=discount_rate,
+                discount_rate=int(discount_rate), # แปลงเป็นตัวเลข
                 start_date=start_date,
                 end_date=end_date,
-                usage_limit=usage_limit
+                usage_limit=int(usage_limit),     # แปลงเป็นตัวเลข
+                
+                # 👇 สองบรรทัดนี้สำคัญมาก!
+                used_count=0,    # เริ่มต้นที่ 0 เสมอ
+                is_active=True   # สร้างแล้วให้ใช้งานได้ทันที
             )
             messages.success(request, f"สร้างโปรโมชั่น {code} สำเร็จ!")
+            
+        except ValueError:
+            messages.error(request, "กรุณากรอกตัวเลขในช่อง 'ส่วนลด' หรือ 'จำกัดสิทธิ์' ให้ถูกต้อง")
         except Exception as e:
             messages.error(request, f"เกิดข้อผิดพลาด: {e}")
         
@@ -276,3 +290,50 @@ def delete_promotion(request, promo_id):
     promo.delete()
     messages.success(request, "ลบโปรโมชั่นเรียบร้อย")
     return redirect('promotion_list')
+
+
+# ✅ 1. หน้า Dashboard ดูรายการขอคืนเงิน
+@staff_member_required(login_url='login')
+def admin_refund_dashboard(request):
+    # 1. ดึงข้อมูลมา
+    refunds_qs = Booking.objects.filter(status='refund_requested').order_by('created_at')
+    
+    # 2. ✅ วนลูปเพื่อจัดรูปแบบตัวเลขใน Python (ตัดปัญหา Template Error)
+    refunds = []
+    for booking in refunds_qs:
+        amount = 0
+        if hasattr(booking, 'payment'):
+            amount = booking.payment.amount
+            
+        # สร้างตัวแปรใหม่แปะเข้าไปใน object เลย
+        booking.amount_display = f"{amount:,.2f}" 
+        refunds.append(booking)
+    
+    return render(request, 'admincar/refund_dashboard.html', {'refunds': refunds})
+# ✅ 2. ฟังก์ชันกด "ยืนยันการคืนเงิน"
+@staff_member_required(login_url='login')
+def admin_approve_refund(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+    
+    if request.method == 'POST':
+        # 1. เปลี่ยนสถานะ
+        booking.status = 'cancelled'
+        if hasattr(booking, 'payment'):
+            booking.payment.payment_status = 'REFUNDED'
+            booking.payment.save()
+        booking.save()
+
+        # 2. แจ้งเตือน LINE ลูกค้า
+        if hasattr(booking.user, 'profile') and booking.user.profile.line_id:
+            refund_val = booking.payment.amount if hasattr(booking, 'payment') else 0
+            msg = (
+                f"💰 แจ้งโอนเงินคืนเรียบร้อย (โดย Admin)\n"
+                f"Ref: #{booking.booking_ref}\n"
+                f"ยอดเงิน: {refund_val:,.2f} บาท\n"
+                f"โอนเข้า: {booking.refund_bank_name} - {booking.refund_account_no}"
+            )
+            send_line_push(booking.user.profile.line_id, msg)
+            
+        messages.success(request, "บันทึกสถานะการคืนเงินเรียบร้อย")
+
+    return redirect('admin_refund_dashboard')

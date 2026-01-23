@@ -43,13 +43,7 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
         # (แก้ไข!) เราจะอัปเดต username (เบอร์โทร) ที่นี่
-        fields = ['first_name', 'last_name', 'email', 'username']
-
-    def __init__(self, *args, **kwargs):
-        # (เพิ่ม!) ตั้งชื่อ 'username' เป็น 'เบอร์โทร'
-        super(UserUpdateForm, self).__init__(*args, **kwargs)
-        self.fields['username'].label = "เบอร์โทรศัพท์"
-
+        fields = ['first_name', 'last_name', 'email']
 
 # --- 3. ฟอร์มสำหรับอัปเดต "Profile" (หน้าโปรไฟล์) ---
 # (นี่คือ p_form ที่ View ของเราต้องการ)

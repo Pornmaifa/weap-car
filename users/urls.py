@@ -2,6 +2,8 @@
 
 from django.urls import path
 from django.contrib.auth import views as auth_views
+
+from car_rental import views
 from . import views as user_views
 
 urlpatterns = [
@@ -12,4 +14,5 @@ urlpatterns = [
     path('become-owner/', user_views.become_owner, name='become_owner'),
     path('profile/view/<int:user_id>/', user_views.public_profile, name='public_profile'),
     path('login-redirect/', user_views.custom_login_redirect, name='login_redirect'),
+    path('change-password/', user_views.change_password, name='change_password'),
 ]

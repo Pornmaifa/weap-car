@@ -52,14 +52,17 @@
                                             data-license="{% if booking.user %}{{ booking.user.profile.license_number|default:'-' }}{% else %}{{ booking.guest.license_number }}{% endif %}"
                                             
                                             data-profile-url="{% if booking.user %}{% url 'public_profile' booking.user.id %}{% endif %}"
-
+                                            data-price-per-day="{{ booking.car.price_per_day }}"
+                                            data-days="{{ booking.rental_days }}"
                                             data-car="{{ booking.car.brand }} {{ booking.car.model }}"
                                             data-plate="{{ booking.car.license_plate }}"
                                             data-pickup="{{ booking.pickup_datetime|date:'d M Y, H:i' }}"
                                             data-dropoff="{{ booking.dropoff_datetime|date:'d M Y, H:i' }}"
                                             data-location="{{ booking.location }}"
-                                            data-total="{{ booking.total_price }}"
-                                            
+                                            data-total="{{ booking.total_price|add:booking.discount_amount }}"
+                                            data-discount="{{ booking.discount_amount }}"
+                                            data-deposit="{{ booking.car.deposit|default:'0' }}"
+
                                             data-approve-url="{% url 'update_booking_status' booking.id 'approve' %}"
                                             data-reject-url="{% url 'update_booking_status' booking.id 'reject' %}"
                                         >
@@ -155,9 +158,19 @@
                 <div class="bg-white border-2 border-dashed border-[#47B3C4] rounded-lg p-4 mb-6">
                     <h4 class="text-center text-gray-600 font-bold mb-4">สรุปรายได้</h4>
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-gray-600">ยอดชำระจากลูกค้า</span>
+                        <span class="text-gray-600">ยอดค่าเช่าหลังหักส่วนลด</span>
                         <span class="font-bold text-lg" id="modal_total"></span>
                     </div>
+                    <div class="flex justify-between items-center mb-2 text-yellow-600 text-sm bg-yellow-50 p-1 rounded">
+                        <span><i class="fas fa-hand-holding-usd mr-1"></i> รับมัดจำเพิ่ม (เงินสด)</span>
+                        <span class="font-bold" id="modal_deposit"></span>
+                    </div>
+                    
+                    <div id="row_discount" class="flex justify-between items-center mb-2 text-green-600 text-sm hidden">
+                        <span><i class="fas fa-tag mr-1"></i> ส่วนลดโปรโมชั่น</span>
+                        <span id="modal_discount"></span>
+                    </div>
+
                     <div class="flex justify-between items-center mb-2 text-red-500 text-sm">
                         <span>หักค่าธรรมเนียมระบบ (15%)</span>
                         <span id="modal_fee"></span>
@@ -187,18 +200,18 @@
         </div>
     </div>
 
-    <script>
-        function openDetailModal(btn) {
+<script>
+    function openDetailModal(btn) {
+        try {
             const d = btn.dataset;
 
-            // 1. ใส่ข้อมูลพื้นฐาน
-            document.getElementById('modal_ref').innerText = '#' + d.ref;
-            document.getElementById('modal_name').innerText = d.name;
-            document.getElementById('modal_phone').innerText = d.phone;
-            document.getElementById('modal_email').innerText = d.email;
-            document.getElementById('modal_license').innerText = d.license;
+            // --- 1. ข้อมูลพื้นฐาน (เหมือนเดิม) ---
+            if(document.getElementById('modal_ref')) document.getElementById('modal_ref').innerText = '#' + (d.ref || '-');
+            if(document.getElementById('modal_name')) document.getElementById('modal_name').innerText = d.name || '-';
+            if(document.getElementById('modal_phone')) document.getElementById('modal_phone').innerText = d.phone || '-';
+            if(document.getElementById('modal_email')) document.getElementById('modal_email').innerText = d.email || '-';
+            if(document.getElementById('modal_license')) document.getElementById('modal_license').innerText = d.license || '-';
 
-            // 2. จัดการลิงก์ Profile (ปุ่มดูรีวิว)
             const profileLink = document.getElementById('modal_profile_link');
             if (profileLink) {
                 if (d.profileUrl && d.profileUrl.trim() !== "") {
@@ -207,60 +220,110 @@
                     profileLink.style.display = 'inline-flex';
                 } else {
                     profileLink.classList.add('hidden');
-                    profileLink.style.display = 'none';
                 }
             }
 
-            // 3. ข้อมูลรถ และสถานที่ (Location แก้แล้วที่นี่)
-            document.getElementById('modal_car').innerText = d.car;
-            document.getElementById('modal_plate').innerText = d.plate;
-            document.getElementById('modal_pickup').innerText = d.pickup;
-            document.getElementById('modal_dropoff').innerText = d.dropoff;
-            
-            // ✅ แก้ไข: อัปเดต Location ให้ถูกต้อง
+            // --- 2. ข้อมูลรถ (เหมือนเดิม) ---
+            if(document.getElementById('modal_car')) document.getElementById('modal_car').innerText = d.car || '-';
+            if(document.getElementById('modal_plate')) document.getElementById('modal_plate').innerText = d.plate || '-';
+            if(document.getElementById('modal_pickup')) document.getElementById('modal_pickup').innerText = d.pickup || '-';
+            if(document.getElementById('modal_dropoff')) document.getElementById('modal_dropoff').innerText = d.dropoff || '-';
             if (document.getElementById('modal_location')) {
-                document.getElementById('modal_location').innerText = d.location; 
+                document.getElementById('modal_location').innerText = d.location || '-'; 
             }
 
-            // 4. คำนวณเงิน
-            const total = parseFloat(d.total);
-            const fee = total * 0.15;
-            const net = total - fee;
+            // =========================================================
+            // 💰 3. คำนวณเงิน (Logic ใหม่: คิดจากรายวัน)
+            // =========================================================
+            
+            // รับค่ารายวันและจำนวนวันที่ส่งมาจากปุ่ม
+            const pricePerDay = parseFloat(d.pricePerDay || 0);
+            const days = parseInt(d.days || 0);
+            const discount = parseFloat(d.discount || 0);
+            const deposit = parseFloat(d.deposit || 0);
+
+            // 1. คำนวณค่าเช่ารวม (Gross Rent)
+            const fullRent = pricePerDay * days;
+
+            // 2. คำนวณค่าเช่าหลังหักส่วนลด (Net Rent)
+            // ยอดนี้จะถูกนำไปแสดงที่บรรทัด "ยอดชำระจากลูกค้า"
+            let rentAfterDiscount = fullRent - discount;
+            if (rentAfterDiscount < 0) rentAfterDiscount = 0;
+
+            // 3. คำนวณค่าคอมมิชชั่น 15% (คิดจากยอดค่าเช่าหลังหักส่วนลด)
+            const fee = rentAfterDiscount * 0.15;
+
+            // 4. คำนวณรายได้สุทธิเจ้าของ (Owner Revenue)
+            // สูตร: (ค่าเช่าหลังลด - ค่าคอมฯ) + มัดจำ
+            const ownerRevenue = (rentAfterDiscount - fee) + deposit;
+
+
+            // --- 4. แสดงผลตัวเลข ---
             const fmt = (num) => '฿' + num.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
-            document.getElementById('modal_total').innerText = fmt(total);
-            document.getElementById('modal_fee').innerText = '-' + fmt(fee);
-            document.getElementById('modal_net').innerText = fmt(net);
+            // แสดงยอดเช่าที่ลูกค้าจ่าย (หลังหักส่วนลดแล้ว)
+            if(document.getElementById('modal_total')) document.getElementById('modal_total').innerText = fmt(rentAfterDiscount);
+            
+            // แสดงส่วนลด (ถ้ามี)
+            const discountRow = document.getElementById('row_discount');
+            const discountVal = document.getElementById('modal_discount');
+            if (discountRow && discountVal) {
+                if (discount > 0) {
+                    discountRow.classList.remove('hidden');
+                    discountVal.innerText = '-' + fmt(discount);
+                } else {
+                    discountRow.classList.add('hidden');
+                }
+            }
 
-            // 5. อัปเดตปุ่ม Action
-            document.getElementById('btn_approve').href = d.approveUrl;
-            document.getElementById('btn_reject').href = d.rejectUrl;
+            // แสดงค่าคอมมิชชั่น
+            if(document.getElementById('modal_fee')) document.getElementById('modal_fee').innerText = '-' + fmt(fee);
+            
+            // แสดงยอดมัดจำ
+            if(document.getElementById('modal_deposit')) document.getElementById('modal_deposit').innerText = '+' + fmt(deposit);
+            
+            // แสดงยอดสุทธิที่เจ้าของได้รับ
+            if(document.getElementById('modal_net')) document.getElementById('modal_net').innerText = fmt(ownerRevenue);
 
-            // 6. เปิด Modal
+
+            // --- 5. อัปเดตลิงก์ปุ่ม ---
+            if(document.getElementById('btn_approve')) document.getElementById('btn_approve').href = d.approveUrl;
+            if(document.getElementById('btn_reject')) document.getElementById('btn_reject').href = d.rejectUrl;
+
+            // เปิด Modal
             const modal = document.getElementById('detailModal');
             const content = document.getElementById('detailModalContent');
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                content.classList.remove('scale-95');
-                content.classList.add('scale-100');
-            }, 10);
+            if(modal && content) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    content.classList.remove('scale-95');
+                    content.classList.add('scale-100');
+                }, 10);
+            }
+
+        } catch (error) {
+            console.error("Error opening modal:", error);
+            alert("เกิดข้อผิดพลาดในการแสดงผลข้อมูล");
         }
+    }
 
-        function closeDetailModal() {
-            const modal = document.getElementById('detailModal');
-            const content = document.getElementById('detailModalContent');
+    function closeDetailModal() {
+        const modal = document.getElementById('detailModal');
+        const content = document.getElementById('detailModalContent');
+        if (content) {
             content.classList.remove('scale-100');
             content.classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 200);
         }
+        setTimeout(() => {
+            if (modal) modal.classList.add('hidden');
+        }, 200);
+    }
 
-        window.onclick = function(event) {
-            const modal = document.getElementById('detailModal');
-            if (event.target == modal) {
-                closeDetailModal();
-            }
+    window.onclick = function(event) {
+        const modal = document.getElementById('detailModal');
+        if (event.target == modal) {
+            closeDetailModal();
         }
-    </script>
+    }
+</script>
 {% endblock %}

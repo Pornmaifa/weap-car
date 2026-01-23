@@ -189,7 +189,21 @@
                             {{ original_total_price|intcomma }} THB
                         </span>
                     </div>
-            
+                    {% if car.deposit > 0 %}
+                    <div >
+                        <div class="flex justify-between items-center text-yellow-800 mb-1">
+                            <span class="font-bold text-sm">
+                                ค่ามัดจำ (จ่ายวันรับรถ)
+                            </span>
+                            <span class="font-bold text-lg">
+                                {{ car.deposit|intcomma }} THB
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-gray-500">
+                            * ชำระกับเจ้าของรถโดยตรง และได้รับคืนเมื่อจบการเช่า
+                        </p>
+                    </div>
+                    {% endif %}
                     {% if discount_amount > 0 %}
                     <div class="flex justify-between items-center mb-2 text-green-600">
                         <span>
@@ -229,13 +243,21 @@
                                         ใช้โค้ด
                                     </button>
                                 </form>
-                            {% endif %} {% if messages %}
+                            {% endif %} 
+                            
+                            {% if messages %}
                                 <div class="mt-2 space-y-1">
                                     {% for message in messages %}
-                                        <div class="text-xs {% if message.tags == 'error' %}text-red-500{% else %}text-green-600{% endif %}">
-                                            <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i> 
-                                            {{ message }}
-                                        </div>
+                                        
+                                        {% if 'promo' in message.tags %}
+                                        
+                                            <div class="text-xs {% if message.tags == 'error' %}text-red-500{% else %}text-green-600{% endif %}">
+                                                <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i> 
+                                                {{ message }}
+                                            </div>
+
+                                        {% endif %}
+                                        
                                     {% endfor %}
                                 </div>
                             {% endif %}

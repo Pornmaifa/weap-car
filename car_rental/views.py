@@ -1,34 +1,20 @@
-# car_rental/views.py
-
-from datetime import timezone
-import uuid
-from django.shortcuts import get_object_or_404, render, redirect
-from django.contrib.auth.decorators import login_required
-from .models import Booking, Car , CarImage, Promotion, RenterReply, RenterReview, Review,  ReviewReply
-from django.contrib import messages
 import os
-from django.core.files.storage import default_storage
-from django.shortcuts import render, redirect
-from .models import Car, CarImage
-from django.core.files.base import ContentFile
-import base64
-from django.db.models import Q # ใช้สำหรับ query ขั้นสูง
-from car_rental.utils import build_rental_context 
-from datetime import datetime # อย่าลืม import ตัวนี้ข้างบนไฟล์
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-from django.db.models import Count, Sum, Q            # ✅ Import เพิ่ม
-from django.db.models.functions import Coalesce       # ✅ Import เพิ่ม
-from django.utils import timezone
-from car_rental.models import Car, CarImage
-from django.db.models import Count, Sum, Q, DecimalField  # ✅ เพิ่ม DecimalField
-
-from django.db.models import Value
-from django.db.models.functions import Coalesce, TruncMonth
-from django.db.models import Count, Sum, Q, Value, DecimalField
-from django.db.models.functions import Coalesce
-from django.utils import timezone
 import json
+import base64
+import uuid
+from datetime import datetime, timedelta
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.db.models import Count, Sum, Q, Value, DecimalField
+from django.db.models.functions import Coalesce, ExtractYear, TruncMonth
+from django.utils import timezone # ✅ ใช้ตัวนี้ตัวเดียวเพื่อจัดการเวลา
+
+from .models import Booking, Car, CarImage, Promotion, RenterReply, RenterReview, Review, ReviewReply
+from car_rental.utils import build_rental_context
 @login_required
 def add_car_preview(request):
     draft = request.session.get('car_draft')
@@ -43,9 +29,7 @@ def add_car_preview(request):
 @login_required
 def dashboard(request):
     
-    # ----------------------------------------------------
-    # ส่วนที่ 1: จัดการ POST (ลบ/แก้ไข รถ)
-    # ----------------------------------------------------
+    # --- จัดการ POST (ลบ/แก้ไข รถ) ---
     if request.method == "POST":
         if 'delete_car_id' in request.POST:
             car_id = request.POST.get("delete_car_id")
@@ -58,39 +42,71 @@ def dashboard(request):
             car_id = request.POST.get("edit_car_id")
             car = get_object_or_404(Car, id=car_id, owner=request.user)
             
-            # รับค่าจากฟอร์ม
             car.brand = request.POST.get('brand')
             car.model = request.POST.get('model')
             car.license_plate = request.POST.get('license_plate')
             car.price_per_day = request.POST.get('price')
             car.description = request.POST.get('description')
 
-            # จัดการรูปภาพ
-            new_image = request.FILES.get('new_image')
-            if new_image:
-                if car.images.exists():
-                    img_obj = car.images.first()
-                    img_obj.image = new_image
-                    img_obj.save()
-                else:
-                    CarImage.objects.create(car=car, image=new_image)
-                    
-            if car.status != 'PENDING':
-                new_status = request.POST.get('status')
+            new_status = request.POST.get('status')
+            # เปลี่ยนสถานะได้เฉพาะถ้ารถไม่ใช่ PENDING หรือถ้าเป็น ADMIN อนุมัติแล้ว
+            if car.status != 'PENDING': 
                 if new_status in ['AVAILABLE', 'MAINTENANCE']:
                     car.status = new_status 
 
-            car.save()
+            # --- 🟢 (ใหม่) รับค่ามัดจำและกฎ ---
+            deposit_val = request.POST.get('deposit')
+            car.deposit = deposit_val if deposit_val else 0  # ถ้าช่องว่างให้เป็น 0
+            car.rules = request.POST.get('rules')
+
+            car.save() # บันทึกข้อมูลรถก่อน
+            # --- 🟢 (ใหม่) จัดการรูปภาพ ---
+            
+            # A. ลบรูปเก่า (Delete Images)
+            # รับ list ของ ID รูปที่ต้องการลบ
+            delete_ids = request.POST.getlist('delete_images') 
+            if delete_ids:
+                # ลบเฉพาะรูปที่เป็นของรถคันนี้จริงๆ (เพื่อความปลอดภัย)
+                CarImage.objects.filter(id__in=delete_ids, car=car).delete()
+
+            # B. เพิ่มรูปใหม่ (Add New Images)
+            # รับไฟล์หลายรูปจาก input name="new_images"
+            new_images = request.FILES.getlist('new_images') 
+            for img_file in new_images:
+                CarImage.objects.create(car=car, image=img_file)
             messages.success(request, 'แก้ไขข้อมูลรถเรียบร้อยแล้ว')
             return redirect("dashboard")
         
-    # ----------------------------------------------------
-    # ส่วนที่ 2: ดึงข้อมูลเพื่อแสดงผล (GET)
-    # ----------------------------------------------------
+    # --- ส่วน GET ดึงข้อมูล ---
     user = request.user    
     now = timezone.now()
+    
+    # =========================================================
+    # 🧹 1. (เพิ่มใหม่ตรงนี้) กวาดล้างรายการหมดอายุ (Auto Expire Check)
+    # =========================================================
+    # หา Booking ของรถเรา ที่สถานะยังรอเงินอยู่
+    pending_bookings = Booking.objects.filter(
+        car__owner=user,
+        status__in=['approved', 'waiting_payment']
+    )
 
-    # 1. ข้อมูลรถ (My Cars)
+    for booking in pending_bookings:
+        # เช็คว่ามี Payment record และมี expire_at ไหม
+        if hasattr(booking, 'payment') and booking.payment.expire_at:
+            # ถ้าเวลาปัจจุบัน เลยเวลาหมดอายุแล้ว
+            if now > booking.payment.expire_at:
+                # 1. ยกเลิก Booking
+                booking.status = 'cancelled'
+                booking.save()
+                
+                # 2. ปรับสถานะ Payment เป็น EXPIRED
+                booking.payment.payment_status = 'EXPIRED'
+                booking.payment.save()
+                
+                # (Optional) Print log เพื่อดูใน Terminal ว่ามีการยกเลิกจริงไหม
+                print(f"✅ Auto-cancelled booking {booking.id} due to expiry.")
+
+    # 1. ข้อมูลรถ
     my_cars = Car.objects.filter(owner=user).annotate(
         booking_count=Count('booking', filter=Q(booking__status__in=['confirmed', 'picked_up', 'completed'])),
         total_income=Coalesce(
@@ -104,127 +120,170 @@ def dashboard(request):
         )
     ).order_by('-id')
 
-    # 2. ข้อมูล Card สรุปยอด
+    # 2. ข้อมูล Card สรุปยอด (นับรวมทั้งหมด)
     total_cars = my_cars.count()
     total_bookings = Booking.objects.filter(car__owner=user).count()
     total_revenue = sum(c.total_income for c in my_cars)
     
-    # 3. ข้อมูลกราฟรายเดือน (Multi-Line Chart & Total Days)
+    # 3. ข้อมูลกราฟ (กรองตามปี)
+    
+    # 3.1 หาปีที่มีข้อมูลทั้งหมด
+    all_booking_dates = Booking.objects.filter(
+        car__owner=user,
+        pickup_datetime__isnull=False
+    ).values_list('pickup_datetime', flat=True)
+
+    # ใช้ Set เพื่อเก็บปีที่ไม่ซ้ำกัน
+    found_years = set()
+    for dt in all_booking_dates:
+        if dt:
+            # ตรวจสอบว่าเป็น datetime หรือ date object
+            if hasattr(dt, 'year'):
+                found_years.add(dt.year)
+    
+    # เรียงลำดับจากปีล่าสุดไปหาปีเก่า
+    available_years = sorted(list(found_years), reverse=True)
+    
+    # ถ้าหาไม่เจอเลย ให้ใช้ปีปัจจุบันเป็นค่าเริ่มต้น
+    if not available_years:
+        available_years = [now.year]
+
+    # 3.2 ดูว่า User เลือกปีไหน
+    selected_year = request.GET.get('year')
+    
+    if selected_year:
+        try:
+            selected_year = int(selected_year)
+        except (ValueError, TypeError):
+            selected_year = available_years[0]
+    else:
+        selected_year = available_years[0]
+
+    # ✅ Safety Check: ป้องกัน Error NoneType + int
+    if selected_year is None:
+        selected_year = now.year
+
+    # 3.3 สร้างแกน X (เดือน 1-12)
+    month_keys = []
+    for m in range(1, 13):
+        month_keys.append((selected_year, m))
+
+    # 3.4 ดึง Booking เฉพาะปีที่เลือก
     raw_bookings = Booking.objects.filter(
         car__owner=user, 
-        status__in=['confirmed', 'picked_up', 'completed']
+        status__in=['confirmed', 'picked_up', 'completed'],
+        pickup_datetime__year=selected_year
     ).select_related('car').order_by('pickup_datetime')
     
-    # ตัวแปรสำหรับคำนวณ
-    type_monthly_data = {}  # เก็บยอดแยกตามประเภทรถ { 'Sedan': {(2024,1): 5}, ... }
-    monthly_revenue = {}    # เก็บรายได้รวมรายเดือน
-    total_days_booked = 0   # เก็บจำนวนวันเช่ารวมทั้งหมด
-    all_months = set()      # เก็บเดือนที่มีการจองทั้งหมด
+    type_monthly_income = {}    
+    total_days_booked_year = 0 
+    all_known_types = set()
 
     for b in raw_bookings:
         local_date = timezone.localtime(b.pickup_datetime)
-        month_key = (local_date.year, local_date.month)
-        all_months.add(month_key)
+        m_key = (local_date.year, local_date.month)
         
-        # 3.1 คำนวณวันเช่า
         duration = (b.dropoff_datetime - b.pickup_datetime).days
         if duration < 1: duration = 1
-        total_days_booked += duration
+        total_days_booked_year += duration
 
-        # 3.2 เก็บรายได้รวมรายเดือน
-        monthly_revenue[month_key] = monthly_revenue.get(month_key, 0) + float(b.total_price)
-
-        # 3.3 แยกประเภทรถ (สำหรับกราฟเส้นหลายสี)
-        # เช็คว่า field ใน model ชื่อ car_type หรือไม่ (ถ้าชื่ออื่นให้แก้ตรงนี้)
-        c_type = getattr(b.car, 'car_type', 'ไม่ระบุ') 
-        if not c_type: c_type = "ไม่ระบุ"
-
-        if c_type not in type_monthly_data:
-            type_monthly_data[c_type] = {}
+        c_type = getattr(b.car, 'car_type', 'ไม่ระบุ') or "ไม่ระบุ"
+        all_known_types.add(c_type)
         
-        type_monthly_data[c_type][month_key] = type_monthly_data[c_type].get(month_key, 0) + 1
+        if c_type not in type_monthly_income:
+            type_monthly_income[c_type] = {}
+        
+        type_monthly_income[c_type][m_key] = type_monthly_income[c_type].get(m_key, 0) + float(b.total_price)
 
-    # เตรียมข้อมูลส่งให้ Chart.js
     thai_months = ["", "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."]
-    sorted_months = sorted(list(all_months))
-    
-    # แกน X (เดือน)
-    chart_labels = [f"{thai_months[m]} {y+543}" for y, m in sorted_months]
-    
-    # ข้อมูลกราฟรายได้ (Bar Chart)
-    chart_revenue_data = [monthly_revenue.get(k, 0) for k in sorted_months]
+    chart_labels = [thai_months[m] for y, m in month_keys] 
 
-    # ข้อมูลกราฟเส้นหลายสี (Multi-Line Chart)
-    multi_line_datasets = []
-    colors = ['#47B3C4', '#FF6384', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'] # สีวนลูป
-    
-    for i, (c_type, months_data) in enumerate(type_monthly_data.items()):
-        data_points = []
-        for m_key in sorted_months:
-            data_points.append(months_data.get(m_key, 0))
-            
-        dataset = {
+    theme_colors = ['#47B3C4', '#FF6384', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF']
+    color_map = {}
+    sorted_types = sorted(list(all_known_types))
+    for i, c_type in enumerate(sorted_types):
+        color_map[c_type] = theme_colors[i % len(theme_colors)]
+
+    # --- สร้าง Datasets ---
+    line_chart_data = []
+    for c_type in sorted_types:
+        type_counts_map = {}
+        for b in raw_bookings:
+             ct = getattr(b.car, 'car_type', 'ไม่ระบุ') or "ไม่ระบุ"
+             if ct == c_type:
+                 ld = timezone.localtime(b.pickup_datetime)
+                 mk = (ld.year, ld.month)
+                 type_counts_map[mk] = type_counts_map.get(mk, 0) + 1
+        
+        data_points = [type_counts_map.get(k, 0) for k in month_keys]
+        line_chart_data.append({
             'label': c_type,
             'data': data_points,
-            'borderColor': colors[i % len(colors)],
-            'backgroundColor': colors[i % len(colors)],
+            'borderColor': color_map[c_type],
+            'backgroundColor': color_map[c_type],
             'fill': False,
             'tension': 0.4
-        }
-        multi_line_datasets.append(dataset)
+        })
 
-    # 4. ข้อมูลกราฟประเภทรถ (Pie Chart) - ดึงจาก Booking โดยตรง
-    car_types_qs = Booking.objects.filter(
-        car__owner=user,
-        status__in=['confirmed', 'picked_up', 'completed']
-    ).values('car__car_type').annotate(
-        income=Sum('total_price')
-    ).order_by('-income')
+    stacked_revenue_datasets = []
+    for c_type in sorted_types:
+        income_data = type_monthly_income.get(c_type, {})
+        data_points = [income_data.get(k, 0) for k in month_keys]
+        stacked_revenue_datasets.append({
+            'label': c_type,
+            'data': data_points,
+            'backgroundColor': color_map[c_type],
+            'stack': 'Stack 0',
+        })
+        
+    pie_labels = sorted_types
+    pie_data = []
+    pie_colors = []
+    for c_type in sorted_types:
+        total_type_income = sum(type_monthly_income.get(c_type, {}).values())
+        pie_data.append(total_type_income)
+        pie_colors.append(color_map[c_type])
 
-    type_labels = []
-    type_data = []
-    for item in car_types_qs:
-        t_name = item['car__car_type'] if item['car__car_type'] else 'ไม่ระบุ'
-        type_labels.append(t_name)
-        type_data.append(float(item['income'] or 0))
-
-    # 5. ระบบแนะนำ (Recommendations)
+    # 5. ระบบแนะนำ
     recommendations = []
     if total_revenue < 5000:
-        recommendations.append("💡 เริ่มต้นได้ดี! ลองแชร์รูปรถสวยๆ ลง Social Media เพื่อเพิ่มยอดจองแรก")
+        recommendations.append("💡 เริ่มต้นได้ดี! ลองแชร์รูปรถลง Social Media เพื่อเพิ่มยอด")
     
     if any(c.booking_count == 0 for c in my_cars):
-        recommendations.append("⚠️ มีรถบางคันยังไม่มียอดจอง ลองตรวจสอบราคาหรือเปลี่ยนรูปปกให้น่าสนใจขึ้น")
+        recommendations.append("⚠️ รถบางคันยังไม่มียอดจอง ลองเช็คราคาหรือเปลี่ยนรูปปกดูนะครับ")
     
-    # แนะนำรถที่ขายดีในเดือนล่าสุด
-    if sorted_months:
-        last_month_key = sorted_months[-1]
-        best_type_now = None
-        max_val = 0
-        for c_type, m_data in type_monthly_data.items():
-            count = m_data.get(last_month_key, 0)
-            if count > max_val:
-                max_val = count
-                best_type_now = c_type
-        
-        if best_type_now:
-            m_name = thai_months[last_month_key[1]]
-            recommendations.append(f"📈 เดือน {m_name} รถประเภท '{best_type_now}' มาแรงที่สุด! เตรียมรถให้พร้อม")
+    # หาว่าเดือนไหนขายดีที่สุดในปีที่เลือก
+    monthly_totals = {}
+    for y, m in month_keys:
+        monthly_totals[(y, m)] = 0
+        for c_type in type_monthly_income:
+            monthly_totals[(y, m)] += type_monthly_income[c_type].get((y, m), 0)
+            
+    best_month_key = max(monthly_totals, key=monthly_totals.get) if monthly_totals else None
+    if best_month_key and monthly_totals[best_month_key] > 0:
+        m_name = thai_months[best_month_key[1]]
+        recommendations.append(f"🔥 เดือน {m_name} คือช่วงทำเงินสูงสุดของปี {selected_year+543}!")
 
     context = {
         'cars': my_cars,
         'total_cars': total_cars,
         'total_bookings': total_bookings,
-        'total_days_booked': total_days_booked,
+        'total_days_booked': Booking.objects.filter(car__owner=user).count(),
         'total_revenue': total_revenue,
         'recommendations': recommendations,
         
+        # ตัวเลือกปี
+        'available_years': available_years,
+        'selected_year': selected_year,
+        'thai_year_display': selected_year + 543,
+
         # JSON Data
         'month_labels': chart_labels,
-        'multi_line_data': multi_line_datasets, # ส่งข้อมูลเส้นหลายสี
-        'revenue_data': chart_revenue_data,
-        'type_labels': type_labels,
-        'type_data': type_data,
+        'multi_line_data': line_chart_data,
+        'stacked_revenue_data': stacked_revenue_datasets,
+        'type_labels': pie_labels,
+        'type_data': pie_data,
+        'type_colors': pie_colors,
     }
     return render(request, 'car_rental/dashboard.html', context)
 
@@ -429,8 +488,8 @@ def add_car(request):
                 accessory_price=data.get("accessory_price") or 0,
                 min_rental_days=data.get("min_rental_days") or 1,
                 max_rental_days=data.get("max_rental_days") or 30,
-                price_per_day=data.get("price") or 0,
-                discount_option=data.get("discount_option") or "NONE",
+                price_per_day=data.get("price") or 0,                
+                deposit=data.get("deposit") or 0,
 
                 # ✅ ส่วนสำคัญ: รับไฟล์เอกสาร (ไม่ใช่ Base64)
                 doc_registration=files.get("doc_registration"),

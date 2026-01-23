@@ -137,7 +137,7 @@ class Car(models.Model):
     discount_option = models.CharField(max_length=50, choices=DISCOUNT_CHOICES, default='NONE')
     min_rental_days = models.PositiveIntegerField(default=1)
     max_rental_days = models.PositiveIntegerField(default=30)
-
+    deposit = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="ค่ามัดจำ (จ่ายหน้างาน)")
     # ==========================
     # 7. DOCUMENTS (เอกสารยืนยัน - Admin Only)
     # ==========================
@@ -177,6 +177,7 @@ class Booking(models.Model):
         ('rejected', 'ปฏิเสธ'),                 # เจ้าของไม่รับ
         ('cancelled', 'ยกเลิก'),                # ลูกค้ายกเลิกเอง
         ('completed', 'จบการเช่า'),              # คืนรถแล้ว
+        ('refund_requested', 'รอคืนเงิน'),
     ]
 
     car = models.ForeignKey('Car', on_delete=models.CASCADE)
@@ -196,13 +197,23 @@ class Booking(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     booking_ref = models.CharField(max_length=20, unique=True, null=True, blank=True) # เลขที่ใบจอง เช่น BK-20251214-XXXX
     discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    
+    # เพิ่ม Field สำหรับการคืนเงิน
+    refund_bank_name = models.CharField(max_length=100, blank=True, null=True, verbose_name="ธนาคารที่ขอรับเงินคืน")
+    refund_account_no = models.CharField(max_length=50, blank=True, null=True, verbose_name="เลขบัญชี")
+    refund_account_name = models.CharField(max_length=200, blank=True, null=True, verbose_name="ชื่อบัญชี")
+    refund_slip_image = models.ImageField(upload_to='refund_slips/', blank=True, null=True, verbose_name="หลักฐานการโอนคืน") # เผื่อแอดมินแนบสลิปคืนเงิน
     def __str__(self):
         return f"Booking {self.booking_ref} - {self.car.brand}"
     
     @property
-    def remaining_balance(self):
-        return self.total_price - self.deposit_amount
+    def rental_days(self):
+        # คำนวณระยะเวลา
+        duration = self.dropoff_datetime - self.pickup_datetime
+        # ปัดเศษวัน (เช่น 1 วัน 2 ชม. นับเป็น 2 วัน) หรือสูตรตามที่คุณต้องการ
+        days = duration.days
+        if duration.seconds > 0:
+            days += 1
+        return max(1, days) # อย่างน้อยต้อง 1 วัน
 
 
 # ตาราง Promotion
@@ -219,7 +230,17 @@ class Promotion(models.Model):
     is_active = models.BooleanField(default=True, verbose_name="สถานะ")
     def __str__(self):
         return self.title
+class PromotionUsage(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    promotion = models.ForeignKey('Promotion', on_delete=models.CASCADE)
+    used_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        # บรรทัดนี้สำคัญ: ห้าม User คนเดิม + Promo อันเดิม ซ้ำกันในตาราง
+        unique_together = ('user', 'promotion') 
 
+    def __str__(self):
+        return f"{self.user.username} used {self.promotion.code}"
 
 
 # ตาราง Payment (เชื่อมกับ Booking แบบ One-to-One)
@@ -351,4 +372,6 @@ class BookingInspection(models.Model):
     def __str__(self):
         return f"Inspection for {self.booking.booking_ref}"
     
+
+
 

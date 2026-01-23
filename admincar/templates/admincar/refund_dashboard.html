@@ -1,0 +1,62 @@
+{% extends 'admincar/admin_base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="p-6">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">
+        <i class="fas fa-hand-holding-usd text-orange-500"></i> จัดการคำร้องขอคืนเงิน
+    </h2>
+
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="min-w-full leading-normal">
+            <thead>
+                <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                    <th class="py-3 px-6 text-left">Ref No.</th>
+                    <th class="py-3 px-6 text-left">ลูกค้า</th>
+                    <th class="py-3 px-6 text-left">ข้อมูลบัญชีธนาคาร (สำหรับโอนคืน)</th>
+                    <th class="py-3 px-6 text-right">ยอดคืนเงิน</th>
+                    <th class="py-3 px-6 text-center">จัดการ</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-600 text-sm">
+                {% for item in refunds %}
+                <tr class="border-b border-gray-200 hover:bg-gray-50">
+                    <td class="py-3 px-6 text-left font-medium">{{ item.booking_ref }}</td>
+                    <td class="py-3 px-6 text-left">
+                        <div class="flex items-center">
+                            <span>{{ item.user.first_name }} {{ item.user.last_name }}</span>
+                        </div>
+                    </td>
+                    <td class="py-3 px-6 text-left">
+                        <div class="bg-yellow-50 p-2 rounded border border-yellow-200">
+                            <p class="font-bold text-blue-600">{{ item.refund_bank_name }}</p>
+                            <p class="text-lg font-mono">{{ item.refund_account_no }}</p>
+                            <p>{{ item.refund_account_name }}</p>
+                        </div>
+                    </td>
+                    <td class="py-3 px-6 text-right font-bold text-red-500">
+                        {{ item.amount_display }} บาท
+                    </td>
+                    <td class="py-3 px-6 text-center">
+                        <form action="{% url 'admin_approve_refund' item.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" 
+                                    class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded shadow transition duration-200"
+                                    onclick="return confirm('ยืนยันว่าคุณโอนเงินคืนเรียบร้อยแล้ว?');">
+                                <i class="fas fa-check"></i> โอนแล้ว
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="py-10 text-center text-gray-400">
+                        ไม่มีรายการที่ต้องคืนเงินในขณะนี้
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

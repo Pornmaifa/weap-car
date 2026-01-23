@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'line_app',
     'admincar',
     
+    
 ]
 
 MIDDLEWARE = [

@@ -225,7 +225,7 @@
 
                     <div class="flex justify-between mb-4">
                         <p class="text-gray-600">ค่าประกัน/บริการ</p>
-                        <p class="font-bold text-green-500">฿0</p>
+                        <p class="font-bold text-green-500">฿{{ car.deposit|intcomma }}</p>
                     </div>
 
                     <div class="flex justify-between items-center border-t border-gray-200 pt-4">
@@ -233,6 +233,7 @@
                         <p class="text-3xl font-extrabold text-red-600">฿{{ total_price|intcomma }}</p>
                     </div>
 
+                
                     <div class="mt-6">
                         <a href="{% url 'user_info' car.id %}?pickup_datetime={{ pickup_datetime|date:'c' }}&dropoff_datetime={{ dropoff_datetime|date:'c' }}&location={{ location|urlencode }}"
                         class="block w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-lg shadow-lg transition transform hover:-translate-y-1 text-center text-xl">
@@ -240,7 +241,7 @@
                         </a>
                     </div>
 
-            </div>
+                </div>
         </div>
     </div>
 </div>

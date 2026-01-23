@@ -306,11 +306,19 @@
 
             <section id="step-7" class="step min-h-[70vh] flex flex-col justify-center">
                 <div class="max-w-xl mx-auto w-full">
-                    <h1 class="text-4xl font-bold text-center mb-8">ตั้งราคารถของคุณ</h1>
+                    <h1 class="text-4xl font-bold text-center mb-8">ตั้งราคาและมัดจำของคุณ</h1>
                     <div class="space-y-6">
                         <div>
                             <label class="block text-lg font-semibold mb-2">ราคาต่อวัน (THB)</label>
                             <input type="number" name="price" min="0" step="10" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-lg font-semibold mb-2">ค่ามัดจำ (จ่ายวันรับรถ)</label>
+                            <input type="number" name="deposit" min="0" step="100" value="3000" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <p class="text-sm text-gray-600 mt-2">
+                                * เงินส่วนนี้ <strong>ลูกค้าจะจ่ายให้คุณโดยตรง</strong> ณ วันรับรถ <br>
+                                และคุณต้องคืนให้ลูกค้าเมื่อจบการเช่า (ระบบจะไม่หักเปอร์เซ็นต์จากยอดนี้)
+                            </p>
                         </div>
                         </div>
                 </div>
@@ -593,19 +601,20 @@
     }
 
     function buildPreviewUI() {
+        // ฟังก์ชันช่วยดึงค่า
         const getVal = n => (document.querySelector(`[name="${n}"]`)?.value || "").trim();
         const getRadio = n => document.querySelector(`input[name="${n}"]:checked`)?.value || "-";
 
+        // 1. แสดงรูปภาพ
         const imgWrap = document.getElementById("preview-images");
         imgWrap.innerHTML = "";
         imageList.forEach(src => {
             imgWrap.innerHTML += `<div class="aspect-w-3 aspect-h-2"><img src="${src}" class="w-full h-full object-cover"></div>`;
         });
 
+        // 2. แสดงข้อมูลทั่วไป
         document.getElementById("preview-title").innerText = (getVal("brand") + " " + getVal("model"));
         document.getElementById("preview-description").innerText = getVal("description");
-        
-        // แสดง Rules และ Seats
         document.getElementById("preview-rules").innerText = getVal("rules") || "ไม่มีข้อห้ามเพิ่มเติม";
         document.getElementById("preview-seats").innerText = getVal("num_seats");
 
@@ -615,10 +624,37 @@
         document.getElementById("preview-doors").innerText = getVal("num_doors");
         document.getElementById("preview-luggage").innerText = getVal("num_luggage");
         document.getElementById("preview-address").innerText = `${getVal("street_address")} ${getVal("city")} ${getVal("state")} ${getVal("zip_code")}`;
+        
+        // 3. แสดงราคาต่อวัน
         document.getElementById("preview-price").innerText = getVal("price");
 
-        // ลบส่วนจัดการแสดงผลส่วนลดออก
+        // ✅ 4. (เพิ่มใหม่) ส่วนแสดงค่ามัดจำ
+        const deposit = getVal("deposit");
+        const priceElement = document.getElementById("preview-price");
+        
+        if (priceElement) {
+            const priceContainer = priceElement.parentElement; // หา container ของราคา (กล่องขวามือ)
+            
+            // ลบอันเก่าออกก่อน (กันซ้ำเวลาแก้ไปมา)
+            const oldDeposit = document.getElementById("preview-deposit-display");
+            if(oldDeposit) oldDeposit.remove();
 
+            // ถ้ามีค่ามัดจำ ให้สร้าง Element แสดงผล
+            if (deposit && parseInt(deposit) > 0) {
+                const depositDiv = document.createElement("div");
+                depositDiv.id = "preview-deposit-display";
+                depositDiv.className = "mt-3 pt-3 border-t border-gray-100";
+                depositDiv.innerHTML = `
+                    <div class="flex justify-between items-center text-sm text-gray-600">
+                        <span><i class="fas fa-money-bill-wave text-yellow-500 mr-1"></i> มัดจำ (จ่ายวันรับรถ):</span>
+                        <span class="font-bold text-gray-800">${parseInt(deposit).toLocaleString()} THB</span>
+                    </div>
+                `;
+                priceContainer.appendChild(depositDiv);
+            }
+        }
+
+        // 5. แสดงอุปกรณ์เสริม (ที่นั่งเด็ก)
         const accessoryDiv = document.getElementById("preview-accessory");
         accessoryDiv.innerHTML = "";
         const hasChild = document.getElementById("child_seat").checked;
@@ -628,6 +664,7 @@
             accessoryDiv.innerHTML = `<p class="text-gray-500">ไม่มีอุปกรณ์เสริม</p>`;
         }
     }
+
 
     function submitCarForm() {
         if (imageList.length < 5) { alert("กรุณาอัปโหลดรูปอย่างน้อย 5 รูป"); showStep(4); return; }

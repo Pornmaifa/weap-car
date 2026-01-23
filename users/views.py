@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from car_rental.models import RenterReview # อย่าลืม import
 from django.db.models import Avg
 from django.shortcuts import redirect
+from django.contrib.auth import update_session_auth_hash
 
 def custom_login_redirect(request):
     # เช็คบัตร: ถ้าเป็น Staff หรือ Superuser
@@ -54,39 +55,27 @@ def register(request):
 # users/views.py
 # ... (import เหมือนเดิม)
 
+# ในไฟล์ users/views.py
+
 @login_required
 def profile(request):
     if request.method == 'POST':
-        # นี่คือตอนที่ผู้ใช้กด "บันทึก"
-        # (เราควรจะเช็ก request.POST.get('form_type')
-        # แต่ตอนนี้เรารู้ว่ามีแค่ฟอร์มเดียว)
-
         u_form = UserUpdateForm(request.POST, instance=request.user)
-        # เราต้องส่ง request.FILES ให้ ProfileForm เพื่อรับรูปภาพ
-        p_form = ProfileUpdateForm(request.POST,
-                                   request.FILES,
-                                   instance=request.user.profile)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
 
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
-            messages.success(request, 'อัปเดตโปรไฟล์ของคุณเรียบร้อยแล้ว!')
-            return redirect('profile') # กลับมาหน้าโปรไฟล์ (ซึ่งจะกลับไปเป็นโหมดแสดงผล)
-        else:
-            # (ถ้าฟอร์มไม่ผ่าน, เราควรจะแสดง Error
-            # แต่ตอนนี้เราจะแค่โหลดหน้าใหม่ก่อน)
-            messages.error(request, 'เกิดข้อผิดพลาด! กรุณาลองอีกครั้ง')
+            messages.success(request, 'อัปเดตข้อมูลสำเร็จ!')
+            return redirect('profile')
 
-    # นี่คือตอนที่ผู้ใช้เปิดหน้า (GET)
-    # เราส่งฟอร์มเปล่าๆ ไปให้ (แม้ว่า HTML จะไม่ได้ใช้โดยตรง)
-    u_form = UserUpdateForm(instance=request.user)
-    p_form = ProfileUpdateForm(instance=request.user.profile)
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=request.user.profile)
 
     context = {
         'u_form': u_form,
         'p_form': p_form
-        # เราไม่ต้องการ 'edit_mode' อีกต่อไป 
-        # เพราะ JavaScript เป็นตัวจัดการ
     }
     return render(request, 'users/profile.html', context)
 
@@ -94,6 +83,38 @@ def profile(request):
 # @login_required
 # def change_password(request):
 #    ... (Logic การเปลี่ยนรหัสผ่าน) ...
+
+# --- ฟังก์ชันเปลี่ยนรหัสผ่าน  ---
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        old_pass = request.POST.get('old_password')
+        new_pass1 = request.POST.get('new_password1')
+        new_pass2 = request.POST.get('new_password2')
+        
+        user = request.user
+        
+        # 1. เช็ครหัสเดิม
+        if not user.check_password(old_pass):
+            messages.error(request, "รหัสผ่านเดิมไม่ถูกต้อง")
+            return redirect('profile')
+            
+        # 2. เช็ครหัสใหม่ตรงกัน
+        if new_pass1 != new_pass2:
+            messages.error(request, "รหัสผ่านใหม่ไม่ตรงกัน")
+            return redirect('profile')
+            
+        # 3. เปลี่ยนรหัสและบันทึก
+        user.set_password(new_pass1)
+        user.save()
+        
+        # 4. Login ให้อัตโนมัติ (ไม่ให้เด้งหลุด)
+        update_session_auth_hash(request, user)
+        
+        messages.success(request, "เปลี่ยนรหัสผ่านเรียบร้อยแล้ว")
+        return redirect('profile')
+        
+    return redirect('profile') # ถ้าไม่ใช่ POST ให้กลับไปหน้า Profile
 
 def public_profile(request, user_id):
     # ดึงข้อมูลผู้ใช้คนนั้น

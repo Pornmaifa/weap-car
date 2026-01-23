@@ -23,14 +23,30 @@
             
         <main class="flex-1 p-4 md:p-8 fade-in">
             
-            <div class="flex items-center justify-between mb-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-800">Owner Dashboard</h1>
-                    <p class="text-gray-500 mt-1">จัดการรถเช่าและดูสถิติของคุณ</p>
+                    <p class="text-gray-500 mt-1">สถิติประจำปี 
+                        <span class="text-[#47B3C4] font-bold text-lg">{{ thai_year_display }}</span>
+                    </p>
                 </div>
-                <a href="{% url 'add_car' %}" class="bg-[#47B3C4] hover:bg-[#3a9faa] text-white px-4 py-2 rounded shadow flex items-center gap-2 font-medium transition transform hover:scale-105">
-                    <i class="fas fa-plus"></i> เพิ่มรถใหม่
-                </a>
+
+                <div class="flex items-center gap-3">
+                    <form method="GET" action="{% url 'dashboard' %}" class="flex items-center bg-white px-3 py-2 rounded-lg shadow-sm border border-gray-200">
+                        <label class="text-sm text-gray-500 mr-2"><i class="far fa-calendar-alt"></i> ปี พ.ศ.:</label>
+                        <select name="year" onchange="this.form.submit()" class="bg-transparent font-bold text-gray-700 outline-none cursor-pointer">
+                            {% for y in available_years %}
+                                <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>
+                                    {{ y|add:543 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+
+                    <a href="{% url 'add_car' %}" class="bg-[#47B3C4] hover:bg-[#3a9faa] text-white px-4 py-2 rounded shadow flex items-center gap-2 font-medium transition transform hover:scale-105">
+                        <i class="fas fa-plus"></i> เพิ่มรถใหม่
+                    </a>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -43,7 +59,6 @@
                         <div class="p-3 bg-blue-50 rounded-full text-[#47B3C4]"><i class="fas fa-car text-xl"></i></div>
                     </div>
                 </div>
-
                 <div onclick="showSection('bookings', this)" id="card-bookings" class="bg-white p-6 rounded-lg shadow cursor-pointer border-b-4 border-transparent hover:border-[#EAB308] transition hover:shadow-lg">
                     <div class="flex justify-between items-start">
                         <div>
@@ -56,7 +71,6 @@
                         <div class="p-3 bg-yellow-50 rounded-full text-yellow-600"><i class="fas fa-bookmark text-xl"></i></div>
                     </div>
                 </div>
-
                 <div onclick="showSection('revenue', this)" id="card-revenue" class="bg-white p-6 rounded-lg shadow cursor-pointer border-b-4 border-transparent hover:border-[#22c55e] transition hover:shadow-lg">
                     <div class="flex justify-between items-start">
                         <div>
@@ -66,11 +80,10 @@
                         <div class="p-3 bg-green-50 rounded-full text-green-600"><i class="fas fa-wallet text-xl"></i></div>
                     </div>
                 </div>
-
                 <div onclick="showSection('insights', this)" id="card-insights" class="bg-white p-6 rounded-lg shadow cursor-pointer border-b-4 border-transparent hover:border-[#ef4444] transition hover:shadow-lg relative overflow-hidden">
                     <div class="flex justify-between items-start z-10 relative">
                         <div>
-                            <p class="text-sm text-gray-500 font-semibold mb-1">AI แนะนำ</p>
+                            <p class="text-sm text-gray-500 font-semibold mb-1">คำแนะนำ</p>
                             <p class="text-lg font-bold text-gray-800">{{ recommendations|length }} ข้อความ</p>
                         </div>
                         <div class="p-3 bg-red-50 rounded-full text-red-500"><i class="fas fa-lightbulb text-xl"></i></div>
@@ -101,19 +114,35 @@
                             <tbody class="divide-y">
                                 {% for car in cars %}
                                 <tr class="hover:bg-gray-50 transition duration-150">
-                                    <td class="p-4 w-24">
-                                        {% if car.images.all %}
-                                            <img src="{{ car.images.first.image.url }}" class="h-16 w-24 object-cover rounded-lg shadow-sm border border-gray-200">
-                                        {% else %}
-                                            <div class="h-16 w-24 bg-gray-200 rounded-lg flex items-center justify-center text-xs text-gray-500">ไม่มีรูป</div>
-                                        {% endif %}
+                                    
+                                    <td class="p-4 w-32 align-top">
+                                        <a href="{% url 'car_detail' car.id %}" target="_blank" class="block relative group">
+                                            {% if car.images.all %}
+                                                <img src="{{ car.images.first.image.url }}" class="h-20 w-32 object-cover rounded-lg shadow-sm border border-gray-200 group-hover:opacity-90 transition">
+                                                {% if car.images.count > 1 %}
+                                                    <span class="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] px-1.5 rounded-full backdrop-blur-sm">
+                                                        +{{ car.images.count|add:"-1" }}
+                                                    </span>
+                                                {% endif %}
+                                            {% else %}
+                                                <div class="h-20 w-32 bg-gray-200 rounded-lg flex items-center justify-center text-xs text-gray-500 group-hover:bg-gray-300 transition">ไม่มีรูป</div>
+                                            {% endif %}
+                                            
+                                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                                                <i class="fas fa-external-link-alt text-white drop-shadow-md"></i>
+                                            </div>
+                                        </a>
                                     </td>
-                                    <td class="p-4">
-                                        <div class="font-bold text-gray-800 text-lg">{{ car.brand }} {{ car.model }}</div>
+
+                                    <td class="p-4 align-top">
+                                        <a href="{% url 'car_detail' car.id %}" target="_blank" class="font-bold text-gray-800 text-lg hover:text-[#47B3C4] transition block">
+                                            {{ car.brand }} {{ car.model }} <i class="fas fa-external-link-alt text-xs ml-1 opacity-50"></i>
+                                        </a>
+                                        
                                         <div class="text-gray-500 text-xs mt-1 bg-gray-100 inline-block px-2 py-0.5 rounded">{{ car.license_plate }}</div>
-                                        <div class="text-[#47B3C4] font-bold mt-1">฿{{ car.price_per_day|intcomma }}/วัน</div>
                                         <div class="text-xs text-gray-400 mt-1">ประเภท: {{ car.car_type|default:"ไม่ระบุ" }}</div>
                                     </td>
+
                                     <td class="p-4">
                                         {% if car.status == 'PENDING' %}
                                             <span class="px-2 py-1 rounded bg-yellow-100 text-yellow-700 text-xs font-bold flex items-center w-max"><i class="fas fa-clock mr-1"></i> รออนุมัติ</span>
@@ -131,19 +160,29 @@
                                         <div class="mb-1"><i class="fas fa-calendar-check mr-2 text-gray-400"></i> {{ car.booking_count }} ครั้ง</div>
                                         <div class="text-green-600 font-bold"><i class="fas fa-coins mr-2"></i> ฿{{ car.total_income|intcomma }}</div>
                                     </td>
-                                    <td class="p-4 text-right space-x-2">
+                                    <td class="p-4 text-right space-x-2 align-top">
+                                        <div id="images-data-{{ car.id }}" class="hidden">
+                                            {% for img in car.images.all %}
+                                                <div data-id="{{ img.id }}" data-url="{{ img.image.url }}"></div>
+                                            {% endfor %}
+                                        </div>
+
                                         <button onclick="openEditModal(this)" 
                                                 data-id="{{ car.id }}" 
                                                 data-brand="{{ car.brand }}" 
                                                 data-model="{{ car.model }}" 
                                                 data-license="{{ car.license_plate }}" 
                                                 data-price="{{ car.price_per_day|floatformat:0 }}" 
+                                                
+                                                data-deposit="{{ car.deposit|default:'0'|floatformat:0 }}" 
+                                                data-rules="{{ car.rules }}" 
+                                                
                                                 data-desc="{{ car.description }}" 
                                                 data-status="{{ car.status }}" 
-                                                data-img="{% if car.images.all %}{{ car.images.first.image.url }}{% endif %}" 
                                                 class="text-blue-500 hover:bg-blue-50 p-2 rounded transition" title="แก้ไข">
                                             <i class="fas fa-edit"></i>
                                         </button>
+
                                         <form method="POST" action="{% url 'dashboard' %}" class="inline-block" onsubmit="return confirm('⚠️ ยืนยันลบรถคันนี้?\nข้อมูลรายได้และสถิติรถคันนี้จะหายไปจากระบบ');">
                                             {% csrf_token %}
                                             <input type="hidden" name="delete_car_id" value="{{ car.id }}">
@@ -163,7 +202,7 @@
 
                 <div id="section-bookings" class="tab-content hidden fade-in">
                     <div class="flex justify-between items-center mb-6 border-l-4 border-yellow-500 pl-4">
-                        <h2 class="text-xl font-bold text-gray-800">แนวโน้มการจองตามประเภทรถ</h2>
+                        <h2 class="text-xl font-bold text-gray-800">แนวโน้มการจองตามประเภทรถ (1 ปีย้อนหลัง)</h2>
                     </div>
                     <div class="h-96 w-full p-4 border border-gray-100 rounded-lg">
                         <canvas id="bookingsChart"></canvas>
@@ -172,15 +211,15 @@
 
                 <div id="section-revenue" class="tab-content hidden fade-in">
                     <div class="flex justify-between items-center mb-6 border-l-4 border-green-500 pl-4">
-                        <h2 class="text-xl font-bold text-gray-800">วิเคราะห์รายได้</h2>
+                        <h2 class="text-xl font-bold text-gray-800">วิเคราะห์รายได้ (1 ปีย้อนหลัง)</h2>
                     </div>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <div class="p-4 border border-gray-100 rounded-lg">
-                            <h3 class="text-sm font-bold text-gray-500 mb-4 text-center">รายได้รายเดือน (บาท)</h3>
+                            <h3 class="text-sm font-bold text-gray-500 mb-4 text-center">รายได้รายเดือน (แยกตามประเภทรถ)</h3>
                             <div class="h-64"><canvas id="revenueChart"></canvas></div>
                         </div>
                         <div class="p-4 border border-gray-100 rounded-lg">
-                            <h3 class="text-sm font-bold text-gray-500 mb-4 text-center">สัดส่วนรายได้ตามประเภทรถ</h3>
+                            <h3 class="text-sm font-bold text-gray-500 mb-4 text-center">สัดส่วนรายได้รวม</h3>
                             <div class="h-64 flex justify-center"><canvas id="typeChart"></canvas></div>
                         </div>
                     </div>
@@ -220,92 +259,94 @@
 
     <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center transition-opacity duration-300 backdrop-blur-sm">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 overflow-hidden transform scale-95 transition-transform duration-300" id="modalContent">
-            
             <div class="bg-gradient-to-r from-[#47B3C4] to-[#3a9faa] px-6 py-4 flex justify-between items-center text-white">
                 <h2 class="text-xl font-bold"><i class="fas fa-edit mr-2"></i> แก้ไขข้อมูลรถ</h2>
                 <button type="button" onclick="closeEditModal()" class="text-white hover:text-gray-200 text-2xl font-bold">&times;</button>
             </div>
-
-            <form id="editForm" method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
+            <form id="editForm" method="POST" enctype="multipart/form-data" class="flex-1 overflow-y-auto p-6 space-y-6">
                 {% csrf_token %}
                 <input type="hidden" name="edit_car_id" id="edit_car_id_input">
                 
                 <div class="flex flex-col md:flex-row gap-6">
-                    <div class="w-full md:w-1/3 flex flex-col items-center">
-                        <div class="w-full h-40 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden mb-2 flex items-center justify-center relative group cursor-pointer hover:border-[#47B3C4] transition">
-                            <img id="modal_img_preview" src="" class="w-full h-full object-cover hidden">
-                            <div id="modal_no_img" class="text-center text-gray-400">
-                                <i class="fas fa-camera text-3xl mb-2"></i><br>ไม่มีรูป
+                    <div class="w-full md:w-1/3 space-y-3">
+
+                        <label class="block text-sm font-medium text-gray-700">รูปภาพรถ</label>
+                        
+                        <div id="current_images_container" class="grid grid-cols-2 gap-2 mb-2">
                             </div>
-                            <label for="new_image" class="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 cursor-pointer transition">
-                                <i class="fas fa-upload text-2xl mb-1"></i>
-                                <span>เปลี่ยนรูป</span>
-                            </label>
+                        
+                        <div class="relative group cursor-pointer w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-[#47B3C4] hover:bg-blue-50 transition">
+                            <i class="fas fa-cloud-upload-alt text-2xl text-gray-400 group-hover:text-[#47B3C4] mb-1"></i>
+                            <span class="text-xs text-gray-500">เพิ่มรูปใหม่ (เลือกได้หลายรูป)</span>
+                            <input type="file" name="new_images" id="new_images" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" multiple onchange="previewNewImages(this)">
                         </div>
-                        <input type="file" name="new_image" id="new_image" class="hidden" accept="image/*" onchange="previewImage(this)">
-                        <p class="text-xs text-gray-500">ขนาดแนะนำ 800x600 px</p>
+                        <div id="new_images_preview" class="grid grid-cols-3 gap-1"></div>
                     </div>
 
                     <div class="w-full md:w-2/3 space-y-4">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">ยี่ห้อ</label>
-                                <input type="text" name="brand" id="modal_brand" class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-[#47B3C4] outline-none transition">
+                                <label class="block text-xs text-gray-500 mb-1">ยี่ห้อ</label>
+                                <input type="text" name="brand" id="modal_brand" class="w-full border p-2 rounded bg-gray-100 text-gray-600" readonly>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">รุ่น</label>
-                                <input type="text" name="model" id="modal_model" class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-[#47B3C4] outline-none transition">
+                                <label class="block text-xs text-gray-500 mb-1">รุ่น</label>
+                                <input type="text" name="model" id="modal_model" class="w-full border p-2 rounded bg-gray-100 text-gray-600" readonly>
                             </div>
                         </div>
+                        
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">เลขทะเบียน</label>
-                            <input type="text" name="license_plate" id="modal_license" class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-[#47B3C4] outline-none bg-gray-50">
+                            <label class="block text-xs text-gray-500 mb-1">เลขทะเบียน</label>
+                            <input type="text" name="license_plate" id="modal_license" class="w-full border border-gray-300 rounded p-2">
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">ราคาต่อวัน (บาท)</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">฿</div>
-                                <input type="number" name="price" id="modal_price" class="w-full pl-8 border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-[#47B3C4] outline-none transition">
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">ราคาต่อวัน (฿)</label>
+                                <input type="number" name="price" id="modal_price" class="w-full border border-gray-300 rounded p-2 font-bold text-green-600">
                             </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1 text-yellow-700">ค่ามัดจำ (฿)</label>
+                                <input type="number" name="deposit" id="modal_deposit" class="w-full border border-yellow-300 rounded p-2 font-bold text-yellow-700 bg-yellow-50">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">รายละเอียดเพิ่มเติม</label>
+                            <textarea name="description" id="modal_desc" rows="3" class="w-full border border-gray-300 rounded p-2 text-sm"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-red-500 mb-1">🚫 กฎข้อห้าม / เงื่อนไข</label>
+                            <textarea name="rules" id="modal_rules" rows="3" class="w-full border border-red-200 rounded p-2 bg-red-50 text-sm text-red-800" placeholder="เช่น ห้ามสูบบุหรี่, ห้ามสัตว์เลี้ยง"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">สถานะ</label>
+                            <select name="status" id="modal_status" class="w-full border border-gray-300 rounded p-2">
+                                <option value="AVAILABLE">✅ ว่าง (พร้อมใช้งาน)</option>
+                                <option value="MAINTENANCE">🔧 ไม่ว่าง (ซ่อมบำรุง)</option>
+                            </select>
                         </div>
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">รายละเอียดเพิ่มเติม</label>
-                    <textarea name="description" id="modal_desc" rows="3" class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-[#47B3C4] outline-none transition"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">สถานะรถ</label>
-                    <div class="relative">
-                        <select name="status" id="modal_status" class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-[#47B3C4] outline-none bg-white appearance-none cursor-pointer">
-                            <option value="AVAILABLE">✅ ว่าง (พร้อมใช้งาน)</option>
-                            <option value="MAINTENANCE">🔧 ไม่ว่าง (ซ่อมบำรุง/ปิดปรับปรุง)</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-gray-500"><i class="fas fa-chevron-down"></i></div>
-                    </div>
-                </div>
-
-                <div class="flex justify-end gap-3 mt-6 pt-4 border-t">
-                    <button type="button" onclick="closeEditModal()" class="px-5 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium transition">
-                        ยกเลิก
-                    </button>
-                    <button type="submit" class="px-6 py-2.5 bg-[#47B3C4] text-white rounded-lg hover:bg-[#3a9faa] font-medium shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
-                        <i class="fas fa-save mr-2"></i> บันทึกการแก้ไข
-                    </button>
+                <div class="flex justify-end gap-3 pt-4 border-t sticky bottom-0 bg-white">
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">ยกเลิก</button>
+                    <button type="submit" class="px-6 py-2 bg-[#47B3C4] text-white rounded hover:bg-[#3a9faa] shadow">บันทึก</button>
                 </div>
             </form>
         </div>
     </div>
 
     {{ month_labels|json_script:"month_labels_data" }}
-    {{ multi_line_data|json_script:"multi_line_data_data" }} {{ revenue_data|json_script:"revenue_data_data" }}
-    {{ type_labels|json_script:"type_labels_data" }}
+    {{ multi_line_data|json_script:"multi_line_data_data" }} 
+    {{ stacked_revenue_data|json_script:"stacked_revenue_data_data" }} {{ type_labels|json_script:"type_labels_data" }}
     {{ type_data|json_script:"type_data_data" }}
+    {{ type_colors|json_script:"type_colors_data" }}
 
     <script>
-        // --- 1. Logic สลับ Tab ---
+        // --- 1. Logic สลับ Tab (เหมือนเดิม) ---
         function showSection(sectionId, cardElement) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById('section-' + sectionId).classList.remove('hidden');
@@ -329,9 +370,10 @@
         document.addEventListener('DOMContentLoaded', function() {
             const monthLabels = JSON.parse(document.getElementById('month_labels_data').textContent);
             const multiLineData = JSON.parse(document.getElementById('multi_line_data_data').textContent);
-            const revenueData = JSON.parse(document.getElementById('revenue_data_data').textContent);
+            const stackedRevenueData = JSON.parse(document.getElementById('stacked_revenue_data_data').textContent); // ✅ รับค่าใหม่
             const typeLabels = JSON.parse(document.getElementById('type_labels_data').textContent);
             const typeData = JSON.parse(document.getElementById('type_data_data').textContent);
+            const typeColors = JSON.parse(document.getElementById('type_colors_data').textContent);
 
             // Chart 1: Bookings (Multi-Line Chart)
             if (document.getElementById('bookingsChart')) {
@@ -351,24 +393,41 @@
                 });
             }
 
-            // Chart 2: Revenue (Bar Chart)
+            // Chart 2: Revenue (เปลี่ยนเป็น Stacked Bar Chart) ✅✅✅
             if (document.getElementById('revenueChart')) {
                 new Chart(document.getElementById('revenueChart'), {
                     type: 'bar',
                     data: {
                         labels: monthLabels.length ? monthLabels : ['ไม่มีข้อมูล'],
-                        datasets: [{
-                            label: 'รายได้ (บาท)',
-                            data: revenueData.length ? revenueData : [0],
-                            backgroundColor: '#22c55e',
-                            borderRadius: 6,
-                            barThickness: 30
+                        datasets: stackedRevenueData.length ? stackedRevenueData : [{
+                            label: 'ไม่มีข้อมูล',
+                            data: [0],
+                            backgroundColor: '#eee'
                         }]
                     },
                     options: { 
                         responsive: true, 
                         maintainAspectRatio: false,
-                        plugins: { legend: { display: false } }
+                        plugins: { 
+                            legend: { position: 'top' },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                                callbacks: {
+                                    footer: function(tooltipItems) {
+                                        let total = 0;
+                                        tooltipItems.forEach(function(item) {
+                                            total += item.raw;
+                                        });
+                                        return 'รวม: ฿' + total.toLocaleString();
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: { stacked: true }, // ✅ แกน X ซ้อนกัน
+                            y: { stacked: true, beginAtZero: true } // ✅ แกน Y ซ้อนกัน
+                        }
                     }
                 });
             }
@@ -381,7 +440,7 @@
                         labels: typeLabels.length ? typeLabels : ['ยังไม่มีข้อมูล'],
                         datasets: [{
                             data: typeData.length ? typeData : [1],
-                            backgroundColor: ['#47B3C4', '#FF6384', '#FFCE56', '#4BC0C0', '#9966FF'],
+                            backgroundColor: typeColors.length ? typeColors : ['#eee'], 
                             borderWidth: 0,
                             hoverOffset: 10
                         }]
@@ -395,17 +454,19 @@
             }
         });
 
-        // --- 3. Modal Logic ---
+        // --- 3. Modal Logic (เหมือนเดิม) ---
         const modal = document.getElementById('editModal');
         const modalContent = document.getElementById('modalContent');
-
         function openEditModal(button) {
+            const d = button.dataset;
             document.getElementById('edit_car_id_input').value = button.dataset.id;
             document.getElementById('modal_brand').value = button.dataset.brand;
             document.getElementById('modal_model').value = button.dataset.model;
             document.getElementById('modal_license').value = button.dataset.license;
             document.getElementById('modal_price').value = button.dataset.price;
             document.getElementById('modal_desc').value = button.dataset.desc;
+            document.getElementById('modal_rules').value = d.rules || '';     
+            document.getElementById('modal_deposit').value = d.deposit || '0';
             
             const statusSelect = document.getElementById('modal_status');
             const status = button.dataset.status;
@@ -419,51 +480,66 @@
                 statusSelect.classList.remove('bg-gray-100', 'cursor-not-allowed');
                 statusSelect.title = "";
             }
-
-            const imgUrl = button.dataset.img;
-            const imgPreview = document.getElementById('modal_img_preview');
-            const noImg = document.getElementById('modal_no_img');
+            // 4. จัดการรูปภาพ (Existing Images)
+            const imgContainer = document.getElementById('current_images_container');
+            imgContainer.innerHTML = ''; 
             
-            if (imgUrl) {
-                imgPreview.src = imgUrl;
-                imgPreview.classList.remove('hidden');
-                noImg.classList.add('hidden');
+            // ดึงข้อมูลรูปจาก Hidden Div ในตาราง
+            const hiddenImagesDiv = document.getElementById('images-data-' + d.id);
+            const images = hiddenImagesDiv.querySelectorAll('div');
+
+            if (images.length > 0) {
+                images.forEach(img => {
+                    const imgId = img.dataset.id;
+                    const imgUrl = img.dataset.url;
+                    
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'relative group h-20 w-full border rounded overflow-hidden';
+                    wrapper.innerHTML = `
+                        <img src="${imgUrl}" class="w-full h-full object-cover">
+                        <label class="absolute inset-0 bg-red-500/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer text-white text-xs font-bold">
+                            <input type="checkbox" name="delete_images" value="${imgId}" class="mr-1"> ลบ
+                        </label>
+                    `;
+                    imgContainer.appendChild(wrapper);
+                });
             } else {
-                imgPreview.classList.add('hidden');
-                noImg.classList.remove('hidden');
+                imgContainer.innerHTML = '<p class="text-gray-400 text-xs col-span-2 text-center py-2">ไม่มีรูปภาพเดิม</p>';
             }
+
+            // เคลียร์ Preview รูปใหม่
+            document.getElementById('new_images').value = '';
+            document.getElementById('new_images_preview').innerHTML = '';
 
             modal.classList.remove('hidden');
-            setTimeout(() => {
-                modalContent.classList.remove('scale-95');
-                modalContent.classList.add('scale-100');
-            }, 10);
+            setTimeout(() => { modalContent.classList.remove('scale-95'); modalContent.classList.add('scale-100'); }, 10);
         }
-
+        // --- ฟังก์ชันปิด Modal (เหมือนเดิม) ---
         function closeEditModal() {
-            modalContent.classList.remove('scale-100');
-            modalContent.classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
+            modalContent.classList.remove('scale-100'); modalContent.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
         }
 
-        function previewImage(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('modal_img_preview').src = e.target.result;
-                    document.getElementById('modal_img_preview').classList.remove('hidden');
-                    document.getElementById('modal_no_img').classList.add('hidden');
-                }
-                reader.readAsDataURL(input.files[0]);
+        function previewNewImages(input) {
+            const container = document.getElementById('new_images_preview');
+            container.innerHTML = ''; 
+
+            if (input.files) {
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const div = document.createElement('div');
+                        div.className = 'h-10 w-full rounded border border-green-300 overflow-hidden relative';
+                        div.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                        container.appendChild(div);
+                    }
+                    reader.readAsDataURL(file);
+                });
             }
         }
 
-        window.onclick = function(event) {
-            if (event.target == modal) { closeEditModal(); }
-        }
+        window.onclick = function(event) { if (event.target == modal) { closeEditModal(); } }
+    
     </script>
-
 </body>
 </html>

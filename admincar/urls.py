@@ -13,4 +13,7 @@ urlpatterns = [
     path('approve-payment/reject/<int:payment_id>/', views.reject_payment_action, name='reject_payment_action'),
     path('promotions/', views.promotion_list, name='promotion_list'),
     path('promotions/delete/<int:promo_id>/', views.delete_promotion, name='delete_promotion'),
+    # urls.py
+    path('refunds/', views.admin_refund_dashboard, name='admin_refund_dashboard'),
+    path('refunds/approve/<int:booking_id>/', views.admin_approve_refund, name='admin_approve_refund'),
 ]

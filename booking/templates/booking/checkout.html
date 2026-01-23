@@ -141,6 +141,22 @@
                                 {{ original_total_price|intcomma }} THB
                             </span>
                         </div>
+                        
+                        {% if car.deposit > 0 %}
+                            <div >
+                                <div class="flex justify-between items-center text-yellow-800 mb-1">
+                                    <span class="font-bold text-sm">
+                                        ค่ามัดจำ (จ่ายวันรับรถ)
+                                    </span>
+                                    <span class="font-bold text-lg">
+                                        {{ car.deposit|intcomma }} THB
+                                    </span>
+                                </div>
+                                <p class="text-[11px] text-gray-500">
+                                    * ชำระกับเจ้าของรถโดยตรง และได้รับคืนเมื่อจบการเช่า
+                                </p>
+                            </div>
+                        {% endif %}
 
                         {% if discount_amount > 0 %}
                         <div class="flex justify-between mb-2 text-green-600 font-medium">

@@ -39,4 +39,10 @@ urlpatterns = [
     
     # Path สำหรับกดยกเลิกโค้ด (ถ้าต้องการ)
     path('remove-promotion/<int:car_id>/', views.remove_promotion, name='remove_promotion'),
+
+    path('cancel/<int:booking_id>/', views.cancel_booking, name='cancel_booking'),
+    path('refund/<int:booking_id>/', views.request_refund, name='request_refund'),
+
+    
+
 ]
