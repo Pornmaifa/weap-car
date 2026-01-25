@@ -164,12 +164,6 @@
                             <span>สัมภาระ: {{ car.num_luggage }} ใบ</span>
                         </div>
 
-                        {% if car.has_child_seat %}
-                        <div class="flex items-start gap-2">
-                            <i class="fas fa-check text-green-700 mt-0.5"></i>
-                            <span>มีที่นั่งเด็ก (+{{ car.accessory_price }} บ./วัน)</span>
-                        </div>
-                        {% endif %}
                         
                         <p class="text-gray-600 font-medium mb-4 mt-4">รายละเอียดรถเพิ่มเติม</p>
                         {% if car.description %}

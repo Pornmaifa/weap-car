@@ -28,6 +28,7 @@ urlpatterns = [
     path('booking/', include('booking.urls')),   
     path('line_app/', include('line_app.urls')),
     path('system-admin/', include('admincar.urls')),
+    path('i18n/', include('django.conf.urls.i18n')),
 ]
 
 if settings.DEBUG:

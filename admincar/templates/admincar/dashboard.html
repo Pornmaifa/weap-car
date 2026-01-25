@@ -49,7 +49,8 @@
                 <thead class="bg-gray-50 text-gray-600 uppercase">
                     <tr>
                         <th class="p-3 text-left">Ref</th>
-                        <th class="p-3 text-left">ข้อมูลลูกค้า</th> <th class="p-3 text-left">รถที่จอง</th>
+                        <th class="p-3 text-left">ข้อมูลลูกค้า</th> 
+                        <th class="p-3 text-left">รถที่จอง</th>
                         <th class="p-3 text-left">วันที่</th>
                         <th class="p-3 text-left">สถานะ</th>
                     </tr>
@@ -75,7 +76,6 @@
                                         <i class="fas fa-user-clock text-orange-500 mr-1"></i> ลูกค้าทั่วไป (Guest)
                                     {% endif %}
                                 </span>
-                                
                             </div>
                         </td>
 
@@ -127,15 +127,18 @@
                     </td>
                     <td class="p-3">{{ u.first_name }} {{ u.last_name }}</td>
                     <td class="p-3">
-                        {% if u.is_staff %}
-                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">Admin</span>
+                        {% if u.is_superuser %}
+                            <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">Super Admin</span>
+                        {% elif u.is_staff %}
+                            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">Admin (Staff)</span>
                         {% else %}
-                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">User</span>
+                            <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">สมาชิก</span>
                         {% endif %}
                     </td>
                     
                     <td class="p-3 text-right">
-                        {% if not u.is_superuser and u != request.user %} <form action="{% url 'delete_user' u.id %}" method="POST" onsubmit="return confirm('⚠️ คำเตือน: คุณต้องการลบบัญชี {{ u.username }} ใช่หรือไม่? \nข้อมูลการจองที่เกี่ยวข้องอาจได้รับผลกระทบ');" class="inline-block">
+                        {% if not u.is_superuser and u != request.user %} 
+                            <form action="{% url 'delete_user' u.id %}" method="POST" onsubmit="return confirm('⚠️ คำเตือน: คุณต้องการลบบัญชี {{ u.username }} ใช่หรือไม่? \nข้อมูลการจองที่เกี่ยวข้องอาจได้รับผลกระทบ');" class="inline-block">
                                 {% csrf_token %}
                                 <button type="submit" class="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-full transition" title="ลบบัญชี">
                                     <i class="fas fa-trash-alt"></i>
@@ -180,7 +183,18 @@
                     </td>
                     <td class="p-3">{{ c.price_per_day|intcomma }}</td>
                     <td class="p-3">
-                        <span class="text-xs px-2 py-1 rounded {% if c.status == 'available' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">{{ c.get_status_display }}</span>
+                        <span class="text-xs px-2 py-1 rounded 
+                            {% if c.status == 'AVAILABLE' or c.status == 'available' %}bg-green-100 text-green-700
+                            {% elif c.status == 'MAINTENANCE' or c.status == 'maintenance' %}bg-yellow-100 text-yellow-800
+                            {% elif c.status == 'PENDING' or c.status == 'pending' %}bg-orange-100 text-orange-800
+                            {% else %}bg-red-100 text-red-700{% endif %}">
+                            
+                            {% if c.status == 'AVAILABLE' or c.status == 'available' %}พร้อมใช้งาน
+                            {% elif c.status == 'MAINTENANCE' or c.status == 'maintenance' %}ซ่อมบำรุง
+                            {% elif c.status == 'PENDING' or c.status == 'pending' %}รออนุมัติ
+                            {% elif c.status == 'BOOKED' or c.status == 'booked' %}ถูกจองแล้ว
+                            {% else %}{{ c.get_status_display }}{% endif %}
+                        </span>
                     </td>
                 </tr>
                 {% endfor %}
@@ -262,12 +276,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }, options: { responsive: true, maintainAspectRatio: false }
     });
 
-    // Chart 2: Users
+    // Chart 2: Users (✅ แก้ไขสีตรงนี้)
     new Chart(document.getElementById('usersChart'), {
         type: 'doughnut',
         data: {
-            labels: ['Admin', 'User ทั่วไป', 'Guest'],
-            datasets: [{ data: userData, backgroundColor: ['#9333ea', '#22c55e', '#9ca3af'] }]
+            labels: ['Admin', 'สมาชิก', 'ลูกค้าทั่วไป'], 
+            datasets: [{ 
+                data: userData, 
+                // 🟣 ม่วง (Admin), 🟢 เขียว (Member), 🟠 ส้ม (Guest)
+                backgroundColor: ['#9333ea', '#22c55e', '#f97316'] 
+            }]
         }, options: { responsive: true, maintainAspectRatio: false }
     });
 
@@ -275,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(document.getElementById('carsChart'), {
         type: 'bar',
         data: {
-            labels: ['ว่าง', 'ไม่ว่าง', 'ซ่อม'],
+            labels: ['พร้อมใช้งาน', 'ไม่ว่าง', 'ซ่อมบำรุง'],
             datasets: [{ label: 'จำนวนรถ', data: carData, backgroundColor: ['#22c55e', '#ef4444', '#f59e0b'] }]
         }, options: { responsive: true, maintainAspectRatio: false }
     });

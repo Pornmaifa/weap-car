@@ -1,0 +1,358 @@
+# locale/en/LC_MESSAGES/django.po
+
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-26 04:11+0700\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\car\settings.py:126
+msgid "Thai"
+msgstr "Thai"
+
+#: .\car\settings.py:127
+msgid "English"
+msgstr "English"
+
+# --- ส่วนของหน้า Booking Requests ---
+
+#: .\booking\templates\booking\booking_requests.html:5
+msgid "แน่ใจหรือไม่ที่จะปฏิเสธคำขอนี้?"
+msgstr "Are you sure you want to reject this request?"
+
+#: .\booking\templates\booking\booking_requests.html:6
+msgid "ยืนยันที่จะปฏิเสธ?"
+msgstr "Confirm rejection?"
+
+#: .\booking\templates\booking\booking_requests.html:14
+msgid "คำขอเช่าที่รออนุมัติ"
+msgstr "Pending Booking Requests"
+
+#: .\booking\templates\booking\booking_requests.html:22
+msgid "รถที่จอง"
+msgstr "Booked Car"
+
+#: .\booking\templates\booking\booking_requests.html:23
+#: .\booking\templates\booking\booking_requests.html:134
+msgid "ผู้เช่า"
+msgstr "Renter"
+
+#: .\booking\templates\booking\booking_requests.html:24
+msgid "วันที่ใช้งาน"
+msgstr "Rental Dates"
+
+#: .\booking\templates\booking\booking_requests.html:25
+msgid "รวมเงิน"
+msgstr "Total Amount"
+
+#: .\booking\templates\booking\booking_requests.html:26
+#: .\car_rental\templates\car_rental\dashboard.html:110
+msgid "จัดการ"
+msgstr "Actions"
+
+#: .\booking\templates\booking\booking_requests.html:78
+msgid "คลิกดูรายละเอียด"
+msgstr "Click for details"
+
+#: .\booking\templates\booking\booking_requests.html:84
+#: .\booking\templates\booking\booking_requests.html:152
+msgid "รับ:"
+msgstr "Pick-up:"
+
+#: .\booking\templates\booking\booking_requests.html:85
+#: .\booking\templates\booking\booking_requests.html:153
+msgid "คืน:"
+msgstr "Drop-off:"
+
+#: .\booking\templates\booking\booking_requests.html:95
+msgid "อนุมัติ"
+msgstr "Approve"
+
+#: .\booking\templates\booking\booking_requests.html:100
+#: .\booking\templates\booking\booking_requests.html:192
+msgid "ปฏิเสธ"
+msgstr "Reject"
+
+#: .\booking\templates\booking\booking_requests.html:111
+msgid "ไม่มีคำขอเช่าที่รอการอนุมัติในขณะนี้"
+msgstr "No pending booking requests at the moment."
+
+#: .\booking\templates\booking\booking_requests.html:123
+msgid "รายละเอียดคำขอเช่า"
+msgstr "Booking Request Details"
+
+#: .\booking\templates\booking\booking_requests.html:137
+msgid "ดูรีวิวลูกค้า"
+msgstr "View Renter Reviews"
+
+#: .\booking\templates\booking\booking_requests.html:141
+msgid "ชื่อ:"
+msgstr "Name:"
+
+#: .\booking\templates\booking\booking_requests.html:142
+msgid "เบอร์:"
+msgstr "Phone:"
+
+#: .\booking\templates\booking\booking_requests.html:144
+msgid "ใบขับขี่:"
+msgstr "License No.:"
+
+#: .\booking\templates\booking\booking_requests.html:148
+msgid "ข้อมูลการเช่า"
+msgstr "Rental Info"
+
+#: .\booking\templates\booking\booking_requests.html:149
+msgid "รถ:"
+msgstr "Car:"
+
+#: .\booking\templates\booking\booking_requests.html:154
+msgid "สถานที่:"
+msgstr "Location:"
+
+#: .\booking\templates\booking\booking_requests.html:159
+msgid "สรุปรายได้"
+msgstr "Revenue Summary"
+
+#: .\booking\templates\booking\booking_requests.html:161
+msgid "ยอดค่าเช่าหลังหักส่วนลด"
+msgstr "Net Rental Fee (After Discount)"
+
+#: .\booking\templates\booking\booking_requests.html:165
+msgid "รับมัดจำเพิ่ม (เงินสด)"
+msgstr "Collect Deposit (Cash)"
+
+#: .\booking\templates\booking\booking_requests.html:170
+msgid "ส่วนลดโปรโมชั่น"
+msgstr "Promotion Discount"
+
+#: .\booking\templates\booking\booking_requests.html:175
+#, python-format
+msgid "หักค่าธรรมเนียมระบบ (15%%)"
+msgstr "System Fee Deduction (15%%)"
+
+#: .\booking\templates\booking\booking_requests.html:179
+msgid "รายได้สุทธิที่คุณได้รับ"
+msgstr "Your Net Income"
+
+#: .\booking\templates\booking\booking_requests.html:187
+msgid "ปิดหน้าต่าง"
+msgstr "Close"
+
+#: .\booking\templates\booking\booking_requests.html:197
+msgid "อนุมัติการจอง"
+msgstr "Approve Booking"
+
+# --- ส่วนของหน้า Dashboard (เจ้าของ) ---
+
+#: .\car_rental\templates\car_rental\dashboard.html:8
+msgid "Owner Dashboard - WarpCar"
+msgstr "Owner Dashboard - WarpCar"
+
+#: .\car_rental\templates\car_rental\dashboard.html:27
+msgid "Owner Dashboard"
+msgstr "Owner Dashboard"
+
+#: .\car_rental\templates\car_rental\dashboard.html:28
+msgid "สถิติประจำปี"
+msgstr "Annual Statistics"
+
+#: .\car_rental\templates\car_rental\dashboard.html:35
+msgid "ปี พ.ศ.:"
+msgstr "Year:"
+
+#: .\car_rental\templates\car_rental\dashboard.html:46
+msgid "เพิ่มรถใหม่"
+msgstr "Add New Car"
+
+#: .\car_rental\templates\car_rental\dashboard.html:55
+msgid "รถทั้งหมด"
+msgstr "Total Cars"
+
+#: .\car_rental\templates\car_rental\dashboard.html:64
+msgid "การจองทั้งหมด"
+msgstr "Total Bookings"
+
+#: .\car_rental\templates\car_rental\dashboard.html:67
+#, python-format
+msgid "รวม %(days)s วัน"
+msgstr "Total %(days)s days"
+
+#: .\car_rental\templates\car_rental\dashboard.html:76
+msgid "รายได้รวม"
+msgstr "Total Revenue"
+
+#: .\car_rental\templates\car_rental\dashboard.html:85
+msgid "คำแนะนำ"
+msgstr "Insights"
+
+#: .\car_rental\templates\car_rental\dashboard.html:86
+#, python-format
+msgid "%(count)s ข้อความ"
+msgstr "%(count)s items"
+
+#: .\car_rental\templates\car_rental\dashboard.html:100
+msgid "จัดการรถของคุณ"
+msgstr "Manage Your Cars"
+
+#: .\car_rental\templates\car_rental\dashboard.html:106
+msgid "รูปรถ"
+msgstr "Car Image"
+
+#: .\car_rental\templates\car_rental\dashboard.html:107
+msgid "รายละเอียด"
+msgstr "Details"
+
+#: .\car_rental\templates\car_rental\dashboard.html:108
+#: .\car_rental\templates\car_rental\dashboard.html:325
+msgid "สถานะ"
+msgstr "Status"
+
+#: .\car_rental\templates\car_rental\dashboard.html:109
+msgid "สถิติ"
+msgstr "Stats"
+
+#: .\car_rental\templates\car_rental\dashboard.html:127
+msgid "ไม่มีรูป"
+msgstr "No Image"
+
+#: .\car_rental\templates\car_rental\dashboard.html:142
+msgid "ประเภท:"
+msgstr "Type:"
+
+#: .\car_rental\templates\car_rental\dashboard.html:147
+msgid "รออนุมัติ"
+msgstr "Pending"
+
+#: .\car_rental\templates\car_rental\dashboard.html:149
+msgid "ซ่อมบำรุง"
+msgstr "Maintenance"
+
+#: .\car_rental\templates\car_rental\dashboard.html:152
+msgid "ถูกเช่าอยู่"
+msgstr "Rented"
+
+#: .\car_rental\templates\car_rental\dashboard.html:154
+msgid "ว่าง"
+msgstr "Available"
+
+#: .\car_rental\templates\car_rental\dashboard.html:159
+#, python-format
+msgid "%(count)s ครั้ง"
+msgstr "%(count)s times"
+
+#: .\car_rental\templates\car_rental\dashboard.html:181
+msgid "แก้ไข"
+msgstr "Edit"
+
+#: .\car_rental\templates\car_rental\dashboard.html:184
+msgid "⚠️ ยืนยันลบรถคันนี้?\\nข้อมูลรายได้และสถิติรถคันนี้จะหายไปจากระบบ"
+msgstr "⚠️ Delete this car?\\nAll revenue and history for this car will be lost."
+
+#: .\car_rental\templates\car_rental\dashboard.html:189
+msgid "ลบ"
+msgstr "Delete"
+
+#: .\car_rental\templates\car_rental\dashboard.html:196
+msgid "คุณยังไม่มีรถเช่า เริ่มเพิ่มรถคันแรกได้เลย!"
+msgstr "You don't have any cars listed. Add your first car now!"
+
+#: .\car_rental\templates\car_rental\dashboard.html:205
+msgid "แนวโน้มการจองตามประเภทรถ (1 ปีย้อนหลัง)"
+msgstr "Booking Trends (Last 1 Year)"
+
+#: .\car_rental\templates\car_rental\dashboard.html:214
+msgid "วิเคราะห์รายได้ (1 ปีย้อนหลัง)"
+msgstr "Revenue Analysis (Last 1 Year)"
+
+#: .\car_rental\templates\car_rental\dashboard.html:218
+msgid "รายได้รายเดือน (แยกตามประเภทรถ)"
+msgstr "Monthly Revenue (By Type)"
+
+#: .\car_rental\templates\car_rental\dashboard.html:222
+msgid "สัดส่วนรายได้รวม"
+msgstr "Revenue Distribution"
+
+#: .\car_rental\templates\car_rental\dashboard.html:230
+msgid "คำแนะนำเพื่อเพิ่มรายได้"
+msgstr "Tips to Increase Revenue"
+
+#: .\car_rental\templates\car_rental\dashboard.html:241
+#, python-format
+msgid "คำแนะนำที่ %(number)s"
+msgstr "Tip #%(number)s"
+
+#: .\car_rental\templates\car_rental\dashboard.html:250
+msgid "ประสิทธิภาพรถของคุณยอดเยี่ยมอยู่แล้ว!"
+msgstr "Your car performance is excellent!"
+
+#: .\car_rental\templates\car_rental\dashboard.html:251
+msgid "ยังไม่มีคำแนะนำเพิ่มเติมในขณะนี้"
+msgstr "No further recommendations at this time."
+
+#: .\car_rental\templates\car_rental\dashboard.html:263
+msgid "แก้ไขข้อมูลรถ"
+msgstr "Edit Car Details"
+
+#: .\car_rental\templates\car_rental\dashboard.html:273
+msgid "รูปภาพรถ"
+msgstr "Car Photos"
+
+#: .\car_rental\templates\car_rental\dashboard.html:280
+msgid "เพิ่มรูปใหม่ (เลือกได้หลายรูป)"
+msgstr "Add New Photos (Multiple)"
+
+#: .\car_rental\templates\car_rental\dashboard.html:289
+msgid "ยี่ห้อ"
+msgstr "Brand"
+
+#: .\car_rental\templates\car_rental\dashboard.html:293
+msgid "รุ่น"
+msgstr "Model"
+
+#: .\car_rental\templates\car_rental\dashboard.html:299
+msgid "เลขทะเบียน"
+msgstr "License Plate"
+
+#: .\car_rental\templates\car_rental\dashboard.html:305
+msgid "ราคาต่อวัน (฿)"
+msgstr "Price/Day (฿)"
+
+#: .\car_rental\templates\car_rental\dashboard.html:309
+msgid "ค่ามัดจำ (฿)"
+msgstr "Deposit (฿)"
+
+#: .\car_rental\templates\car_rental\dashboard.html:315
+msgid "รายละเอียดเพิ่มเติม"
+msgstr "Description"
+
+#: .\car_rental\templates\car_rental\dashboard.html:320
+msgid "กฎข้อห้าม / เงื่อนไข"
+msgstr "Rules / Conditions"
+
+#: .\car_rental\templates\car_rental\dashboard.html:321
+msgid "เช่น ห้ามสูบบุหรี่, ห้ามสัตว์เลี้ยง"
+msgstr "e.g. No smoking, No pets"
+
+#: .\car_rental\templates\car_rental\dashboard.html:327
+msgid "ว่าง (พร้อมใช้งาน)"
+msgstr "Available (Ready)"
+
+#: .\car_rental\templates\car_rental\dashboard.html:328
+msgid "ไม่ว่าง (ซ่อมบำรุง)"
+msgstr "Unavailable (Maintenance)"
+
+#: .\car_rental\templates\car_rental\dashboard.html:335
+msgid "ยกเลิก"
+msgstr "Cancel"
+
+#: .\car_rental\templates\car_rental\dashboard.html:336
+msgid "บันทึก"
+msgstr "Save"

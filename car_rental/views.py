@@ -320,8 +320,7 @@ def publish_car(request):
             num_doors=draft.get('num_doors', 4),
             num_luggage=draft.get('num_luggage', 2),
             fuel_system=draft.get('fuel_system', 'GASOLINE'),
-            has_child_seat=draft.get('has_child_seat', False),
-            accessory_price=draft.get('accessory_price', 0),
+            
 
             min_rental_days=draft.get('min_rental_days', 1),
             max_rental_days=draft.get('max_rental_days', 30),
@@ -484,8 +483,8 @@ def add_car(request):
                 license_plate=data.get("license_plate", ""),
                 
                 # Options & Price
-                has_child_seat=(data.get("has_child_seat") == "true"),
-                accessory_price=data.get("accessory_price") or 0,
+                
+                
                 min_rental_days=data.get("min_rental_days") or 1,
                 max_rental_days=data.get("max_rental_days") or 30,
                 price_per_day=data.get("price") or 0,                

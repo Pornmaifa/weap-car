@@ -114,8 +114,6 @@ class Car(models.Model):
     num_luggage = models.PositiveIntegerField(default=2, verbose_name="จำนวนสัมภาระ")
     doc_id_card = models.ImageField(upload_to='car_documents/', null=True, blank=True, verbose_name="สำเนาบัตรประชาชน")
     # Accessories
-    has_child_seat = models.BooleanField(default=False)
-    accessory_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="ราคาอุปกรณ์เสริมต่อวัน")
 
     # ==========================
     # 5. LOCATION (สถานที่รับรถ)
