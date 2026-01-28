@@ -1,4 +1,4 @@
-<aside class="w-full md:w-1/4 flex flex-col space-y-2 h-screen relative">
+{% load i18n %} <aside class="w-full md:w-1/4 flex flex-col space-y-2 h-screen relative">
     
     <a href="{% url 'dashboard' %}"
        class="p-3 rounded-lg font-semibold 
@@ -7,7 +7,7 @@
        {% else %}
            bg-gray-200 text-gray-800 hover:bg-gray-300
        {% endif %}">
-       แดชบอร์ด
+       {% trans "แดชบอร์ด" %}
     </a>
 
     <a href="{% url 'booking_requests' %}" 
@@ -17,7 +17,7 @@
        {% else %}
            bg-gray-200 text-gray-800 hover:bg-gray-300
        {% endif %}">
-       คำขอเช่ารถ
+       {% trans "คำขอเช่ารถ" %}
     </a>
 
     <a href="{% url 'manage_bookings' %}" 
@@ -27,7 +27,7 @@
        {% else %}
            bg-gray-200 text-gray-800 hover:bg-gray-300
        {% endif %}">
-       จัดการรายการจองทั้งหมด
+       {% trans "จัดการรายการจองทั้งหมด" %}
     </a>
  
 </aside>

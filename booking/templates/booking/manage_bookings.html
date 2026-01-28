@@ -1,27 +1,33 @@
 {% extends 'basereview.html' %}
 {% load static %}
 {% load humanize %}
+{% load i18n %} 
 
 {% block content %}
+{% trans "ยืนยันที่จะปฏิเสธ?" as msg_confirm_reject %}
+{% trans "ยืนยันรับรถคืนและจบงาน?" as msg_confirm_finish %}
+
 <body class="bg-gray-100 font-sarabun">
 
-    {% include 'car_rental/navbar_detail.html' %} <div class="container mx-auto flex flex-col md:flex-row p-4 md:p-8 gap-8 pt-24">
+    {% include 'car_rental/navbar_detail.html' %} 
+    
+    <div class="container mx-auto flex flex-col md:flex-row p-4 md:p-8 gap-8 pt-24">
         {% include 'users/sidebar.html' %} 
         
         <main class="flex-1 p-4 md:p-8">
             
-            <h1 class="text-3xl font-bold text-gray-800 mb-6">จัดการรายการจองทั้งหมด</h1>
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">{% trans "จัดการรายการจองทั้งหมด" %}</h1>
 
             <div class="bg-white rounded-lg shadow-lg overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-gray-50 text-gray-600 text-sm uppercase">
-                                <th class="p-4 border-b">รถที่จอง</th>
-                                <th class="p-4 border-b">ผู้เช่า</th>
-                                <th class="p-4 border-b">สถานะ</th> 
-                                <th class="p-4 border-b">วันใช้งาน</th>
-                                <th class="p-4 border-b text-center">จัดการ</th>
+                                <th class="p-4 border-b">{% trans "รถที่จอง" %}</th>
+                                <th class="p-4 border-b">{% trans "ผู้เช่า" %}</th>
+                                <th class="p-4 border-b">{% trans "สถานะ" %}</th> 
+                                <th class="p-4 border-b">{% trans "วันใช้งาน" %}</th>
+                                <th class="p-4 border-b text-center">{% trans "จัดการ" %}</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700">
@@ -53,8 +59,11 @@
                                         
                                         data-car="{{ booking.car.brand }} {{ booking.car.model }}"
                                         data-plate="{{ booking.car.license_plate }}"
+                                        
+                                        /* ✅ กลับมาใช้ date filter ปกติ */
                                         data-pickup="{{ booking.pickup_datetime|date:'d M Y, H:i' }}"
                                         data-dropoff="{{ booking.dropoff_datetime|date:'d M Y, H:i' }}"
+                                        
                                         data-location="{{ booking.location }}"
                                         
                                         data-price-per-day="{{ booking.car.price_per_day }}"
@@ -75,58 +84,58 @@
                                             {% endif %}
                                             <i class="fas fa-search-plus text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                         </div>
-                                        <div class="text-[10px] text-[#47B3C4] mt-1 group-hover:underline">คลิกดูรายละเอียด</div>
+                                        <div class="text-[10px] text-[#47B3C4] mt-1 group-hover:underline">{% trans "คลิกดูรายละเอียด" %}</div>
                                     </button>
                                 </td>
 
                                 <td class="p-4">
                                     {% if booking.status == 'pending' %}
-                                        <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-bold">รออนุมัติ</span>
+                                        <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-bold">{% trans "รออนุมัติ" %}</span>
                                     {% elif booking.status == 'approved' %}
-                                        <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold">รอชำระเงิน</span>
+                                        <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold">{% trans "รอชำระเงิน" %}</span>
                                     {% elif booking.status == 'waiting_verify' %}
                                         <span class="text-orange-600 bg-orange-100 px-2 py-1 rounded">
-                                            <i class="fas fa-search-dollar"></i> รอตรวจสอบยอดเงิน
+                                            <i class="fas fa-search-dollar"></i> {% trans "รอตรวจสอบยอดเงิน" %}
                                         </span>   
                                     {% elif booking.status == 'confirmed' %}
-                                        <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">จ่ายเงินแล้ว</span>
+                                        <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">{% trans "จ่ายเงินแล้ว" %}</span>
                                     {% elif booking.status == 'picked_up' %}
-                                        <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-bold">รับรถแล้ว</span>
+                                        <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-bold">{% trans "รับรถแล้ว" %}</span>
                                     {% elif booking.status == 'completed' %}
-                                        <span class="bg-gray-200 text-gray-600 px-2 py-1 rounded text-xs font-bold">จบงาน</span>
+                                        <span class="bg-gray-200 text-gray-600 px-2 py-1 rounded text-xs font-bold">{% trans "จบงาน" %}</span>
                                     {% else %}
-                                        <span class="bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-bold">ยกเลิก/ปฏิเสธ</span>
+                                        <span class="bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-bold">{% trans "ยกเลิก/ปฏิเสธ" %}</span>
                                     {% endif %}
                                 </td>
 
                                 <td class="p-4 text-sm">
-                                    <div><span class="text-gray-400">รับ:</span> {{ booking.pickup_datetime|date:"d M H:i" }}</div>
-                                    <div><span class="text-gray-400">คืน:</span> {{ booking.dropoff_datetime|date:"d M H:i" }}</div>
+                                    <div><span class="text-gray-400">{% trans "รับ:" %}</span> {{ booking.pickup_datetime|date:"d M H:i" }}</div>
+                                    <div><span class="text-gray-400">{% trans "คืน:" %}</span> {{ booking.dropoff_datetime|date:"d M H:i" }}</div>
                                 </td>
 
                                 <td class="p-4 text-center">
                                     {% if booking.status == 'confirmed' %}
                                         <a href="{% url 'inspection_page' booking.id %}" 
                                         class="inline-block bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-xs shadow transition">
-                                            <i class="fas fa-camera mr-1"></i> ตรวจรถ/ส่งมอบ
+                                            <i class="fas fa-camera mr-1"></i> {% trans "ตรวจรถ/ส่งมอบ" %}
                                         </a>
                                     {% elif booking.status == 'picked_up' %}
                                         <a href="{% url 'update_booking_status' booking.id 'completed' %}" 
                                         class="inline-block bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-xs shadow transition"
-                                        onclick="return confirm('ยืนยันรับรถคืนและจบงาน?');">
-                                            <i class="fas fa-flag-checkered mr-1"></i> จบงาน
+                                        onclick="return confirm('{{ msg_confirm_finish|escapejs }}');">
+                                            <i class="fas fa-flag-checkered mr-1"></i> {% trans "จบงาน" %}
                                         </a>
                                     {% elif booking.status == 'pending' %}
-                                        <span class="text-xs text-yellow-600">กดที่ชื่อเพื่ออนุมัติ</span>
+                                        <span class="text-xs text-yellow-600">{% trans "กดที่ชื่อเพื่ออนุมัติ" %}</span>
                                     {% elif booking.status == 'completed' %}
                                         {% if not booking.renter_review %}
                                             <button onclick="openReviewModal('{{ booking.id }}', '{{ booking.user.first_name }} {{ booking.user.last_name }}', 'renter')" 
                                                 class="bg-blue-400 text-white px-3 py-1 rounded text-xs hover:bg-blue-500 ml-2 shadow transition">
-                                                <i class="fas fa-user-check mr-1"></i> รีวิวลูกค้า
+                                                <i class="fas fa-user-check mr-1"></i> {% trans "รีวิวลูกค้า" %}
                                             </button>
                                         {% else %}
                                             <div class="text-xs text-green-600 font-bold mt-1">
-                                                <i class="fas fa-check-circle mr-1"></i> รีวิวลูกค้าแล้ว
+                                                <i class="fas fa-check-circle mr-1"></i> {% trans "รีวิวลูกค้าแล้ว" %}
                                                 <span class="text-gray-400 font-normal">({{ booking.renter_review.rating }}/5)</span>
                                             </div>
                                         {% endif %}
@@ -137,7 +146,7 @@
 
                             </tr>
                             {% empty %}
-                            <tr><td colspan="5" class="p-8 text-center text-gray-400">ยังไม่มีประวัติการจอง</td></tr>
+                            <tr><td colspan="5" class="p-8 text-center text-gray-400">{% trans "ยังไม่มีประวัติการจอง" %}</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -151,7 +160,7 @@
             
             <div class="bg-[#47B3C4] px-6 py-4 flex justify-between items-center text-white">
                 <div>
-                    <h3 class="text-lg font-bold">รายละเอียดคำขอเช่า</h3>
+                    <h3 class="text-lg font-bold">{% trans "รายละเอียดคำขอเช่า" %}</h3>
                     <p class="text-sm opacity-90">Ref: <span id="modal_ref" class="font-mono font-bold"></span></p>
                 </div>
                 <button onclick="closeDetailModal()" class="text-white hover:text-gray-200 text-2xl font-bold">&times;</button>
@@ -161,51 +170,51 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
                         <div class="flex justify-between items-center border-b pb-2 mb-3">
-                            <h4 class="text-gray-800 font-bold"><i class="fas fa-user mr-2 text-gray-400"></i>ผู้เช่า</h4>
+                            <h4 class="text-gray-800 font-bold"><i class="fas fa-user mr-2 text-gray-400"></i>{% trans "ผู้เช่า" %}</h4>
                             <a id="modal_profile_link" href="#" target="_blank" class="hidden text-xs bg-white border border-[#47B3C4] text-[#47B3C4] px-2 py-1 rounded hover:bg-[#47B3C4] hover:text-white transition shadow-sm">
-                                <i class="fas fa-star mr-1"></i> ดูรีวิวลูกค้า
+                                <i class="fas fa-star mr-1"></i> {% trans "ดูรีวิวลูกค้า" %}
                             </a>
                         </div>
-                        <p class="text-sm">ชื่อ: <span id="modal_name" class="font-medium"></span></p>
-                        <p class="text-sm mt-1">เบอร์: <span id="modal_phone" class="font-medium"></span></p>
+                        <p class="text-sm">{% trans "ชื่อ:" %} <span id="modal_name" class="font-medium"></span></p>
+                        <p class="text-sm mt-1">{% trans "เบอร์:" %} <span id="modal_phone" class="font-medium"></span></p>
                         <p class="text-sm mt-1">Email: <span id="modal_email" class="font-medium"></span></p>
-                        <p class="text-sm mt-1">ใบขับขี่: <span id="modal_license" class="font-medium"></span></p>
+                        <p class="text-sm mt-1">{% trans "ใบขับขี่:" %} <span id="modal_license" class="font-medium"></span></p>
                     </div>
                     <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                        <h4 class="text-gray-800 font-bold mb-3 border-b pb-1"><i class="fas fa-car mr-2 text-gray-400"></i>ข้อมูลการเช่า</h4>
-                        <p class="text-sm">รถ: <span id="modal_car" class="font-medium"></span></p>
+                        <h4 class="text-gray-800 font-bold mb-3 border-b pb-1"><i class="fas fa-car mr-2 text-gray-400"></i>{% trans "ข้อมูลการเช่า" %}</h4>
+                        <p class="text-sm">{% trans "รถ:" %} <span id="modal_car" class="font-medium"></span></p>
                         <p class="text-xs text-gray-400 mb-2">(<span id="modal_plate"></span>)</p>
-                        <p class="text-xs">รับ: <span id="modal_pickup" class="font-medium"></span></p>
-                        <p class="text-xs">คืน: <span id="modal_dropoff" class="font-medium"></span></p>
-                        <p class="text-xs mt-1">สถานที่: <span id="modal_location" class="font-medium"></span></p>
+                        <p class="text-xs">{% trans "รับ:" %} <span id="modal_pickup" class="font-medium"></span></p>
+                        <p class="text-xs">{% trans "คืน:" %} <span id="modal_dropoff" class="font-medium"></span></p>
+                        <p class="text-xs mt-1">{% trans "สถานที่:" %} <span id="modal_location" class="font-medium"></span></p>
                     </div>
                 </div>
 
                 <div class="bg-white border-2 border-dashed border-[#47B3C4] rounded-lg p-4 mb-6">
-                    <h4 class="text-center text-gray-600 font-bold mb-4">สรุปรายได้</h4>
+                    <h4 class="text-center text-gray-600 font-bold mb-4">{% trans "สรุปรายได้" %}</h4>
                     
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-gray-600">ยอดค่าเช่า (หลังหักส่วนลด)</span>
+                        <span class="text-gray-600">{% trans "ยอดค่าเช่าหลังหักส่วนลด" %}</span>
                         <span class="font-bold text-lg" id="modal_total"></span>
                     </div>
                     
                     <div class="flex justify-between items-center mb-2 text-yellow-600 text-sm bg-yellow-50 p-1 rounded">
-                        <span><i class="fas fa-hand-holding-usd mr-1"></i> รับมัดจำเพิ่ม (เงินสด)</span>
+                        <span><i class="fas fa-hand-holding-usd mr-1"></i> {% trans "รับมัดจำเพิ่ม (เงินสด)" %}</span>
                         <span class="font-bold" id="modal_deposit"></span>
                     </div>
                     
                     <div id="row_discount" class="flex justify-between items-center mb-2 text-green-600 text-sm hidden">
-                        <span><i class="fas fa-tag mr-1"></i> ส่วนลดโปรโมชั่น</span>
+                        <span><i class="fas fa-tag mr-1"></i> {% trans "ส่วนลดโปรโมชั่น" %}</span>
                         <span id="modal_discount"></span>
                     </div>
 
                     <div class="flex justify-between items-center mb-2 text-red-500 text-sm">
-                        <span>หักค่าธรรมเนียมระบบ (15% ของค่าเช่า)</span>
+                        <span>{% trans "หักค่าธรรมเนียมระบบ (15%)" %}</span>
                         <span id="modal_fee"></span>
                     </div>
                     
                     <div class="border-t pt-2 flex justify-between items-center mt-2">
-                        <span class="font-bold text-gray-800">รายได้สุทธิที่คุณได้รับ</span>
+                        <span class="font-bold text-gray-800">{% trans "รายได้สุทธิที่คุณได้รับ" %}</span>
                         <span class="text-2xl font-bold text-green-600" id="modal_net"></span>
                     </div>
                 </div>
@@ -213,15 +222,15 @@
 
             <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t">
                 <button onclick="closeDetailModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition">
-                    ปิด
+                    {% trans "ปิด" %}
                 </button>
                 
                 <div id="modal_actions" class="flex gap-3 hidden">
-                    <a id="btn_reject" href="#" onclick="return confirm('ยืนยันที่จะปฏิเสธ?');" class="px-4 py-2 border border-red-500 text-red-500 hover:bg-red-50 rounded-lg font-bold transition flex items-center">
-                        <i class="fas fa-times mr-2"></i> ปฏิเสธ
+                    <a id="btn_reject" href="#" onclick="return confirm('{{ msg_confirm_reject|escapejs }}');" class="px-4 py-2 border border-red-500 text-red-500 hover:bg-red-50 rounded-lg font-bold transition flex items-center">
+                        <i class="fas fa-times mr-2"></i> {% trans "ปฏิเสธ" %}
                     </a>
                     <a id="btn_approve" href="#" class="px-6 py-2 bg-[#47B3C4] hover:bg-[#3a9faa] text-white rounded-lg font-bold shadow-lg transition flex items-center">
-                        <i class="fas fa-check mr-2"></i> อนุมัติ
+                        <i class="fas fa-check mr-2"></i> {% trans "อนุมัติ" %}
                     </a>
                 </div>
             </div>
@@ -254,43 +263,27 @@
                 // 2. ข้อมูลรถ
                 document.getElementById('modal_car').innerText = d.car || '-';
                 document.getElementById('modal_plate').innerText = d.plate || '-';
+                
                 document.getElementById('modal_pickup').innerText = d.pickup || '-';
                 document.getElementById('modal_dropoff').innerText = d.dropoff || '-';
                 document.getElementById('modal_location').innerText = d.location || '-'; 
 
-                // =========================================================
-                // 💰 3. คำนวณเงิน (Logic ใหม่: รายวัน - ส่วนลด -> คิด Fee)
-                // =========================================================
-                
-                // รับค่าจากปุ่ม
+                // 3. คำนวณเงิน
                 const pricePerDay = parseFloat(d.pricePerDay || 0);
                 const days = parseInt(d.days || 0);
                 const discount = parseFloat(d.discount || 0);
                 const deposit = parseFloat(d.deposit || 0);
 
-                // 1. คำนวณค่าเช่ารวม (Gross Rent) = ราคา/วัน * จำนวนวัน
                 const fullRent = pricePerDay * days;
-
-                // 2. คำนวณค่าเช่าหลังหักส่วนลด (Net Rent)
-                // ยอดนี้คือยอดที่ลูกค้าจ่ายสำหรับค่าเช่า (ไม่รวมมัดจำ)
                 let rentAfterDiscount = fullRent - discount;
                 if (rentAfterDiscount < 0) rentAfterDiscount = 0;
-
-                // 3. คำนวณค่าคอมมิชชั่น 15% (คิดจากยอดเช่าหลังลด)
                 const fee = rentAfterDiscount * 0.15;
-
-                // 4. รายได้สุทธิเจ้าของ (Owner Revenue)
-                // สูตร: (ค่าเช่าที่เหลือจากหักคอมฯ) + มัดจำที่รับมา
                 const ownerRevenue = (rentAfterDiscount - fee) + deposit;
 
-
-                // --- 4. แสดงผลตัวเลข ---
                 const fmt = (num) => '฿' + num.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
-                // แสดงยอดค่าเช่า (หลังหักส่วนลด) ที่ลูกค้าจ่าย
                 if(document.getElementById('modal_total')) document.getElementById('modal_total').innerText = fmt(rentAfterDiscount);
                 
-                // แสดงส่วนลด (ถ้ามี)
                 const discountRow = document.getElementById('row_discount');
                 const discountVal = document.getElementById('modal_discount');
                 if (discountRow && discountVal) {
@@ -302,17 +295,11 @@
                     }
                 }
 
-                // แสดงค่าคอมมิชชั่น
                 if(document.getElementById('modal_fee')) document.getElementById('modal_fee').innerText = '-' + fmt(fee);
-                
-                // แสดงยอดมัดจำ
                 if(document.getElementById('modal_deposit')) document.getElementById('modal_deposit').innerText = '+' + fmt(deposit);
-                
-                // แสดงยอดสุทธิที่เจ้าของได้รับ
                 if(document.getElementById('modal_net')) document.getElementById('modal_net').innerText = fmt(ownerRevenue);
 
-
-                // --- 5. จัดการปุ่มอนุมัติ (โชว์เฉพาะสถานะ pending) ---
+                // 5. จัดการปุ่มอนุมัติ
                 const actionDiv = document.getElementById('modal_actions');
                 if (d.status === 'pending') {
                     actionDiv.classList.remove('hidden');

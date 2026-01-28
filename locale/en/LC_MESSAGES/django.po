@@ -1,358 +1,2054 @@
-# locale/en/LC_MESSAGES/django.po
-
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-26 04:11+0700\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\car\settings.py:126
-msgid "Thai"
-msgstr "Thai"
+# =========================================
+# A - ALPHABET & NUMBERS
+# =========================================
+msgid "Admin เห็นเท่านั้น"
+msgstr "Admin Only"
 
-#: .\car\settings.py:127
 msgid "English"
 msgstr "English"
 
-# --- ส่วนของหน้า Booking Requests ---
-
-#: .\booking\templates\booking\booking_requests.html:5
-msgid "แน่ใจหรือไม่ที่จะปฏิเสธคำขอนี้?"
-msgstr "Are you sure you want to reject this request?"
-
-#: .\booking\templates\booking\booking_requests.html:6
-msgid "ยืนยันที่จะปฏิเสธ?"
-msgstr "Confirm rejection?"
-
-#: .\booking\templates\booking\booking_requests.html:14
-msgid "คำขอเช่าที่รออนุมัติ"
-msgstr "Pending Booking Requests"
-
-#: .\booking\templates\booking\booking_requests.html:22
-msgid "รถที่จอง"
-msgstr "Booked Car"
-
-#: .\booking\templates\booking\booking_requests.html:23
-#: .\booking\templates\booking\booking_requests.html:134
-msgid "ผู้เช่า"
-msgstr "Renter"
-
-#: .\booking\templates\booking\booking_requests.html:24
-msgid "วันที่ใช้งาน"
-msgstr "Rental Dates"
-
-#: .\booking\templates\booking\booking_requests.html:25
-msgid "รวมเงิน"
-msgstr "Total Amount"
-
-#: .\booking\templates\booking\booking_requests.html:26
-#: .\car_rental\templates\car_rental\dashboard.html:110
-msgid "จัดการ"
-msgstr "Actions"
-
-#: .\booking\templates\booking\booking_requests.html:78
-msgid "คลิกดูรายละเอียด"
-msgstr "Click for details"
-
-#: .\booking\templates\booking\booking_requests.html:84
-#: .\booking\templates\booking\booking_requests.html:152
-msgid "รับ:"
-msgstr "Pick-up:"
-
-#: .\booking\templates\booking\booking_requests.html:85
-#: .\booking\templates\booking\booking_requests.html:153
-msgid "คืน:"
-msgstr "Drop-off:"
-
-#: .\booking\templates\booking\booking_requests.html:95
-msgid "อนุมัติ"
-msgstr "Approve"
-
-#: .\booking\templates\booking\booking_requests.html:100
-#: .\booking\templates\booking\booking_requests.html:192
-msgid "ปฏิเสธ"
-msgstr "Reject"
-
-#: .\booking\templates\booking\booking_requests.html:111
-msgid "ไม่มีคำขอเช่าที่รอการอนุมัติในขณะนี้"
-msgstr "No pending booking requests at the moment."
-
-#: .\booking\templates\booking\booking_requests.html:123
-msgid "รายละเอียดคำขอเช่า"
-msgstr "Booking Request Details"
-
-#: .\booking\templates\booking\booking_requests.html:137
-msgid "ดูรีวิวลูกค้า"
-msgstr "View Renter Reviews"
-
-#: .\booking\templates\booking\booking_requests.html:141
-msgid "ชื่อ:"
-msgstr "Name:"
-
-#: .\booking\templates\booking\booking_requests.html:142
-msgid "เบอร์:"
-msgstr "Phone:"
-
-#: .\booking\templates\booking\booking_requests.html:144
-msgid "ใบขับขี่:"
-msgstr "License No.:"
-
-#: .\booking\templates\booking\booking_requests.html:148
-msgid "ข้อมูลการเช่า"
-msgstr "Rental Info"
-
-#: .\booking\templates\booking\booking_requests.html:149
-msgid "รถ:"
-msgstr "Car:"
-
-#: .\booking\templates\booking\booking_requests.html:154
-msgid "สถานที่:"
-msgstr "Location:"
-
-#: .\booking\templates\booking\booking_requests.html:159
-msgid "สรุปรายได้"
-msgstr "Revenue Summary"
-
-#: .\booking\templates\booking\booking_requests.html:161
-msgid "ยอดค่าเช่าหลังหักส่วนลด"
-msgstr "Net Rental Fee (After Discount)"
-
-#: .\booking\templates\booking\booking_requests.html:165
-msgid "รับมัดจำเพิ่ม (เงินสด)"
-msgstr "Collect Deposit (Cash)"
-
-#: .\booking\templates\booking\booking_requests.html:170
-msgid "ส่วนลดโปรโมชั่น"
-msgstr "Promotion Discount"
-
-#: .\booking\templates\booking\booking_requests.html:175
-#, python-format
-msgid "หักค่าธรรมเนียมระบบ (15%%)"
-msgstr "System Fee Deduction (15%%)"
-
-#: .\booking\templates\booking\booking_requests.html:179
-msgid "รายได้สุทธิที่คุณได้รับ"
-msgstr "Your Net Income"
-
-#: .\booking\templates\booking\booking_requests.html:187
-msgid "ปิดหน้าต่าง"
-msgstr "Close"
-
-#: .\booking\templates\booking\booking_requests.html:197
-msgid "อนุมัติการจอง"
-msgstr "Approve Booking"
-
-# --- ส่วนของหน้า Dashboard (เจ้าของ) ---
-
-#: .\car_rental\templates\car_rental\dashboard.html:8
-msgid "Owner Dashboard - WarpCar"
-msgstr "Owner Dashboard - WarpCar"
-
-#: .\car_rental\templates\car_rental\dashboard.html:27
 msgid "Owner Dashboard"
 msgstr "Owner Dashboard"
 
-#: .\car_rental\templates\car_rental\dashboard.html:28
-msgid "สถิติประจำปี"
-msgstr "Annual Statistics"
+msgid "Owner Dashboard - WarpCar"
+msgstr "Owner Dashboard - WarpCar"
 
-#: .\car_rental\templates\car_rental\dashboard.html:35
-msgid "ปี พ.ศ.:"
-msgstr "Year:"
+msgid "Thai"
+msgstr "Thai"
 
-#: .\car_rental\templates\car_rental\dashboard.html:46
-msgid "เพิ่มรถใหม่"
-msgstr "Add New Car"
+msgid "1"
+msgstr "1"
 
-#: .\car_rental\templates\car_rental\dashboard.html:55
-msgid "รถทั้งหมด"
-msgstr "Total Cars"
+msgid "2"
+msgstr "2"
 
-#: .\car_rental\templates\car_rental\dashboard.html:64
-msgid "การจองทั้งหมด"
-msgstr "Total Bookings"
+msgid "3"
+msgstr "3"
 
-#: .\car_rental\templates\car_rental\dashboard.html:67
-#, python-format
-msgid "รวม %(days)s วัน"
-msgstr "Total %(days)s days"
+msgid "4"
+msgstr "4"
 
-#: .\car_rental\templates\car_rental\dashboard.html:76
-msgid "รายได้รวม"
-msgstr "Total Revenue"
+msgid "5"
+msgstr "5"
 
-#: .\car_rental\templates\car_rental\dashboard.html:85
-msgid "คำแนะนำ"
-msgstr "Insights"
+# =========================================
+# G - GENERAL / COMMON TERMS
+# =========================================
+msgid "กฎและข้อห้าม"
+msgstr "Rules & Restrictions"
 
-#: .\car_rental\templates\car_rental\dashboard.html:86
-#, python-format
-msgid "%(count)s ข้อความ"
-msgstr "%(count)s items"
-
-#: .\car_rental\templates\car_rental\dashboard.html:100
-msgid "จัดการรถของคุณ"
-msgstr "Manage Your Cars"
-
-#: .\car_rental\templates\car_rental\dashboard.html:106
-msgid "รูปรถ"
-msgstr "Car Image"
-
-#: .\car_rental\templates\car_rental\dashboard.html:107
-msgid "รายละเอียด"
-msgstr "Details"
-
-#: .\car_rental\templates\car_rental\dashboard.html:108
-#: .\car_rental\templates\car_rental\dashboard.html:325
-msgid "สถานะ"
-msgstr "Status"
-
-#: .\car_rental\templates\car_rental\dashboard.html:109
-msgid "สถิติ"
-msgstr "Stats"
-
-#: .\car_rental\templates\car_rental\dashboard.html:127
-msgid "ไม่มีรูป"
-msgstr "No Image"
-
-#: .\car_rental\templates\car_rental\dashboard.html:142
-msgid "ประเภท:"
-msgstr "Type:"
-
-#: .\car_rental\templates\car_rental\dashboard.html:147
-msgid "รออนุมัติ"
-msgstr "Pending"
-
-#: .\car_rental\templates\car_rental\dashboard.html:149
-msgid "ซ่อมบำรุง"
-msgstr "Maintenance"
-
-#: .\car_rental\templates\car_rental\dashboard.html:152
-msgid "ถูกเช่าอยู่"
-msgstr "Rented"
-
-#: .\car_rental\templates\car_rental\dashboard.html:154
-msgid "ว่าง"
-msgstr "Available"
-
-#: .\car_rental\templates\car_rental\dashboard.html:159
-#, python-format
-msgid "%(count)s ครั้ง"
-msgstr "%(count)s times"
-
-#: .\car_rental\templates\car_rental\dashboard.html:181
-msgid "แก้ไข"
-msgstr "Edit"
-
-#: .\car_rental\templates\car_rental\dashboard.html:184
-msgid "⚠️ ยืนยันลบรถคันนี้?\\nข้อมูลรายได้และสถิติรถคันนี้จะหายไปจากระบบ"
-msgstr "⚠️ Delete this car?\\nAll revenue and history for this car will be lost."
-
-#: .\car_rental\templates\car_rental\dashboard.html:189
-msgid "ลบ"
-msgstr "Delete"
-
-#: .\car_rental\templates\car_rental\dashboard.html:196
-msgid "คุณยังไม่มีรถเช่า เริ่มเพิ่มรถคันแรกได้เลย!"
-msgstr "You don't have any cars listed. Add your first car now!"
-
-#: .\car_rental\templates\car_rental\dashboard.html:205
-msgid "แนวโน้มการจองตามประเภทรถ (1 ปีย้อนหลัง)"
-msgstr "Booking Trends (Last 1 Year)"
-
-#: .\car_rental\templates\car_rental\dashboard.html:214
-msgid "วิเคราะห์รายได้ (1 ปีย้อนหลัง)"
-msgstr "Revenue Analysis (Last 1 Year)"
-
-#: .\car_rental\templates\car_rental\dashboard.html:218
-msgid "รายได้รายเดือน (แยกตามประเภทรถ)"
-msgstr "Monthly Revenue (By Type)"
-
-#: .\car_rental\templates\car_rental\dashboard.html:222
-msgid "สัดส่วนรายได้รวม"
-msgstr "Revenue Distribution"
-
-#: .\car_rental\templates\car_rental\dashboard.html:230
-msgid "คำแนะนำเพื่อเพิ่มรายได้"
-msgstr "Tips to Increase Revenue"
-
-#: .\car_rental\templates\car_rental\dashboard.html:241
-#, python-format
-msgid "คำแนะนำที่ %(number)s"
-msgstr "Tip #%(number)s"
-
-#: .\car_rental\templates\car_rental\dashboard.html:250
-msgid "ประสิทธิภาพรถของคุณยอดเยี่ยมอยู่แล้ว!"
-msgstr "Your car performance is excellent!"
-
-#: .\car_rental\templates\car_rental\dashboard.html:251
-msgid "ยังไม่มีคำแนะนำเพิ่มเติมในขณะนี้"
-msgstr "No further recommendations at this time."
-
-#: .\car_rental\templates\car_rental\dashboard.html:263
-msgid "แก้ไขข้อมูลรถ"
-msgstr "Edit Car Details"
-
-#: .\car_rental\templates\car_rental\dashboard.html:273
-msgid "รูปภาพรถ"
-msgstr "Car Photos"
-
-#: .\car_rental\templates\car_rental\dashboard.html:280
-msgid "เพิ่มรูปใหม่ (เลือกได้หลายรูป)"
-msgstr "Add New Photos (Multiple)"
-
-#: .\car_rental\templates\car_rental\dashboard.html:289
-msgid "ยี่ห้อ"
-msgstr "Brand"
-
-#: .\car_rental\templates\car_rental\dashboard.html:293
-msgid "รุ่น"
-msgstr "Model"
-
-#: .\car_rental\templates\car_rental\dashboard.html:299
-msgid "เลขทะเบียน"
-msgstr "License Plate"
-
-#: .\car_rental\templates\car_rental\dashboard.html:305
-msgid "ราคาต่อวัน (฿)"
-msgstr "Price/Day (฿)"
-
-#: .\car_rental\templates\car_rental\dashboard.html:309
-msgid "ค่ามัดจำ (฿)"
-msgstr "Deposit (฿)"
-
-#: .\car_rental\templates\car_rental\dashboard.html:315
-msgid "รายละเอียดเพิ่มเติม"
-msgstr "Description"
-
-#: .\car_rental\templates\car_rental\dashboard.html:320
 msgid "กฎข้อห้าม / เงื่อนไข"
 msgstr "Rules / Conditions"
 
-#: .\car_rental\templates\car_rental\dashboard.html:321
+msgid "กติกาและข้อห้าม"
+msgstr "Rules & Restrictions"
+
+msgid "กดที่ชื่อเพื่ออนุมัติ"
+msgstr "Click name to approve"
+
+msgid "กรุณาทำรายการจองใหม่อีกครั้ง"
+msgstr "Please make a new booking."
+
+msgid "กรุณาทำรายการใหม่"
+msgstr "Please create a new booking."
+
+msgid "กรุณายอมรับข้อกำหนดและเงื่อนไขก่อน"
+msgstr "Please accept the Terms & Conditions first."
+
+msgid "กรุณาเลือกประเภทบริการ"
+msgstr "Please select a service type."
+
+msgid "กรุณาเลือกประเภทรถ"
+msgstr "Please select a car type."
+
+msgid "กรุณาเลือกสถานที่รับรถก่อนทำการจอง"
+msgstr "Please select a pickup location before booking."
+
+msgid "กรุณาอัปโหลดรูปอย่างน้อย 5 รูป"
+msgstr "Please upload at least 5 photos."
+
+msgid "กรอกชื่อรถของคุณ"
+msgstr "Enter car title"
+
+msgid "กระเป๋า"
+msgstr "Bags"
+
+msgid "กลับหน้าหลัก"
+msgstr "Back to Home"
+
+msgid "การจองทั้งหมด"
+msgstr "Total Bookings"
+
+msgid "การรับและคืนรถ"
+msgstr "Pickup & Return"
+
+msgid "แก้ไข"
+msgstr "Edit"
+
+msgid "แก้ไขข้อมูล"
+msgstr "Edit Profile"
+
+msgid "แก้ไขข้อมูลรถ"
+msgstr "Edit Car Details"
+
+msgid "ขอยกเลิก / รับเงินคืน"
+msgstr "Cancel / Request Refund"
+
+msgid "ข้าพเจ้ายืนยันว่าข้อมูลรถและเอกสารเป็นความจริง และยอมรับ"
+msgstr "I confirm that all information is true and I accept the"
+
+msgid "ขับเอง"
+msgstr "Self Drive"
+
+msgid "ข้อมูลการเช่า"
+msgstr "Rental Info"
+
+msgid "ข้อมูลผู้ใช้"
+msgstr "User Info"
+
+msgid "ข้อมูลส่วนตัว"
+msgstr "Profile"
+
+msgid "ข้อกำหนดและเงื่อนไข"
+msgstr "Terms & Conditions"
+
+msgid "ของ WarpCar"
+msgstr "of WarpCar"
+
+msgid "เข้าสู่ระบบ"
+msgstr "Login"
+
+msgid "คน"
+msgstr "persons"
+
+msgid "ค้นหา"
+msgstr "Search"
+
+msgid "ค้นหารถเช่า"
+msgstr "Search Car Rental"
+
+msgid "คัดลอกโค้ด"
+msgstr "Code"
+
+msgid "คำขอเช่าที่รออนุมัติ"
+msgstr "Pending Booking Requests"
+
+msgid "คำชี้แจงจากลูกค้า:"
+msgstr "Customer's Reply:"
+
+msgid "คำเตือน: คุณได้ชำระเงินแล้ว \\nการยกเลิกต้องรอการตรวจสอบเพื่อคืนเงิน \\nยืนยันที่จะยกเลิกหรือไม่?"
+msgstr "Warning: You have already paid. \\nCancellation requires verification for refund. \\nAre you sure you want to cancel?"
+
+msgid "คำแนะนำ"
+msgstr "Insights"
+
+msgid "คำแนะนำเพื่อเพิ่มรายได้"
+msgstr "Tips to Increase Revenue"
+
+msgid "คำอธิบายรถ"
+msgstr "Description"
+
+msgid "คุณกำลังรีวิว:"
+msgstr "You are reviewing:"
+
+msgid "คุณยังไม่มีรถเช่า เริ่มเพิ่มรถคันแรกได้เลย!"
+msgstr "You don't have any cars listed. Add your first car now!"
+
+msgid "คัน"
+msgstr "cars"
+
+msgid "ค่าธรรมเนียมจอง (15%)"
+msgstr "Booking Fee (15%)"
+
+msgid "ค่าประกัน/บริการ"
+msgstr "Insurance/Service Fee"
+
+msgid "ค่ามัดจำ (฿)"
+msgstr "Deposit (฿)"
+
+msgid "ค่ามัดจำ (จ่ายวันรับรถ)"
+msgstr "Deposit (Paid on Pickup)"
+
+msgid "ค่ามัดจำประกัน (จ่ายวันรับรถ)"
+msgstr "Security Deposit (Pay on Pickup)"
+
+msgid "ค่าเช่า (ก่อนลด)"
+msgstr "Rental Fee (Before Discount)"
+
+msgid "ค่าเช่ารถ"
+msgstr "Rental Fee"
+
+msgid "คืน:"
+msgstr "Drop-off:"
+
+msgid "คืนรถ"
+msgstr "Drop-off"
+
+msgid "คืนรถวันที่"
+msgstr "Return Date"
+
+msgid "โค้ดส่วนลดพิเศษ"
+msgstr "Special Promo Codes"
+
+msgid "ง"
+msgstr ""
+
+msgid "งาน"
+msgstr "Jobs"
+
+msgid "เงินส่วนนี้"
+msgstr "This amount"
+
+msgid "จอง"
+msgstr "Book"
+
+msgid "จอง (ตัวอย่าง)"
+msgstr "Book (Preview)"
+
+msgid "จองคันนี้"
+msgstr "Book Now"
+
+msgid "จองรถเพิ่ม"
+msgstr "Book Another Car"
+
+msgid "จองสำเร็จ"
+msgstr "Booking Confirmed"
+
+msgid "จัดการ"
+msgstr "Actions"
+
+msgid "จัดการรถของคุณ"
+msgstr "Manage Your Cars"
+
+msgid "จัดการรายการจองทั้งหมด"
+msgstr "Manage All Bookings"
+
+msgid "จาก"
+msgstr "From"
+
+msgid "จ่ายเงินแล้ว"
+msgstr "Paid / Confirmed"
+
+msgid "จำนวนที่นั่ง"
+msgstr "Seats"
+
+msgid "จำนวนที่นั่ง (คน)"
+msgstr "Seats (Persons)"
+
+msgid "จำนวนที่นั่ง:"
+msgstr "Seats:"
+
+msgid "จำนวนประตู"
+msgstr "Doors"
+
+msgid "จำนวนประตู:"
+msgstr "Doors:"
+
+msgid "จำนวนสัมภาระ"
+msgstr "Luggage Capacity"
+
+msgid "จำนวนสัมภาระ:"
+msgstr "Luggage:"
+
+msgid "จบงาน"
+msgstr "Completed"
+
+msgid "เจ้าของรถ"
+msgstr "Car Owner"
+
+msgid "แจ้งชำระเงิน"
+msgstr "Confirm Payment"
+
+msgid "ชำระตอนนี้ (ผ่าน QR)"
+msgstr "Pay Now (via QR)"
+
+msgid "ชำระเงิน"
+msgstr "Payment"
+
+msgid "ชี้แจง/ตอบกลับรีวิวนี้:"
+msgstr "Clarify/Reply to this review:"
+
+msgid "เช่น 123 ถนนหลัก"
+msgstr "e.g. 123 Main Street"
+
+msgid "เช่น รถประหยัดน้ำมัน, มีประกันชั้น 1..."
+msgstr "e.g. Fuel efficient, 1st class insurance..."
+
+msgid "เช่น ห้ามสูบบุหรี่, ห้ามนำสัตว์เลี้ยงขึ้นรถ, คืนน้ำมันเต็มถัง..."
+msgstr "e.g. No smoking, No pets, Return full tank..."
+
 msgid "เช่น ห้ามสูบบุหรี่, ห้ามสัตว์เลี้ยง"
 msgstr "e.g. No smoking, No pets"
 
-#: .\car_rental\templates\car_rental\dashboard.html:327
-msgid "ว่าง (พร้อมใช้งาน)"
-msgstr "Available (Ready)"
+msgid "เช่ารถ:"
+msgstr "Rented Car:"
 
-#: .\car_rental\templates\car_rental\dashboard.html:328
+msgid "เช่ารถขับเอง"
+msgstr "Self Drive"
+
+msgid "ใช้"
+msgstr "Apply"
+
+msgid "ซ่อมบำรุง"
+msgstr "Maintenance"
+
+msgid "ดูตัวอย่างก่อนลงประกาศ"
+msgstr "Preview Listing"
+
+msgid "ดูบันทึกสภาพรถก่อนรับรถ"
+msgstr "View Pre-pickup Inspection"
+
+msgid "ดูรายละเอียด"
+msgstr "View Details"
+
+msgid "ดูรีวิวลูกค้า"
+msgstr "View Renter Reviews"
+
+msgid "ดีเซล"
+msgstr "Diesel"
+
+msgid "ตรวจสอบการจอง"
+msgstr "Manage Booking"
+
+msgid "ตรวจรถ/ส่งมอบ"
+msgstr "Inspect / Handover"
+
+msgid "ตอบกลับจากเจ้าของรถ"
+msgstr "Reply from Owner"
+
+msgid "ตอบกลับรีวิวนี้..."
+msgstr "Write a reply..."
+
+msgid "ต่ำสุด: วัน"
+msgstr "Min: Days"
+
+msgid "ตั้งแต่"
+msgstr "Since"
+
+msgid "ตั้งราคาและมัดจำของคุณ"
+msgstr "Set Price & Deposit"
+
+msgid "ตัวกรอง"
+msgstr "Filter"
+
+msgid "ตาม"
+msgstr "By"
+
+msgid "ถอยกลับ"
+msgstr "Back"
+
+msgid "ถอยกลับ (แก้ไข)"
+msgstr "Back (Edit)"
+
+msgid "ถัดไป"
+msgstr "Next"
+
+msgid "ถึง"
+msgstr "To"
+
+msgid "ถูกเช่าอยู่"
+msgstr "Rented"
+
+msgid "ท"
+msgstr ""
+
+msgid "ที่นั่ง"
+msgstr "seats"
+
+msgid "ที่นั่งเด็ก"
+msgstr "Child Seat"
+
+msgid "ที่อยู่"
+msgstr "Address"
+
+msgid "ทำ"
+msgstr "Do"
+
+msgid "ทำให้รถของคุณโดดเด่น"
+msgstr "Make your car stand out"
+
+msgid "ธ"
+msgstr ""
+
+msgid "ธรรมดา (Manual)"
+msgstr "Manual"
+
+msgid "น."
+msgstr "hrs"
+
+msgid "นครนายก"
+msgstr "Nakhon Nayok"
+
+msgid "นครปฐม"
+msgstr "Nakhon Pathom"
+
+msgid "นครพนม"
+msgstr "Nakhon Phanom"
+
+msgid "นครราชสีมา"
+msgstr "Nakhon Ratchasima"
+
+msgid "นครศรีธรรมราช"
+msgstr "Nakhon Si Thammarat"
+
+msgid "นครสวรรค์"
+msgstr "Nakhon Sawan"
+
+msgid "นนทบุรี"
+msgstr "Nonthaburi"
+
+msgid "นราธิวาส"
+msgstr "Narathiwat"
+
+msgid "นาที"
+msgstr "min"
+
+msgid "นามสกุล"
+msgstr "Last Name"
+
+msgid "น่าน"
+msgstr "Nan"
+
+msgid "นี่คือตัวอย่างหน้าประกาศของคุณ (ยังไม่แสดงต่อสาธารณะ)"
+msgstr "This is a preview of your listing (Not yet public)"
+
+msgid "แน่ใจหรือไม่ที่จะปฏิเสธคำขอนี้?"
+msgstr "Are you sure you want to reject this request?"
+
+msgid "แนวโน้มการจองตามประเภทรถ (1 ปีย้อนหลัง)"
+msgstr "Booking Trends (Last 1 Year)"
+
+msgid "แนบหลักฐานการโอนเงิน"
+msgstr "Attach Transfer Slip"
+
+msgid "บ./วัน"
+msgstr "B./day"
+
+msgid "บอกรายละเอียดรถของคุณให้เรียบร้อย แล้วลงประกาศเลย"
+msgstr "Finish up and publish"
+
+msgid "บอกเล่าประสบการณ์ของคุณ..."
+msgstr "Tell us about your experience..."
+
+msgid "บันทึก"
+msgstr "Save"
+
+msgid "บันทึกข้อมูลส่วนตัว"
+msgstr "Save Changes"
+
+msgid "บันทึกโดยเจ้าของรถเมื่อ:"
+msgstr "Recorded by owner at:"
+
+msgid "บาท"
+msgstr "THB"
+
+msgid "บางแสน (ม.บูรพา)"
+msgstr "Bang Saen Beach"
+
+msgid "บึงกาฬ"
+msgstr "Bueng Kan"
+
+msgid "บึงฉวาก"
+msgstr "Bueng Chawak Aquarium"
+
+msgid "บุรีรัมย์"
+msgstr "Buri Ram"
+
+msgid "เบนซิน"
+msgstr "Gasoline"
+
+msgid "เบอร์โทร"
+msgstr "Phone Number"
+
+msgid "เบอร์:"
+msgstr "Phone:"
+
+msgid "ใบ"
+msgstr "bags"
+
+msgid "ใบขับขี่:"
+msgstr "License No.:"
+
+msgid "ป"
+msgstr ""
+
+msgid "ปฏิเสธ"
+msgstr "Reject"
+
+msgid "ปทุมธานี"
+msgstr "Pathum Thani"
+
+msgid "ประจวบคีรีขันธ์"
+msgstr "Prachuap Khiri Khan"
+
+msgid "ประเภทคนขับ"
+msgstr "Driver Type"
+
+msgid "ประเภทตัวรถ"
+msgstr "Car Type"
+
+msgid "ประเภทบริการ"
+msgstr "Service Type"
+
+msgid "ประเภทบริการ:"
+msgstr "Service Type:"
+
+msgid "ประเภทรถ"
+msgstr "Car Type"
+
+msgid "ประเภทรถ:"
+msgstr "Car Type:"
+
+msgid "ประเภท:"
+msgstr "Type:"
+
+msgid "ประสิทธิภาพรถของคุณยอดเยี่ยมอยู่แล้ว!"
+msgstr "Your car performance is excellent!"
+
+msgid "ประวัติการเช่าของฉัน"
+msgstr "My Booking History"
+
+msgid "ประวัติการเช่ารถ"
+msgstr "Booking History"
+
+msgid "ประวัติรีวิวจากเจ้าของรถ"
+msgstr "Reviews from Car Owners"
+
+msgid "ประเทศ"
+msgstr "Country"
+
+msgid "ประเทศไทย"
+msgstr "Thailand"
+
+msgid "ปราจีนบุรี"
+msgstr "Prachin Buri"
+
+msgid "ประตูท่าแพ"
+msgstr "Tha Phae Gate"
+
+msgid "ปัตตานี"
+msgstr "Pattani"
+
+msgid "ป้ายทะเบียนรถ"
+msgstr "License Plate"
+
+msgid "ปี พ.ศ.:"
+msgstr "Year:"
+
+msgid "ปีจดทะเบียน"
+msgstr "Year Registered"
+
+msgid "ปิด"
+msgstr "Close"
+
+msgid "ปิดหน้าต่าง"
+msgstr "Close"
+
+msgid "เป็นเจ้าของรถ"
+msgstr "Become an Owner"
+
+msgid "เปลี่ยนรหัสผ่าน"
+msgstr "Change Password"
+
+msgid "เปลี่ยนรูปโปรไฟล์"
+msgstr "Change Profile Picture"
+
+msgid "โปรโมชั่น"
+msgstr "Promotions"
+
+msgid "โปรโมชั่นที่ใช้"
+msgstr "Promotion Applied"
+
+msgid "ผลการค้นหา"
+msgstr "Search Results"
+
+msgid "ผ่าน"
+msgstr "Pass"
+
+msgid "ผู้เช่า"
+msgstr "Renter"
+
+msgid "ผู้เช่าสามารถเช่าได้นานเท่าใด"
+msgstr "Rental Duration Limits"
+
+msgid "แ"
+msgstr ""
+
+msgid "แผนที่"
+msgstr "Map"
+
+msgid "พ"
+msgstr ""
+
+msgid "พะเยา"
+msgstr "Phayao"
+
+msgid "พังงา"
+msgstr "Phangnga"
+
+msgid "พัทยากลาง (เซ็นทรัลเฟสติวัล)"
+msgstr "Central Festival Pattaya Beach"
+
+msgid "พัทลุง"
+msgstr "Phatthalung"
+
+msgid "พิจิตร"
+msgstr "Phichit"
+
+msgid "พิพิธภัณฑ์ช้างเอราวัณ"
+msgstr "Erawan Museum"
+
+msgid "พิพิธภัณฑ์สิรินธร (ไดโนเสาร์)"
+msgstr "Sirindhorn Museum (Dinosaur Park)"
+
+msgid "พิษณุโลก"
+msgstr "Phitsanulok"
+
+msgid "เพิ่ม"
+msgstr "Add"
+
+msgid "เพิ่มรถเช่า - WarpCar"
+msgstr "Add New Car - WarpCar"
+
+msgid "เพิ่มรถใหม่"
+msgstr "Add New Car"
+
+msgid "เพิ่มรูปถ่ายอย่างน้อย 5 รูป พร้อมชื่อและคำบรรยาย เราจะช่วยคุณเอง"
+msgstr "Add at least 5 photos, a title, and description—we’ll help you out."
+
+msgid "เพิ่มรูปใหม่ (เลือกได้หลายรูป)"
+msgstr "Add New Photos (Multiple)"
+
+msgid "เพิ่มรูปภาพรถ"
+msgstr "Add Car Photos"
+
+msgid "เพิ่มรูปรถและเอกสาร"
+msgstr "Add Photos & Documents"
+
+msgid "เพื่อ"
+msgstr "For"
+
+msgid "แพร่"
+msgstr "Phrae"
+
+msgid "ฟ"
+msgstr ""
+
+msgid "ฟิวเจอร์พาร์ค รังสิต"
+msgstr "Future Park Rangsit"
+
+msgid "ภ"
+msgstr ""
+
+msgid "ภาพ"
+msgstr "Image"
+
+msgid "ภูเก็ต"
+msgstr "Phuket"
+
+msgid "ภูทับเบิก"
+msgstr "Phu Thap Boek"
+
+msgid "ม"
+msgstr ""
+
+msgid "มหาวิทยาลัยขอนแก่น"
+msgstr "Khon Kaen University"
+
+msgid "มหาวิทยาลัยมหาสารคาม (มมส)"
+msgstr "Mahasarakham University (MSU)"
+
+msgid "มหาวิทยาลัยมหิดล (ศาลายา)"
+msgstr "Mahidol University (Salaya)"
+
+msgid "มหาสารคาม"
+msgstr "Maha Sarakham"
+
+msgid "มุกดาหาร"
+msgstr "Mukdahan"
+
+msgid "เมกาบางนา"
+msgstr "Mega Bangna"
+
+msgid "เมืองเก่าภูเก็ต"
+msgstr "Phuket Old Town"
+
+msgid "เมืองโบราณ"
+msgstr "Ancient City (Muang Boran)"
+
+msgid "แม่ฮ่องสอน"
+msgstr "Mae Hong Son"
+
+msgid "ไม่พบรถที่ค้นหา"
+msgstr "No cars found"
+
+msgid "ไม่พบสถานที่..."
+msgstr "Location not found..."
+
+msgid "ไม่ได้ระบุความคิดเห็น"
+msgstr "No comment provided"
+
+msgid "ไม่มีการบันทึกความเสียหาย (สภาพสมบูรณ์)"
+msgstr "No damage recorded (Perfect condition)"
+
+msgid "ไม่มีคำขอเช่าที่รอการอนุมัติในขณะนี้"
+msgstr "No pending booking requests at the moment."
+
+msgid "ไม่มีจุดรับรถในโซนนี้"
+msgstr "No pickup points in this zone."
+
+msgid "ไม่มีข้อห้าม"
+msgstr "No specific rules"
+
+msgid "ไม่มีข้อห้ามเพิ่มเติม"
+msgstr "No additional rules"
+
+msgid "ไม่มีรูป"
+msgstr "No Image"
+
+msgid "ไม่มีรูปภาพ"
+msgstr "No images"
+
+msgid "ไม่มีอุปกรณ์เสริม"
+msgstr "No accessories available"
+
 msgid "ไม่ว่าง (ซ่อมบำรุง)"
 msgstr "Unavailable (Maintenance)"
 
-#: .\car_rental\templates\car_rental\dashboard.html:335
+msgid "ย"
+msgstr ""
+
 msgid "ยกเลิก"
 msgstr "Cancel"
 
-#: .\car_rental\templates\car_rental\dashboard.html:336
-msgid "บันทึก"
-msgstr "Save"
+msgid "ยกเลิก/ปฏิเสธ"
+msgstr "Cancelled / Rejected"
+
+msgid "ยโสธร"
+msgstr "Yasothon"
+
+msgid "ยอดค่าเช่าหลังหักส่วนลด"
+msgstr "Net Rental Fee (After Discount)"
+
+msgid "ยะลา"
+msgstr "Yala"
+
+msgid "ยังไม่มีคำแนะนำเพิ่มเติมในขณะนี้"
+msgstr "No further recommendations at this time."
+
+msgid "ยังไม่มีประวัติการจอง"
+msgstr "No booking history found."
+
+msgid "ยังไม่มีรีวิวจากเจ้าของรถ"
+msgstr "No reviews from car owners yet."
+
+msgid "ยังไม่มีรีวิวสำหรับรถคันนี้ เป็นคนแรกที่รีวิวเลย!"
+msgstr "No reviews yet. Be the first to review!"
+
+msgid "ยี่ห้อ"
+msgstr "Brand"
+
+msgid "ยืนยันที่จะยกเลิกการจองนี้?"
+msgstr "Are you sure you want to cancel this booking?"
+
+msgid "ยืนยันที่จะปฏิเสธ?"
+msgstr "Confirm rejection?"
+
+msgid "ยืนยันเปลี่ยนรหัสผ่าน"
+msgstr "Confirm Password Change"
+
+msgid "ยืนยันรหัสผ่านใหม่"
+msgstr "Confirm New Password"
+
+msgid "ยืนยันรับรถคืนและจบงาน?"
+msgstr "Confirm return vehicle and complete job?"
+
+msgid "ยืนยันและลงประกาศ"
+msgstr "Confirm & Publish"
+
+msgid "ยินดีต้อนรับ คุณ"
+msgstr "Welcome,"
+
+msgid "ย้อนกลับ"
+msgstr "Back"
+
+msgid "ร"
+msgstr ""
+
+msgid "รถกระบะ"
+msgstr "Pickup Truck"
+
+msgid "รถเก๋ง"
+msgstr "Sedan"
+
+msgid "รถเก๋งขนาดเล็ก"
+msgstr "Mini / Sedan"
+
+msgid "รถของคุณเป็นประเภทไหน"
+msgstr "What type of car do you have?"
+
+msgid "รถตู้"
+msgstr "Van"
+
+msgid "รถที่จอง"
+msgstr "Booked Car"
+
+msgid "รถทั้งหมด"
+msgstr "Total Cars"
+
+msgid "รถไฟฟ้า"
+msgstr "Electric Vehicle"
+
+msgid "รถไฟฟ้า (EV)"
+msgstr "Electric Vehicle (EV)"
+
+msgid "รถ:"
+msgstr "Car:"
+
+msgid "รพ.เจ้าพระยาอภัยภูเบศร"
+msgstr "Chaophraya Abhaibhubejhr Hospital"
+
+msgid "รอตรวจสอบยอดเงิน"
+msgstr "Verifying Payment"
+
+msgid "รอตรวจสอบสลิป"
+msgstr "Verifying Slip"
+
+msgid "รอชำระเงิน"
+msgstr "Waiting for Payment"
+
+msgid "รออนุมัติ"
+msgstr "Pending"
+
+msgid "ระนอง"
+msgstr "Ranong"
+
+msgid "ระบบเกียร์"
+msgstr "Transmission"
+
+msgid "ระบบเกียร์:"
+msgstr "Transmission:"
+
+msgid "ระบบเชื้อเพลิง"
+msgstr "Fuel System"
+
+msgid "ระบบเชื้อเพลิง:"
+msgstr "Fuel System:"
+
+msgid "ระยอง"
+msgstr "Rayong"
+
+msgid "รหัสผ่าน"
+msgstr "Password"
+
+msgid "รหัสผ่านเดิม"
+msgstr "Current Password"
+
+msgid "รหัสผ่านใหม่"
+msgstr "New Password"
+
+msgid "รหัสไปรษณีย์"
+msgstr "Zip Code"
+
+msgid "รับ:"
+msgstr "Pick-up:"
+
+msgid "รับมัดจำเพิ่ม (เงินสด)"
+msgstr "Collect Deposit (Cash)"
+
+msgid "รับรถ"
+msgstr "Pick-up"
+
+msgid "รับรถวันที่"
+msgstr "Pickup Date"
+
+msgid "รับรถแล้ว"
+msgstr "Picked Up"
+
+msgid "ราคาต่อวัน (THB)"
+msgstr "Price/Day (THB)"
+
+msgid "ราคาต่อวัน (฿)"
+msgstr "Price/Day (฿)"
+
+msgid "ราคาเริ่มต้น"
+msgstr "Starting at"
+
+msgid "ราคารวมสุทธิ"
+msgstr "Net Total Price"
+
+msgid "ราชบุรี"
+msgstr "Ratchaburi"
+
+msgid "รายการนี้หมดอายุแล้ว"
+msgstr "This booking has expired."
+
+msgid "รายได้รวม"
+msgstr "Total Revenue"
+
+msgid "รายได้รายเดือน (แยกตามประเภทรถ)"
+msgstr "Monthly Revenue (By Type)"
+
+msgid "รายได้สุทธิที่คุณได้รับ"
+msgstr "Your Net Income"
+
+msgid "รายละเอียด"
+msgstr "Details"
+
+msgid "รายละเอียดคำขอเช่า"
+msgstr "Booking Request Details"
+
+msgid "รายละเอียดเพิ่มเติม"
+msgstr "Description"
+
+msgid "รายละเอียดเพิ่มเติมของรถ"
+msgstr "More Details"
+
+msgid "รายละเอียดรถ"
+msgstr "Car Details"
+
+msgid "รายละเอียดรถเพื่อเป็นจุดขายของคุณ"
+msgstr "Car Description (Your Selling Point)"
+
+msgid "รีวิว"
+msgstr "reviews"
+
+msgid "รีวิวจากผู้ใช้งาน"
+msgstr "User Reviews"
+
+msgid "รีวิวลูกค้า"
+msgstr "Review Renter"
+
+msgid "รีวิวลูกค้าแล้ว"
+msgstr "Reviewed"
+
+msgid "รูปรถ"
+msgstr "Car Image"
+
+msgid "รูปรถ (สำหรับลูกค้า)"
+msgstr "Car Photos (For Customers)"
+
+msgid "รูปภาพรถ"
+msgstr "Car Photos"
+
+msgid "รุ่น"
+msgstr "Model"
+
+msgid "เริ่มจองรถคันแรก"
+msgstr "Book your first car"
+
+msgid "เริ่มต้นง่ายๆด้วย"
+msgstr "It’s easy to get started with"
+
+msgid "เริ่มต้นเป็นเจ้าของรถเช่า - WarpCar"
+msgstr "Start Hosting Your Car - WarpCar"
+
+msgid "เรียบร้อยแล้ว! นำไปใช้ตอนจองได้เลย"
+msgstr "copied! Use it when booking."
+
+msgid "เรา"
+msgstr "We"
+
+msgid "โรง"
+msgstr ""
+
+msgid "โรบินสัน ชัยภูมิ"
+msgstr "Robinson Chaiyaphum"
+
+msgid "ร้อยเอ็ด"
+msgstr "Roi Et"
+
+msgid "ล"
+msgstr ""
+
+msgid "ลง"
+msgstr "Post"
+
+msgid "ลด"
+msgstr "Discount"
+
+msgid "ลองเปลี่ยนจังหวัด หรือประเภทรถดูนะครับ"
+msgstr "Try changing province or car type."
+
+msgid "ลพบุรี"
+msgstr "Lopburi"
+
+msgid "ลานพญานาค (ริมโขง)"
+msgstr "Naga Monument (Mekong River)"
+
+msgid "ลำปาง"
+msgstr "Lampang"
+
+msgid "ลำพูน"
+msgstr "Lamphun"
+
+msgid "ลิง"
+msgstr "Link"
+
+msgid "ลบ"
+msgstr "Delete"
+
+msgid "ลูกค้าจะจ่ายให้คุณโดยตรง"
+msgstr "is paid directly to you by the customer"
+
+msgid "เลขทะเบียน"
+msgstr "License Plate"
+
+msgid "เลขที่ใบขับขี่"
+msgstr "Driver's License No."
+
+msgid "เลย"
+msgstr "Loei"
+
+msgid "เลือกจังหวัด"
+msgstr "Select Province"
+
+msgid "เลือกประเภทเชื้อเพลิง"
+msgstr "Select Fuel Type"
+
+msgid "เลือกประเภทบริการ"
+msgstr "Please select a service type."
+
+msgid "เลือกประเภทรถ"
+msgstr "Select Car Type"
+
+msgid "เลือกราคาเริ่มต้น ยืนยันรายละเอียดบางประการ แล้วลงประกาศรถเช่า"
+msgstr "Choose a starting price, verify a few details, then publish your listing."
+
+msgid "เลือกสถานที่"
+msgstr "Select location"
+
+msgid "เลือกวิธีการชำระเงิน"
+msgstr "Select Payment Method"
+
+msgid "แล้ว"
+msgstr "Already"
+
+msgid "แลก"
+msgstr "Exchange"
+
+msgid "และคุณต้องคืนให้ลูกค้าเมื่อจบการเช่า (ระบบจะไม่หักเปอร์เซ็นต์จากยอดนี้)"
+msgstr "and you must return it upon completion (no commission fee deducted)."
+
+msgid "ว"
+msgstr ""
+
+msgid "วง"
+msgstr ""
+
+msgid "ว/ด/ป"
+msgstr "DD/MM/YYYY"
+
+msgid "วัดจุฬามณี"
+msgstr "Wat Chulamanee"
+
+msgid "วัดท่าซุง (วิหารแก้ว)"
+msgstr "Wat Tha Sung (Crystal Temple)"
+
+msgid "วัดท่าหลวง (หลวงพ่อเพชร)"
+msgstr "Wat Tha Luang"
+
+msgid "วัดพระธาตุช่อแฮ"
+msgstr "Wat Phra That Cho Hae"
+
+msgid "วัดพระธาตุหริภุญชัย"
+msgstr "Wat Phra That Hariphunchai"
+
+msgid "วัดพระพุทธบาทราชวรมหาวิหาร"
+msgstr "Wat Phra Phutthabat"
+
+msgid "วัดพระสมุทรเจดีย์"
+msgstr "Phra Samut Chedi"
+
+msgid "วัดพิกุลทอง (พระพุทธรูปองค์ใหญ่)"
+msgstr "Wat Phikun Thong"
+
+msgid "วัดม่วง (หลวงพ่อใหญ่)"
+msgstr "Wat Muang (Big Buddha)"
+
+msgid "วัดป่าเลไลยก์วรวิหาร"
+msgstr "Wat Pa Lelai Worawihan"
+
+msgid "วัดโสธรวรารามวรวิหาร"
+msgstr "Wat Sothon Wararam Worawihan"
+
+msgid "วัน"
+msgstr "day"
+
+msgid "วันใช้งาน"
+msgstr "Usage Date"
+
+msgid "วันที่ใช้งาน"
+msgstr "Rental Dates"
+
+msgid "วันและเวลา"
+msgstr "Date & Time"
+
+msgid "ว่าง"
+msgstr "Available"
+
+msgid "ว่าง (พร้อมใช้งาน)"
+msgstr "Available (Ready)"
+
+msgid "วิเคราะห์รายได้ (1 ปีย้อนหลัง)"
+msgstr "Revenue Analysis (Last 1 Year)"
+
+msgid "วิมานพญาแถน (พญาคันคาก)"
+msgstr "Vimarn Phaya Tan (Toad Museum)"
+
+msgid "เวลา"
+msgstr "Time"
+
+msgid "ศ"
+msgstr ""
+
+msgid "ศาลพระกาฬ"
+msgstr "Phra Kan Shrine"
+
+msgid "ศาลพันท้ายนรสิงห์"
+msgstr "Phantai Norasing Shrine"
+
+msgid "ศาลสมเด็จพระนเรศวร"
+msgstr "Somdet Phra Naresuan Shrine"
+
+msgid "ศรีสะเกษ"
+msgstr "Si Sa Ket"
+
+msgid "ส"
+msgstr ""
+
+msgid "สกุล"
+msgstr ""
+
+msgid "สกลนคร"
+msgstr "Sakon Nakhon"
+
+msgid "สงขลา"
+msgstr "Songkhla"
+
+msgid "ส่ง"
+msgstr "Send"
+
+msgid "ส่งคำชี้แจง"
+msgstr "Submit Reply"
+
+msgid "ส่งรีวิว"
+msgstr "Submit Review"
+
+msgid "สตูล"
+msgstr "Satun"
+
+msgid "สถานะ"
+msgstr "Status"
+
+msgid "สถานที่:"
+msgstr "Location:"
+
+msgid "สถานที่แนะนำ"
+msgstr "Suggested Locations"
+
+msgid "สถานที่รับรถ"
+msgstr "Pickup Location"
+
+msgid "สถานตากอากาศบางปู"
+msgstr "Bang Pu Recreation Center"
+
+msgid "สถานีกลางกรุงเทพอภิวัฒน์ (บางซื่อ)"
+msgstr "Krung Thep Aphiwat Central Terminal"
+
+msgid "สถานีขนส่งกระบี่"
+msgstr "Krabi Bus Terminal"
+
+msgid "สถานีขนส่งกาญจนบุรี"
+msgstr "Kanchanaburi Bus Terminal"
+
+msgid "สถานีขนส่งกำแพงเพชร"
+msgstr "Kamphaeng Phet Bus Terminal"
+
+msgid "สถานีขนส่งขอนแก่น 3"
+msgstr "Khon Kaen Bus Terminal 3"
+
+msgid "สถานีขนส่งจันทบุรี"
+msgstr "Chanthaburi Bus Terminal"
+
+msgid "สถานีขนส่งฉะเชิงเทรา"
+msgstr "Chachoengsao Bus Terminal"
+
+msgid "สถานีขนส่งชัยนาท"
+msgstr "Chai Nat Bus Terminal"
+
+msgid "สถานีขนส่งชัยภูมิ"
+msgstr "Chaiyaphum Bus Terminal"
+
+msgid "สถานีขนส่งเชียงราย 1"
+msgstr "Chiang Rai Bus Terminal 1"
+
+msgid "สถานีขนส่งตราด"
+msgstr "Trat Bus Terminal"
+
+msgid "สถานีขนส่งนครนายก"
+msgstr "Nakhon Nayok Bus Terminal"
+
+msgid "สถานีขนส่งนครราชสีมา 2"
+msgstr "Nakhon ratchasima bus terminal 2 korat"
+
+msgid "สถานีขนส่งพัทยา (รุ่งเรือง)"
+msgstr "Pattaya Bus Terminal"
+
+msgid "สถานีขนส่งพิษณุโลก 2"
+msgstr "Phitsanulok bus terminal 2"
+
+msgid "สถานีขนส่งภูเก็ต 2"
+msgstr "Phuket bus terminal 2"
+
+msgid "สถานีขนส่งระยอง 2"
+msgstr "Rayong bus terminal 2"
+
+msgid "สถานีขนส่งสระแก้ว"
+msgstr "Sa Kaeo Bus Terminal"
+
+msgid "สถานีขนส่งสระบุรี"
+msgstr "Saraburi Bus Terminal"
+
+msgid "สถานีขนส่งสิงห์บุรี"
+msgstr "Sing Buri Bus Terminal"
+
+msgid "สถานีขนส่งสุพรรณบุรี"
+msgstr "Suphan Buri Bus Terminal"
+
+msgid "สถานีขนส่งสุราษฎร์ธานี"
+msgstr "Surat thani bus terminal"
+
+msgid "สถานีขนส่งหนองบัวลำภู"
+msgstr "Nong Bua Lam Phu Bus Terminal"
+
+msgid "สถานีขนส่งหล่มสัก"
+msgstr "Lom Sak Bus Terminal"
+
+msgid "สถานีขนส่งหมอชิต 2"
+msgstr "Mo Chit 2 Bus Terminal"
+
+msgid "สถานีขนส่งหัวหิน"
+msgstr "Hua Hin Bus Terminal"
+
+msgid "สถานีขนส่งหาดใหญ่"
+msgstr "Hat Yai Bus Terminal"
+
+msgid "สถานีขนส่งอ่างทอง"
+msgstr "Ang Thong Bus Terminal"
+
+msgid "สถานีขนส่งอาเขต เชียงใหม่ 2"
+msgstr "Chiang Mai Arcade Bus Terminal 2"
+
+msgid "สถานีขนส่งอาเขต เชียงใหม่ 3"
+msgstr "Chiang Mai Arcade Bus Terminal 3"
+
+msgid "สถานีขนส่งอำนาจเจริญ"
+msgstr "Amnat Charoen Bus Terminal"
+
+msgid "สถานีขนส่งอุดรธานี 1"
+msgstr "Udon thani bus terminal 1"
+
+msgid "สถานีขนส่งอุบลราชธานี"
+msgstr "Ubon ratchathani bus terminal"
+
+msgid "สถานีขนส่งเอกมัย"
+msgstr "Eastern Bus Terminal (Ekkamai)"
+
+msgid "สถานีขนส่งบึงกาฬ"
+msgstr "Bueng Kan Bus Terminal"
+
+msgid "สถานีขนส่งพะเยา"
+msgstr "Phayao Bus Terminal"
+
+msgid "สถานีขนส่งแพร่"
+msgstr "Phrae Bus Terminal"
+
+msgid "สถานีขนส่งมหาสารคาม"
+msgstr "Maha Sarakham Bus Terminal"
+
+msgid "สถานีขนส่งมุกดาหาร"
+msgstr "Mukdahan Bus Terminal"
+
+msgid "สถานีขนส่งยโสธร"
+msgstr "Yasothon Bus Terminal"
+
+msgid "สถานีขนส่งสายใต้ใหม่"
+msgstr "Southern Bus Terminal (Sai Tai Mai)"
+
+msgid "สถานีรถไฟกาญจนบุรี"
+msgstr "Kanchanaburi Railway Station"
+
+msgid "สถานีรถไฟขอนแก่น"
+msgstr "Khon kaen railway station"
+
+msgid "สถานีรถไฟชุมทางฉะเชิงเทรา"
+msgstr "Chachoengsao Junction Railway Station"
+
+msgid "สถานีรถไฟชุมทางหาดใหญ่"
+msgstr "Hat yai junction railway station"
+
+msgid "สถานีรถไฟชุมพร"
+msgstr "Chumphon railway station"
+
+msgid "สถานีรถไฟเชียงใหม่"
+msgstr "Chiang mai railway station"
+
+msgid "สถานีรถไฟด่านพรมแดนบ้านคลองลึก"
+msgstr "Ban Khlong Luk Border Railway Station"
+
+msgid "สถานีรถไฟตรัง"
+msgstr "Trang railway station"
+
+msgid "สถานีรถไฟนครปฐม"
+msgstr "Nakhon Pathom Railway Station"
+
+msgid "สถานีรถไฟนครราชสีมา"
+msgstr "Nakhon ratchasima railway station korat"
+
+msgid "สถานีรถไฟนครศรีธรรมราช"
+msgstr "Nakhon si thammarat railway station"
+
+msgid "สถานีรถไฟนครสวรรค์"
+msgstr "Nakhon sawan railway station"
+
+msgid "สถานีรถไฟบุรีรัมย์"
+msgstr "Buri ram railway station"
+
+msgid "สถานีรถไฟปราจีนบุรี"
+msgstr "Prachin Buri Railway Station"
+
+msgid "สถานีรถไฟพัทลุง"
+msgstr "Phatthalung Railway Station"
+
+msgid "สถานีรถไฟพิจิตร"
+msgstr "Phichit Railway Station"
+
+msgid "สถานีรถไฟพิษณุโลก"
+msgstr "Phitsanulok railway station"
+
+msgid "สถานีรถไฟเพชรบุรี"
+msgstr "Phetchaburi Railway Station"
+
+msgid "สถานีรถไฟมหาชัย"
+msgstr "Mahachai Railway Station"
+
+msgid "สถานีรถไฟยะลา"
+msgstr "Yala railway station"
+
+msgid "สถานีรถไฟราชบุรี"
+msgstr "Ratchaburi Railway Station"
+
+msgid "สถานีรถไฟลพบุรี"
+msgstr "Lopburi railway station"
+
+msgid "สถานีรถไฟลำพูน"
+msgstr "Lamphun Railway Station"
+
+msgid "สถานีรถไฟศรีสะเกษ"
+msgstr "Si sa ket railway station"
+
+msgid "สถานีรถไฟสุรินทร์"
+msgstr "Surin railway station"
+
+msgid "สถานีรถไฟสุราษฎร์ธานี"
+msgstr "Surat thani railway station phunphin"
+
+msgid "สถานีรถไฟหนองคาย"
+msgstr "Nong khai railway station"
+
+msgid "สถานีรถไฟหัวหิน"
+msgstr "Hua hin railway station"
+
+msgid "สถานีรถไฟอยุธยา"
+msgstr "Ayutthaya railway station"
+
+msgid "สถานีรถไฟอุดรธานี"
+msgstr "Udon thani railway station"
+
+msgid "สถานีรถไฟอุตรดิตถ์"
+msgstr "Uttaradit Railway Station"
+
+msgid "สถานีรถไฟอุบลราชธานี"
+msgstr "Ubon ratchathani railway station warin chamrap"
+
+msgid "สถานีรถไฟกรุงเทพ (หัวลำโพง)"
+msgstr "Bangkok Railway Station (Hua Lamphong)"
+
+msgid "สถานีรถไฟชะอำ"
+msgstr "Cha-am Railway Station"
+
+msgid "สนามบินกระบี่ (KBV)"
+msgstr "Krabi airport kbv"
+
+msgid "สนามบินขอนแก่น (KKC)"
+msgstr "Khon kaen airport kkc"
+
+msgid "สนามบินชุมพร (CJM)"
+msgstr "Chumphon airport cjm"
+
+msgid "สนามบินเชียงใหม่ (CNX)"
+msgstr "Chiang mai airport cnx"
+
+msgid "สนามบินดอนเมือง (DMK)"
+msgstr "Don Mueang Airport (DMK)"
+
+msgid "สนามบินตรัง (TST)"
+msgstr "Trang airport tst"
+
+msgid "สนามบินตราด (TDX)"
+msgstr "Trat airport tdx"
+
+msgid "สนามบินนครพนม (KOP)"
+msgstr "Nakhon phanom airport kop"
+
+msgid "สนามบินนครศรีธรรมราช (NST)"
+msgstr "Nakhon si thammarat airport nst"
+
+msgid "สนามบินนราธิวาส (NAW)"
+msgstr "Narathiwat airport naw"
+
+msgid "สนามบินน่านนคร (NNT)"
+msgstr "Nan nakhon airport nnt"
+
+msgid "สนามบินบุรีรัมย์ (BFV)"
+msgstr "Buri ram airport bfv"
+
+msgid "สนามบินเบตง (BTZ)"
+msgstr "Betong airport yala btz"
+
+msgid "สนามบินปาย (PYY)"
+msgstr "Pai airport mae hong son pyy"
+
+msgid "สนามบินพิษณุโลก (PHS)"
+msgstr "Phitsanulok airport phs"
+
+msgid "สนามบินแพร่ (PRH)"
+msgstr "Phrae Airport (PRH)"
+
+msgid "สนามบินภูเก็ต (HKT)"
+msgstr "Phuket airport hkt"
+
+msgid "สนามบินแม่ฟ้าหลวง เชียงราย (CEI)"
+msgstr "Chiang rai airport cei"
+
+msgid "สนามบินแม่สอด (MAQ)"
+msgstr "Mae sot airport tak maq"
+
+msgid "สนามบินแม่ฮ่องสอน (HGN)"
+msgstr "Mae hong son airport hgn"
+
+msgid "สนามบินร้อยเอ็ด (ROI)"
+msgstr "Roi et airport roi"
+
+msgid "สนามบินระนอง (UNN)"
+msgstr "Ranong airport unn"
+
+msgid "สนามบินลำปาง (LPT)"
+msgstr "Lampang airport lpt"
+
+msgid "สนามบินเลย (LOE)"
+msgstr "Loei airport loe"
+
+msgid "สนามบินสกลนคร (SNO)"
+msgstr "Sakon nakhon airport sno"
+
+msgid "สนามบินสมุย (USM)"
+msgstr "Samui airport surat thani usm"
+
+msgid "สนามบินสุโขทัย (THS)"
+msgstr "Sukhothai airport ths"
+
+msgid "สนามบินสุราษฎร์ธานี (URT)"
+msgstr "Surat thani airport urt"
+
+msgid "สนามบินสุวรรณภูมิ (BKK)"
+msgstr "Suvarnabhumi Airport (BKK)"
+
+msgid "สนามบินหาดใหญ่ (HDY)"
+msgstr "Hat yai airport songkhla hdy"
+
+msgid "สนามบินหัวหิน (HHQ)"
+msgstr "Hua hin airport prachuap hhq"
+
+msgid "สนามบินอุดรธานี (UTH)"
+msgstr "Udon thani airport uth"
+
+msgid "สนามบินอุบลราชธานี (UBP)"
+msgstr "Ubon ratchathani airport ubp"
+
+msgid "สนามบินอู่ตะเภา (UTP)"
+msgstr "U-tapao pattaya rayong utp"
+
+msgid "สมุทรปราการ"
+msgstr "Samut Prakan"
+
+msgid "สมุทรสงคราม"
+msgstr "Samut Songkhram"
+
+msgid "สมุทรสาคร"
+msgstr "Samut Sakhon"
+
+msgid "สมาชิกเมื่อ:"
+msgstr "Member since:"
+
+msgid "สระแก้ว"
+msgstr "Sa Kaeo"
+
+msgid "สระบุรี"
+msgstr "Saraburi"
+
+msgid "สรุปยอดที่ต้องชำระ"
+msgstr "Payment Summary"
+
+msgid "สรุปราคา"
+msgstr "Price Summary"
+
+msgid "สรุปรายได้"
+msgstr "Revenue Summary"
+
+msgid "ส่วนลด"
+msgstr "Discount"
+
+msgid "ส่วนลดโปรโมชั่น"
+msgstr "Promotion Discount"
+
+msgid "สิงห์ปาร์ค (ไร่บุญรอด)"
+msgstr "Singha Park"
+
+msgid "สิงห์บุรี"
+msgstr "Sing Buri"
+
+msgid "สิ่งที่ผู้เช่าควรรู้"
+msgstr "Things renters should know"
+
+msgid "สุพรรณบุรี"
+msgstr "Suphan Buri"
+
+msgid "สุรินทร์"
+msgstr "Surin"
+
+msgid "สุราษฎร์ธานี"
+msgstr "Surat Thani"
+
+msgid "สุโขทัย"
+msgstr "Sukhothai"
+
+msgid "สแกนด้วยแอปธนาคารเพื่อชำระเงิน"
+msgstr "Scan with banking app to pay"
+
+msgid "สถิติ"
+msgstr "Stats"
+
+msgid "สถิติประจำปี"
+msgstr "Annual Statistics"
+
+msgid "สยามพารากอน"
+msgstr "Siam Paragon"
+
+msgid "สะพานข้ามแม่น้ำแคว"
+msgstr "River Kwai Bridge"
+
+msgid "สะพานมิตรภาพไทย-ลาว 2"
+msgstr "Thai-Lao Friendship Bridge 2"
+
+msgid "สัดส่วนรายได้รวม"
+msgstr "Revenue Distribution"
+
+msgid "สำเนาบัตรประชาชน"
+msgstr "ID Card Copy"
+
+msgid "สำเนาเล่มทะเบียนรถ"
+msgstr "Car Registration Copy (Blue Book)"
+
+msgid "สูงสุด: วัน"
+msgstr "Max: Days"
+
+msgid "เสริมไทยคอมเพล็กซ์"
+msgstr "Sermthai Complex"
+
+msgid "ห"
+msgstr ""
+
+msgid "หมดเวลาชำระเงิน"
+msgstr "Payment Expired"
+
+msgid "หมดเขต"
+msgstr "Exp:"
+
+msgid "หอแก้วมุกดาหาร"
+msgstr "Ho Kaeo Mukdahan Tower"
+
+msgid "หอนาฬิกาเชียงราย"
+msgstr "Chiang Rai Clock Tower"
+
+msgid "หอนาฬิกาหัวหิน"
+msgstr "Hua Hin Clock Tower"
+
+msgid "หอนาฬิกาอำนาจเจริญ"
+msgstr "Amnat Charoen Clock Tower"
+
+msgid "หัวหิน"
+msgstr "Hua Hin"
+
+msgid "หักค่าธรรมเนียมระบบ (15%)"
+msgstr "System Fee Deduction (15%)"
+
+msgid "หาดจอมเทียน"
+msgstr "Jomtien Beach"
+
+msgid "หาดชะอำ"
+msgstr "Cha-am Beach"
+
+msgid "หาดป่าตอง"
+msgstr "Patong Beach"
+
+msgid "หาดเฉวง (สมุย)"
+msgstr "Chaweng Beach"
+
+msgid "เหลือเวลา"
+msgstr "Time Remaining"
+
+msgid "เหมาะสำหรับเด็กอายุ 1–3 ปี"
+msgstr "Suitable for ages 1–3"
+
+msgid "อ"
+msgstr ""
+
+msgid "อนุมัติ"
+msgstr "Approve"
+
+msgid "อนุมัติการจอง"
+msgstr "Approve Booking"
+
+msgid "อยาก"
+msgstr "Want"
+
+msgid "อยู่"
+msgstr "Stay"
+
+msgid "ออกจากระบบ"
+msgstr "Logout"
+
+msgid "ออโต้ (Auto)"
+msgstr "Auto"
+
+msgid "อะไร"
+msgstr "What"
+
+msgid "อำเภอ / เขต"
+msgstr "District"
+
+msgid "อำนาจเจริญ"
+msgstr "Amnat Charoen"
+
+msgid "อ่างทอง"
+msgstr "Ang Thong"
+
+msgid "อ่าวนาง"
+msgstr "Ao Nang"
+
+msgid "อีเมล"
+msgstr "Email"
+
+msgid "อุดรธานี"
+msgstr "Udon Thani"
+
+msgid "อุทยานประวัติศาสตร์กำแพงเพชร"
+msgstr "Kamphaeng Phet Historical Park"
+
+msgid "อุทยานประวัติศาสตร์อยุธยา"
+msgstr "Ayutthaya Historical Park"
+
+msgid "อุทยานมังกรสวรรค์ (ศาลหลักเมือง)"
+msgstr "Dragon Descendants Museum"
+
+msgid "อุทยานแห่งชาติน้ำตกพลิ้ว"
+msgstr "Namtok Phlio National Park"
+
+msgid "อุตรดิตถ์"
+msgstr "Uttaradit"
+
+msgid "อุทัยธานี"
+msgstr "Uthai Thani"
+
+msgid "อุบลราชธานี"
+msgstr "Ubon Ratchathani"
+
+msgid "อุปกรณ์เสริม"
+msgstr "Accessories"
+
+msgid "เอกสารยืนยันรถ"
+msgstr "Verification Documents"
+
+msgid "เอราวัณ"
+msgstr "Erawan"
+
+msgid "แอป"
+msgstr "App"
+
+msgid "โอเค"
+msgstr "OK"
+
+msgid "ไอคอนสยาม"
+msgstr "ICONSIAM"
+
+msgid "ไฮบริด"
+msgstr "Hybrid"
+
+msgid "⚠️ ยืนยันลบรถคันนี้?\\nข้อมูลรายได้และสถิติรถคันนี้จะหายไปจากระบบ"
+msgstr "⚠️ Delete this car?\\nAll revenue and history for this car will be lost."
+
+msgid "* ยอดคงเหลือจ่ายหน้างาน (รวมมัดจำ)"
+msgstr "* Balance to pay on arrival (inc. deposit)"
+
+msgid "(ตัวอย่าง กก 0000 อุบลราชธานี)"
+msgstr "(e.g. 1AB 1234 Bangkok)"
+
+msgid "(ตัวอย่าง YARIS 1.2)"
+msgstr "(e.g. YARIS 1.2)"
+
+msgid "%(count)s ครั้ง"
+msgstr "%(count)s times"
+
+msgid "%(count)s ข้อความ"
+msgstr "%(count)s items"
+
+# --- หน้า User Info (ข้อมูลผู้ใช้) ---
+
+msgid "สมาชิก"
+msgstr "Member"
+
+msgid "ได้รับข้อมูลข่าวสารกับทุกๆ โปรโมชั่น"
+msgstr "Receive news and all promotions"
+
+msgid "ข้อมูลการจองรถของคุณจะไม่สูญหาย"
+msgstr "Your booking information will not be lost"
+
+msgid "เข้าสู่ระบบสมาชิก"
+msgstr "Member Login"
+
+msgid "ลูกค้าทั่วไป"
+msgstr "Guest"
+
+msgid "จองแบบลูกค้าทั่วไป"
+msgstr "Continue as Guest"
+
+msgid "กรอกข้อมูลลูกค้าทั่วไป"
+msgstr "Fill in Guest Information"
+
+msgid "เบอร์โทรศัพท์"
+msgstr "Phone Number"
+
+msgid "หมายเลขใบขับขี่"
+msgstr "Driving License No."
+
+msgid "ดำเนินการต่อ (ชำระเงิน)"
+msgstr "Continue to Payment"
+
+msgid "ย้อนกลับไปยังหน้าสมาชิก"
+msgstr "Back to Member Login"
+
+msgid "เกียร์:"
+msgstr "Transmission:"
+
+msgid "เชื้อเพลิง:"
+msgstr "Fuel:"
+
+msgid "ที่นั่ง:"
+msgstr "Seats:"
+
+msgid "สัมภาระ:"
+msgstr "Luggage:"
+
+msgid "รายละเอียดรถเพิ่มเติม"
+msgstr "More Car Details"
+
+msgid "ค่าเช่ารวม"
+msgstr "Total Rental Fee"
+
+msgid "ชำระกับเจ้าของรถโดยตรง และได้รับคืนเมื่อจบการเช่า"
+msgstr "Pay directly to owner and refund upon completion"
+
+msgid "มีรหัสโปรโมชั่น?"
+msgstr "Have a promo code?"
+
+msgid "กรอกโค้ดส่วนลด"
+msgstr "Enter promo code"
+
+msgid "ใช้โค้ด"
+msgstr "Apply Code"
+
+msgid "โค้ดส่วนลดสำหรับสมาชิกเท่านั้น"
+msgstr "Promo codes are for members only"
+
+msgid "เข้าสู่ระบบเพื่อใช้สิทธิ์"
+msgstr "Login to redeem"
+
+# --- หน้า Confirm Booking (ยืนยันการจอง) ---
+
+msgid "ชำระเงินและรับการแจ้งเตือน"
+msgstr "Payment & Notifications"
+
+msgid "สแกนคิวอาร์โค้ดเพื่อรับแจ้งเตือน"
+msgstr "Scan QR Code for Notifications"
+
+msgid "สแกน Line OA เพื่อรับการแจ้งเตือนสถานะการจองและการชำระเงิน"
+msgstr "Scan Line OA to receive booking status and payment notifications"
+
+msgid "ยืนยันการจอง"
+msgstr "Confirm Booking"
+
+msgid "* เมื่อกดปุ่มนี้ สถานะจะรอการอนุมัติจากเจ้าของรถ"
+msgstr "* Status will be pending owner approval upon clicking."
+
+msgid "มีที่นั่งเด็ก"
+msgstr "Child Seat Included"
+
+msgid "สรุปยอดเงิน"
+msgstr "Payment Summary"
+
+msgid "ค่าเช่า"
+msgstr "Rental Fee"
+
+msgid "ยอดรวมสุทธิ"
+msgstr "Net Total"
+
+# --- หน้า Login (เข้าสู่ระบบ) ---
+
+msgid "ยังไม่มีบัญชี? ลงทะเบียน"
+msgstr "Don't have an account? Register"
+
+# --- หน้า Register (ลงทะเบียน) ---
+
+msgid "ลงทะเบียน"
+msgstr "Register"
+
+msgid "มีบัญชีอยู่แล้ว? เข้าสู่ระบบ"
+msgstr "Already have an account? Login"
+
+msgid "อีเมล (ใช้เป็นชื่อผู้ใช้สำหรับเข้าสู่ระบบ)"
+msgstr "Email (Used as username)"
+
+msgid "รูปโปรไฟล์ (ไม่บังคับ)"
+msgstr "Profile Picture (Optional)"
+
+msgid "ชื่อจริง"
+msgstr "First Name"
+
+# --- หน้า Request Refund (ขอยกเลิกและรับเงินคืน) ---
+
+msgid "ขอยกเลิกและรับเงินคืน"
+msgstr "Cancel Booking & Request Refund"
+
+msgid "สรุปยอดเงินคืน"
+msgstr "Refund Summary"
+
+msgid "ยอดที่ชำระมา:"
+msgstr "Paid Amount:"
+
+msgid "นโยบาย:"
+msgstr "Policy:"
+
+msgid "ยอดที่จะได้รับคืน:"
+msgstr "Refund Amount:"
+
+msgid "กรุณาระบุบัญชีเพื่อรับเงินโอนคืน"
+msgstr "Please provide bank account details for refund"
+
+msgid "ธนาคาร"
+msgstr "Bank Name"
+
+msgid "เลขที่บัญชี"
+msgstr "Account Number"
+
+msgid "ชื่อบัญชี"
+msgstr "Account Name"
+
+msgid "ยืนยันยกเลิกและขอคืนเงิน"
+msgstr "Confirm Cancellation & Refund"
+
+msgid "การยกเลิกครั้งนี้ <b>จะไม่ได้รับเงินคืน</b> ตามนโยบาย"
+msgstr "This cancellation is <b>non-refundable</b> per policy"
+
+msgid "(เนื่องจากเลยกำหนดเวลา หรือใกล้เวลารับรถเกินไป)"
+msgstr "(Due to expiration or too close to pickup time)"
+
+msgid "ยืนยันยกเลิก (ไม่รับเงินคืน)"
+msgstr "Confirm Cancellation (No Refund)"
+
+msgid "คุณจะไม่ได้รับเงินคืน ยืนยันที่จะยกเลิกหรือไม่?"
+msgstr "You will not receive a refund. Confirm cancellation?"
+
+# --- Views (Logic การคำนวณเงินคืน) ---
+
+msgid "รายการนี้ไม่สามารถขอคืนเงินได้"
+msgstr "This booking is not eligible for a refund."
+
+msgid "ยกเลิกก่อนกำหนด 24 ชม. ได้รับเงินคืนเต็มจำนวน"
+msgstr "Cancelled 24+ hrs in advance. Full refund granted."
+
+msgid "เนื่องจากยกเลิกช้ากว่ากำหนด (น้อยกว่า 24 ชม.) จะไม่ได้รับเงินคืน"
+msgstr "Late cancellation (less than 24 hrs). No refund."
+
+msgid "เลยเวลารับรถแล้ว ไม่สามารถขอเงินคืนได้"
+msgstr "Pickup time has passed. Refund not possible."
+
+msgid "ส่งคำร้องเรียบร้อย"
+msgstr "Request submitted successfully"
+
+# --- Sidebar Menu (เมนูข้าง) ---
+
+msgid "เมนูเจ้าของรถ"
+msgstr "Car Owner Menu"
+
+msgid "จัดการการจอง"
+msgstr "Manage Bookings"
+
+msgid "รีวิวจากเจ้าของรถ"
+msgstr "Reviews "
+
+
+# --- หน้า Manage Booking (ตรวจสอบสถานะการจอง) ---
+
+msgid "ตรวจสอบสถานะการจอง"
+msgstr "Check Booking Status"
+
+msgid "สำหรับลูกค้าทั่วไป (Guest)"
+msgstr "For Guests"
+
+msgid "เลขที่ใบจอง (Booking Ref)"
+msgstr "Booking Reference No."
+
+msgid "เช่น BK-2025..."
+msgstr "e.g. BK-2025..."
+
+msgid "อีเมล หรือ เบอร์โทรศัพท์"
+msgstr "Email or Phone Number"
+
+msgid "กรอกข้อมูลที่ใช้ตอนจอง"
+msgstr "Enter info used during booking"
+
+msgid "ค้นหาการจอง"
+msgstr "Find Booking"
+
+# --- หน้า Booking Detail (รายละเอียดการจอง) ---
+
+msgid "รายละเอียดการจอง:"
+msgstr "Booking Detail:"
+
+msgid "สถานะ:"
+msgstr "Status:"
+
+msgid "รถที่เช่า"
+msgstr "Rented Car"
+
+msgid "วันรับรถ - คืนรถ"
+msgstr "Pickup - Return Date"
+
+msgid "ชื่อผู้จอง"
+msgstr "Booked By"
+
+msgid "การชำระเงิน"
+msgstr "Payment"
+
+msgid "ค่าเช่ารวม:"
+msgstr "Total Rental Fee:"
+
+msgid "มัดจำที่ต้องจ่าย (15%):"
+msgstr "Deposit Required (15%):"
+
+msgid "*ส่วนที่เหลือจ่ายวันรับรถ"
+msgstr "*Remaining balance pay on pickup"
+
+msgid "คำนวณหน้างาน"
+msgstr "Calculated at pickup"
+
+msgid "รอเจ้าของรถอนุมัติ..."
+msgstr "Waiting for owner approval..."
+
+msgid "เจ้าของรถอนุมัติแล้ว กรุณาชำระเงิน"
+msgstr "Approved by owner. Please proceed to payment."
+
+msgid "แจ้งโอนแล้ว รอเจ้าของรถตรวจสอบสลิป"
+msgstr "Payment submitted. Verifying slip."
+
+msgid "จองสำเร็จ! เตรียมเอกสารรับรถได้เลย"
+msgstr "Booking Confirmed! Please prepare documents for pickup."
+
+msgid "การจองถูกปฏิเสธ"
+msgstr "Booking Rejected"
+
+msgid "หลักฐานสภาพรถ (ส่งโดยเจ้าของรถ)"
+msgstr "Car Condition Evidence (Uploaded by Owner)"
+
+msgid "- ไม่มีรูปภาพ -"
+msgstr "- No images -"
+
+msgid "จบการเช่าเรียบร้อยแล้ว"
+msgstr "Rental Completed"
+
+# --- หน้า Car Inspection (ตรวจสภาพรถ) ---
+
+msgid "ตรวจสภาพรถ - WarpCar"
+msgstr "Car Inspection - WarpCar"
+
+msgid "📸 ตรวจสภาพรถก่อนส่งมอบ"
+msgstr "📸 Pre-delivery Vehicle Inspection"
+
+msgid "ไม่ระบุ"
+msgstr "Unspecified"
+
+msgid "ยังไม่มีรูปบันทึกความเสียหาย (ถ้าไม่มีรอยขีดข่วน สามารถกดข้ามได้)"
+msgstr "No damage photos recorded yet (You can skip if there are no scratches)."
+
+msgid "เพิ่มรูปจุดตำหนิ/รอยขีดข่วน"
+msgstr "Add photo of defects/scratches"
+
+msgid "อัปโหลดรูป"
+msgstr "Upload Photo"
+
+msgid "เมื่อกดส่งมอบแล้ว สถานะจะเปลี่ยนเป็น 'รับรถแล้ว' ทันที"
+msgstr "Once confirmed, the status will immediately change to 'Picked Up'."
+
+msgid "✅ ยืนยันสภาพและส่งกุญแจรถ"
+msgstr "✅ Confirm Condition & Handover Keys"
+
+# --- หน้า Booking Success (จองสำเร็จ) ---
+
+msgid "จองสำเร็จ!"
+msgstr "Booking Confirmed!"
+
+msgid "ขอบคุณที่ใช้บริการ WarpCar"
+msgstr "Thank you for choosing WarpCar."
+
+msgid "เราได้รับข้อมูลการจองและการชำระเงินมัดจำเรียบร้อยแล้ว"
+msgstr "We have received your booking and deposit payment."
+
+msgid "เลขที่การจองของคุณ (โปรดบันทึกไว้)"
+msgstr "Your Booking Reference (Please save this):"
+
+msgid "สิ่งที่ต้องทำต่อไป:"
+msgstr "Next Steps:"
+
+msgid "กรุณานำ \"ใบขับขี่\" และ \"บัตรประชาชน\" ตัวจริง"
+msgstr "Please bring your original Driver's License and ID Card"
+
+msgid "มายื่นในวันรับรถเพื่อชำระยอดคงเหลือ"
+msgstr "to present on pickup day for the balance payment."
+
+# --- Dashboard Sidebar (เมนูข้างแดชบอร์ด) ---
+
+msgid "แดชบอร์ด"
+msgstr "Dashboard"
+
+msgid "คำขอเช่ารถ"
+msgstr "Booking Requests"
+

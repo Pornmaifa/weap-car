@@ -1,6 +1,5 @@
-<aside class="w-full md:w-1/4 flex flex-col space-y-2 h-screen relative">
+{% load i18n %} <aside class="w-full md:w-1/4 flex flex-col space-y-2 h-screen relative">
     
-
     <a href="{% url 'booking_history' %}" 
        class="p-3 rounded-lg font-semibold flex items-center gap-3 transition-colors
        {% if request.resolver_match.url_name == 'booking_history' %}
@@ -8,7 +7,7 @@
        {% else %}
            bg-gray-200 text-gray-800 hover:bg-gray-300
        {% endif %}">
-       <i class="fas fa-history w-5 text-center"></i> ประวัติการเช่ารถ
+        <i class="fas fa-history w-5 text-center"></i> {% trans "ประวัติการเช่ารถ" %}
     </a>
 
     <a href="{% url 'public_profile' user.id %}" 
@@ -18,12 +17,12 @@
        {% else %}
            bg-gray-200 text-gray-800 hover:bg-gray-300
        {% endif %}">
-       <i class="fas fa-star w-5 text-center"></i> รีวิวจากเจ้าของรถ
+        <i class="fas fa-star w-5 text-center"></i> {% trans "รีวิวจากเจ้าของรถ" %}
     </a>
 
     {% if user.is_car_owner %}
         <div class="px-2 mt-6 mb-2">
-            <h3 class="text-gray-400 text-xs font-bold uppercase mb-2">เมนูเจ้าของรถ</h3>
+            <h3 class="text-gray-400 text-xs font-bold uppercase mb-2">{% trans "เมนูเจ้าของรถ" %}</h3>
         </div>
 
         <a href="{% url 'manage_bookings' %}" 
@@ -33,9 +32,8 @@
            {% else %}
                bg-gray-200 text-gray-800 hover:bg-gray-300
            {% endif %}">
-           <i class="fas fa-clipboard-list w-5 text-center"></i> จัดการการจอง
+            <i class="fas fa-clipboard-list w-5 text-center"></i> {% trans "จัดการการจอง" %}
         </a>
     {% endif %}
     
-
 </aside>

@@ -1,7 +1,6 @@
 {% load static %}
 {% load humanize %}
-
-{% block content %}
+{% load i18n %} {% block content %}
 
 {% include 'car_rental/navbar_detail.html' %}
 
@@ -12,22 +11,22 @@
             
             <div class="flex flex-col items-center flex-1 text-[#48a9b9]">
                 <i class="fas fa-check-circle text-2xl mb-1"></i>
-                <span class="text-xs font-bold">ผลการค้นหา</span>
+                <span class="text-xs font-bold">{% trans "ผลการค้นหา" %}</span>
             </div>
 
             <div class="flex flex-col items-center flex-1 text-[#48a9b9]">
                 <i class="fas fa-check-circle text-2xl mb-1"></i>
-                <span class="text-xs font-bold">รายละเอียดรถ</span>
+                <span class="text-xs font-bold">{% trans "รายละเอียดรถ" %}</span>
             </div>
 
             <div class="flex flex-col items-center flex-1 text-[#48a9b9]">
                 <i class="fas fa-check-circle text-2xl mb-1"></i>
-                <span class="text-xs font-bold">ข้อมูลผู้ใช้</span>
+                <span class="text-xs font-bold">{% trans "ข้อมูลผู้ใช้" %}</span>
             </div>
 
             <div class="flex flex-col items-center flex-1 text-gray-400">
                 <i class="far fa-circle text-2xl mb-1"></i>
-                <span class="text-xs">ชำระเงิน</span>
+                <span class="text-xs">{% trans "ชำระเงิน" %}</span>
             </div>
 
         </div>
@@ -39,16 +38,16 @@
             <div class="lg:col-span-7 space-y-12 pt-4">
                 
                 <div id="member-login-mode">
-                    <h2 class="text-2xl font-medium text-gray-800 mb-6">สมาชิก</h2>
+                    <h2 class="text-2xl font-medium text-gray-800 mb-6">{% trans "สมาชิก" %}</h2>
                     
                     <div class="space-y-3 mb-8">
                         <div class="flex items-center gap-3">
                             <i class="fas fa-check text-green-600 text-xl"></i>
-                            <span class="text-gray-600">ได้รับข้อมูลข่าวสารกับทุกๆ โปรโมชั่น</span>
+                            <span class="text-gray-600">{% trans "ได้รับข้อมูลข่าวสารกับทุกๆ โปรโมชั่น" %}</span>
                         </div>
                         <div class="flex items-center gap-3">
                             <i class="fas fa-check text-green-600 text-xl"></i>
-                            <span class="text-gray-600">ข้อมูลการจองรถของคุณจะไม่สูญหาย</span>
+                            <span class="text-gray-600">{% trans "ข้อมูลการจองรถของคุณจะไม่สูญหาย" %}</span>
                         </div>
                     </div>
 
@@ -56,63 +55,63 @@
                         {% csrf_token %}
                         <div class="space-y-5 max-w-md">
                             <div>
-                                <label class="block text-gray-500 text-sm mb-1">อีเมล</label>
+                                <label class="block text-gray-500 text-sm mb-1">{% trans "อีเมล" %}</label>
                                 <input type="email" name="username" class="w-full border border-gray-400 p-3 rounded-none focus:outline-none focus:border-[#48a9b9]">
                             </div>
                             <div>
-                                <label class="block text-gray-500 text-sm mb-1">รหัสผ่าน</label>
+                                <label class="block text-gray-500 text-sm mb-1">{% trans "รหัสผ่าน" %}</label>
                                 <input type="password" name="password" class="w-full border border-gray-400 p-3 rounded-none focus:outline-none focus:border-[#48a9b9]">
                             </div>
 
                             <button type="submit" class="w-full bg-[#48a9b9] hover:bg-[#3ba0b0] text-white text-xl font-medium py-3 shadow-md transition">
-                                สมาชิก
+                                {% trans "เข้าสู่ระบบสมาชิก" %}
                             </button>
                         </div>
                     </form>
                 </div>
 
                 <div id="guest-switch-button">
-                    <h2 class="text-2xl font-medium text-gray-800 mb-6">ลูกค้าทั่วไป</h2>
+                    <h2 class="text-2xl font-medium text-gray-800 mb-6">{% trans "ลูกค้าทั่วไป" %}</h2>
                     <div class="max-w-md">
                         <button onclick="showGuestForm()" class="block w-full bg-[#48a9b9] hover:bg-[#3ba0b0] text-white text-xl font-medium py-3 text-center shadow-md transition">
-                            ลูกค้าทั่วไป
+                            {% trans "จองแบบลูกค้าทั่วไป" %}
                         </button>
                     </div>
                 </div>
 
                 <div id="guest-form-mode" class="hidden">
-                    <h2 class="text-2xl font-medium text-gray-800 mb-6">กรอกข้อมูลลูกค้าทั่วไป</h2>
+                    <h2 class="text-2xl font-medium text-gray-800 mb-6">{% trans "กรอกข้อมูลลูกค้าทั่วไป" %}</h2>
                     
                     <form method="POST" action="" class="flex gap-2">
                          {% csrf_token %}
                         <div class="space-y-5 max-w-md">
                             
                             <div>
-                                <label class="block text-gray-500 text-sm mb-1">ชื่อจริง</label>
+                                <label class="block text-gray-500 text-sm mb-1">{% trans "ชื่อจริง" %}</label>
                                 <input type="text" name="first_name" required class="w-full border border-gray-400 p-3 rounded-none focus:outline-none focus:border-[#48a9b9]">
                             </div>
                             <div>
-                                <label class="block text-gray-500 text-sm mb-1">นามสกุล</label>
+                                <label class="block text-gray-500 text-sm mb-1">{% trans "นามสกุล" %}</label>
                                 <input type="text" name="last_name" required class="w-full border border-gray-400 p-3 rounded-none focus:outline-none focus:border-[#48a9b9]">
                             </div>
                             <div>
-                                <label class="block text-gray-500 text-sm mb-1">อีเมล</label>
+                                <label class="block text-gray-500 text-sm mb-1">{% trans "อีเมล" %}</label>
                                 <input type="email" name="email" required class="w-full border border-gray-400 p-3 rounded-none focus:outline-none focus:border-[#48a9b9]">
                             </div>
                             <div>
-                                <label class="block text-gray-500 text-sm mb-1">เบอร์โทรศัพท์</label>
+                                <label class="block text-gray-500 text-sm mb-1">{% trans "เบอร์โทรศัพท์" %}</label>
                                 <input type="tel" name="phone_number" required class="w-full border border-gray-400 p-3 rounded-none focus:outline-none focus:border-[#48a9b9]">
                             </div>
                              <div>
-                                <label class="block text-gray-500 text-sm mb-1">หมายเลขใบขับขี่</label>
+                                <label class="block text-gray-500 text-sm mb-1">{% trans "หมายเลขใบขับขี่" %}</label>
                                 <input type="text" name="license_number" required class="w-full border border-gray-400 p-3 rounded-none focus:outline-none focus:border-[#48a9b9]">
                             </div>
                             <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white text-xl font-medium py-3 shadow-md transition">
-                                ดำเนินการต่อ (ชำระเงิน)
+                                {% trans "ดำเนินการต่อ (ชำระเงิน)" %}
                             </button>
                             
                             <button type="button" onclick="showMemberLogin()" class="w-full text-gray-600 py-3 text-center underline text-sm">
-                                ย้อนกลับไปยังหน้าสมาชิก
+                                {% trans "ย้อนกลับไปยังหน้าสมาชิก" %}
                             </button>
                         </div>
                     </form>
@@ -128,44 +127,44 @@
                         {% if car.images.first %}
                             <img src="{{ car.images.first.image.url }}" class="w-full max-w-xs object-contain" alt="{{ car.model }}">
                         {% else %}
-                            <div class="w-full h-48 bg-gray-200 flex items-center justify-center">No Image</div>
+                            <div class="w-full h-48 bg-gray-200 flex items-center justify-center">{% trans "ไม่มีรูป" %}</div>
                         {% endif %}
                     </div>
 
                     <h3 class="text-2xl font-bold text-black mb-1">{{ car.brand }} {{ car.model }}</h3>
-                    <p class="text-gray-600 font-medium mb-4">รายละเอียดรถ</p>
+                    <p class="text-gray-600 font-medium mb-4">{% trans "รายละเอียดรถ" %}</p>
 
                     <div class="space-y-2 mb-6 text-sm text-gray-700 font-medium">
                         <div class="flex items-start gap-2">
                             <i class="fas fa-check text-green-700 mt-0.5"></i>
-                            <span>ประเภทบริการ: {{ car.get_service_type_display }}</span>
+                            <span>{% trans "ประเภทบริการ:" %} {{ car.get_service_type_display }}</span>
                         </div>
                         <div class="flex items-start gap-2">
                             <i class="fas fa-check text-green-700 mt-0.5"></i>
-                            <span>ประเภทรถ: {{ car.get_car_type_display }}</span>
+                            <span>{% trans "ประเภทรถ:" %} {{ car.get_car_type_display }}</span>
                         </div>
                         <div class="flex items-start gap-2">
                             <i class="fas fa-check text-green-700 mt-0.5"></i>
-                            <span>เกียร์: {{ car.get_transmission_display }}</span>
-                        </div>
-
-                        <div class="flex items-start gap-2">
-                            <i class="fas fa-check text-green-700 mt-0.5"></i>
-                            <span>เชื้อเพลิง: {{ car.get_fuel_system_display }}</span>
+                            <span>{% trans "เกียร์:" %} {{ car.get_transmission_display }}</span>
                         </div>
 
                         <div class="flex items-start gap-2">
                             <i class="fas fa-check text-green-700 mt-0.5"></i>
-                            <span>ที่นั่ง: {{ car.num_seats }} คน</span>
+                            <span>{% trans "เชื้อเพลิง:" %} {{ car.get_fuel_system_display }}</span>
                         </div>
 
                         <div class="flex items-start gap-2">
                             <i class="fas fa-check text-green-700 mt-0.5"></i>
-                            <span>สัมภาระ: {{ car.num_luggage }} ใบ</span>
+                            <span>{% trans "ที่นั่ง:" %} {{ car.num_seats }} {% trans "คน" %}</span>
+                        </div>
+
+                        <div class="flex items-start gap-2">
+                            <i class="fas fa-check text-green-700 mt-0.5"></i>
+                            <span>{% trans "สัมภาระ:" %} {{ car.num_luggage }} {% trans "ใบ" %}</span>
                         </div>
 
                         
-                        <p class="text-gray-600 font-medium mb-4 mt-4">รายละเอียดรถเพิ่มเติม</p>
+                        <p class="text-gray-600 font-medium mb-4 mt-4">{% trans "รายละเอียดรถเพิ่มเติม" %}</p>
                         {% if car.description %}
                         <div class="flex items-start gap-2">
                             <i class="fas fa-check text-green-700 mt-0.5"></i>
@@ -178,7 +177,7 @@
                         </div>
 
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-gray-600">ค่าเช่ารวม ({{ rental_days }} วัน)</span>
+                        <span class="text-gray-600">{% trans "ค่าเช่ารวม" %} ({{ rental_days }} {% trans "วัน" %})</span>
                         <span class="text-xl font-bold {% if discount_amount > 0 %}line-through text-gray-400 text-base{% else %}text-gray-800{% endif %}">
                             {{ original_total_price|intcomma }} THB
                         </span>
@@ -187,28 +186,28 @@
                     <div >
                         <div class="flex justify-between items-center text-yellow-800 mb-1">
                             <span class="font-bold text-sm">
-                                ค่ามัดจำ (จ่ายวันรับรถ)
+                                {% trans "ค่ามัดจำ (จ่ายวันรับรถ)" %}
                             </span>
                             <span class="font-bold text-lg">
                                 {{ car.deposit|intcomma }} THB
                             </span>
                         </div>
                         <p class="text-[11px] text-gray-500">
-                            * ชำระกับเจ้าของรถโดยตรง และได้รับคืนเมื่อจบการเช่า
+                            * {% trans "ชำระกับเจ้าของรถโดยตรง และได้รับคืนเมื่อจบการเช่า" %}
                         </p>
                     </div>
                     {% endif %}
                     {% if discount_amount > 0 %}
                     <div class="flex justify-between items-center mb-2 text-green-600">
                         <span>
-                            <i class="fas fa-tag mr-1"></i> ส่วนลด ({{ applied_code }})
+                            <i class="fas fa-tag mr-1"></i> {% trans "ส่วนลด" %} ({{ applied_code }})
                         </span>
                         <span class="font-bold">-{{ discount_amount|intcomma }} THB</span>
                     </div>
                     {% endif %}
             
                     <div class="flex justify-between items-center mb-6 pt-2 border-t border-gray-300">
-                        <span class="text-lg font-bold text-gray-800">ราคาสุทธิ</span>
+                        <span class="text-lg font-bold text-gray-800">{% trans "ราคาสุทธิ" %}</span>
                         <span class="text-4xl font-medium text-red-600">
                             {{ total_price|intcomma }} THB
                         </span>
@@ -216,7 +215,7 @@
             
                     {% if user.is_authenticated %}
                         <div class="mb-8 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">มีรหัสโปรโมชั่น?</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">{% trans "มีรหัสโปรโมชั่น?" %}</label>
                             
                             {% if applied_code %}
                                 <div class="flex justify-between items-center bg-green-50 border border-green-200 p-3 rounded">
@@ -224,17 +223,17 @@
                                         <i class="fas fa-ticket-alt mr-2"></i> {{ applied_code }}
                                     </span>
                                     <a href="{% url 'remove_promotion' car.id %}" class="text-red-500 text-sm hover:underline">
-                                        ยกเลิก
+                                        {% trans "ยกเลิก" %}
                                     </a>
                                 </div>
                             {% else %}
                                 <form method="POST" action="{% url 'apply_promotion' car.id %}" class="flex gap-2">
                                     {% csrf_token %}
                                     <input type="text" name="promo_code" 
-                                        placeholder="กรอกโค้ดส่วนลด" 
+                                        placeholder="{% trans 'กรอกโค้ดส่วนลด' %}" 
                                         class="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-[#48a9b9]">
                                     <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded text-sm hover:bg-gray-700 transition">
-                                        ใช้โค้ด
+                                        {% trans "ใช้โค้ด" %}
                                     </button>
                                 </form>
                             {% endif %} 
@@ -261,29 +260,29 @@
                     
                         <div class="mb-8 p-4 bg-gray-50 rounded-lg border border-dashed border-gray-300 text-center">
                             <p class="text-sm text-gray-500 mb-2">
-                                <i class="fas fa-lock mr-1"></i> โค้ดส่วนลดสำหรับสมาชิกเท่านั้น
+                                <i class="fas fa-lock mr-1"></i> {% trans "โค้ดส่วนลดสำหรับสมาชิกเท่านั้น" %}
                             </p>
                             <button type="button" onclick="showMemberLogin()" class="text-xs text-[#48a9b9] hover:underline font-bold">
-                                เข้าสู่ระบบเพื่อใช้สิทธิ์
+                                {% trans "เข้าสู่ระบบเพื่อใช้สิทธิ์" %}
                             </button>
                         </div>
                     {% endif %}
 
-                    <h2 class="text-xl font-bold mb-4 text-gray-800">การรับและคืนรถ</h2>
+                    <h2 class="text-xl font-bold mb-4 text-gray-800">{% trans "การรับและคืนรถ" %}</h2>
                     
                     <div class="space-y-6 border-l-2 border-dashed border-gray-400 pl-4">
                         <div class="relative">
                             <span class="absolute -left-5 top-0 w-4 h-4 bg-gray-600 rounded-full border-2 border-white"></span>
-                            <p class="text-sm text-gray-700">รับรถวันที่ {{ pickup_datetime|date:"d M Y" }}</p>
-                            <p class="font-bold text-gray-900">{{ pickup_datetime|time:"H:i" }} น.</p>
-                            <p class="text-sm text-gray-700">สถานที่: {{ location }}</p>
+                            <p class="text-sm text-gray-700">{% trans "รับรถวันที่" %} {{ pickup_datetime|date:"d M Y" }}</p>
+                            <p class="font-bold text-gray-900">{{ pickup_datetime|time:"H:i" }} {% trans "น." %}</p>
+                            <p class="text-sm text-gray-700">{% trans "สถานที่:" %} {{ location }}</p>
                         </div>
 
                         <div class="relative">
                             <span class="absolute -left-5 top-0 w-4 h-4 bg-gray-600 rounded-full border-2 border-white"></span>
-                            <p class="text-sm text-gray-700">คืนรถวันที่ {{ dropoff_datetime|date:"d M Y" }}</p>
-                            <p class="font-bold text-gray-900">{{ dropoff_datetime|time:"H:i" }} น.</p>
-                            <p class="text-sm text-gray-700">สถานที่: {{ location }}</p>
+                            <p class="text-sm text-gray-700">{% trans "คืนรถวันที่" %} {{ dropoff_datetime|date:"d M Y" }}</p>
+                            <p class="font-bold text-gray-900">{{ dropoff_datetime|time:"H:i" }} {% trans "น." %}</p>
+                            <p class="text-sm text-gray-700">{% trans "สถานที่:" %} {{ location }}</p>
                         </div>
                     </div>
 

@@ -1,7 +1,6 @@
 {% load static %}
 {% load humanize %}
-
-{% block content %}
+{% load i18n %} {% block content %}
 
 {% include 'car_rental/navbar_detail.html' %}
 
@@ -11,31 +10,31 @@
         <div class="flex justify-between items-center bg-white rounded-lg shadow-sm p-4 border border-gray-300">
             <div class="flex flex-col items-center flex-1 text-[#48a9b9]">
                 <i class="fas fa-check-circle text-2xl mb-1"></i>
-                <span class="text-xs font-bold">ผลการค้นหา</span>
+                <span class="text-xs font-bold">{% trans "ผลการค้นหา" %}</span>
             </div>
             <div class="flex flex-col items-center flex-1 text-[#48a9b9]">
                 <i class="fas fa-check-circle text-2xl mb-1"></i>
-                <span class="text-xs font-bold">รายละเอียดรถ</span>
+                <span class="text-xs font-bold">{% trans "รายละเอียดรถ" %}</span>
             </div>
             <div class="flex flex-col items-center flex-1 text-[#48a9b9]">
                 <i class="fas fa-check-circle text-2xl mb-1"></i>
-                <span class="text-xs font-bold">ข้อมูลผู้ใช้</span>
+                <span class="text-xs font-bold">{% trans "ข้อมูลผู้ใช้" %}</span>
             </div>
             <div class="flex flex-col items-center flex-1 text-[#48a9b9]"> <i class="fas fa-circle text-2xl mb-1"></i>
-                <span class="text-xs font-bold">ชำระเงิน</span>
+                <span class="text-xs font-bold">{% trans "ชำระเงิน" %}</span>
             </div>
         </div>
     </div>
 
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">เลือกวิธีการชำระเงิน</h2>
+        <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">{% trans "เลือกวิธีการชำระเงิน" %}</h2>
         
         {% if user.is_authenticated and booking.discount_amount > 0 %}
         <div class="mb-6 border-b border-gray-200 pb-6 bg-green-50 p-4 rounded-lg border border-green-200">
-            <h3 class="text-lg font-bold mb-2 text-green-800"><i class="fas fa-tags mr-2"></i> โปรโมชั่นที่ใช้</h3>
+            <h3 class="text-lg font-bold mb-2 text-green-800"><i class="fas fa-tags mr-2"></i> {% trans "โปรโมชั่นที่ใช้" %}</h3>
             <div class="flex justify-between text-green-700 font-bold">
-                <span>ส่วนลด</span>
+                <span>{% trans "ส่วนลด" %}</span>
                 <span>-{{ booking.discount_amount|intcomma }} THB</span>
             </div>
         </div>
@@ -44,13 +43,13 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             
             <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
-                <h3 class="text-xl font-bold mb-4">สรุปยอดที่ต้องชำระ</h3>
+                <h3 class="text-xl font-bold mb-4">{% trans "สรุปยอดที่ต้องชำระ" %}</h3>
                 
                 <div class="flex items-center gap-4 mb-4 pb-4 border-b border-gray-100">
                     {% if booking.car.images.first %}
                         <img src="{{ booking.car.images.first.image.url }}" class="w-16 h-16 rounded object-cover">
                     {% else %}
-                        <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center text-xs">No Img</div>
+                        <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center text-xs">{% trans "ไม่มีรูป" %}</div>
                     {% endif %}
                     <div>
                         <div class="font-bold">{{ booking.car.brand }} {{ booking.car.model }}</div>
@@ -59,7 +58,7 @@
                 </div>
 
                 <div class="flex justify-between mb-2 text-gray-500">
-                    <span>ค่าเช่า (ก่อนลด)</span>
+                    <span>{% trans "ค่าเช่า (ก่อนลด)" %}</span>
                     <span class="{% if booking.discount_amount > 0 %}line-through{% endif %}">
                         {{ rental_gross_price|intcomma }} THB
                     </span>
@@ -67,14 +66,14 @@
 
                 {% if booking.discount_amount > 0 %}
                 <div class="flex justify-between mb-2 text-green-600 font-bold">
-                    <span>ส่วนลด</span>
+                    <span>{% trans "ส่วนลด" %}</span>
                     <span>-{{ booking.discount_amount|intcomma }} THB</span>
                 </div>
                 {% endif %}
 
                 {% if security_deposit > 0 %}
                 <div class="flex justify-between items-center text-yellow-800 mb-1">
-                    <span class="font-bold text-sm">ค่ามัดจำประกัน (จ่ายวันรับรถ)</span>
+                    <span class="font-bold text-sm">{% trans "ค่ามัดจำประกัน (จ่ายวันรับรถ)" %}</span>
                     <span class="font-bold text-lg">฿{{ security_deposit|intcomma }}</span>
                 </div>
                 {% endif %}
@@ -83,14 +82,14 @@
 
                 <div class="flex justify-between items-center mb-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
                     <div>
-                        <span class="block font-bold text-gray-800">ค่าธรรมเนียมจอง (15%)</span>
-                        <span class="text-xs text-blue-600">ชำระตอนนี้ (ผ่าน QR)</span>
+                        <span class="block font-bold text-gray-800">{% trans "ค่าธรรมเนียมจอง (15%)" %}</span>
+                        <span class="text-xs text-blue-600">{% trans "ชำระตอนนี้ (ผ่าน QR)" %}</span>
                     </div>
                     <span class="text-3xl font-bold text-blue-600">{{ platform_fee|intcomma }} THB</span>
                 </div>
 
                 <div class="flex justify-between text-sm text-gray-500 mt-2">
-                    <span>* ยอดคงเหลือจ่ายหน้างาน (รวมมัดจำ)</span>
+                    <span>{% trans "* ยอดคงเหลือจ่ายหน้างาน (รวมมัดจำ)" %}</span>
                     <span class="font-bold text-gray-700">{{ pay_on_arrival|intcomma }} THB</span>
                 </div>
                 
@@ -100,15 +99,15 @@
                 
                 <div id="expired-overlay" class="absolute inset-0 bg-white/95 z-20 flex flex-col items-center justify-center rounded-lg border border-red-200 hidden">
                     <i class="fas fa-times-circle text-red-500 text-5xl mb-4"></i>
-                    <h3 class="text-2xl font-bold text-gray-800">หมดเวลาชำระเงิน</h3>
-                    <p class="text-gray-600 mb-6">กรุณาทำรายการจองใหม่อีกครั้ง</p>
-                    <a href="/" class="bg-gray-800 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition">กลับหน้าหลัก</a>
+                    <h3 class="text-2xl font-bold text-gray-800">{% trans "หมดเวลาชำระเงิน" %}</h3>
+                    <p class="text-gray-600 mb-6">{% trans "กรุณาทำรายการจองใหม่อีกครั้ง" %}</p>
+                    <a href="/" class="bg-gray-800 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition">{% trans "กลับหน้าหลัก" %}</a>
                 </div>
 
                 <div class="bg-white p-6 rounded-lg shadow-lg border border-blue-200 text-center">
                     <div class="bg-red-50 text-red-600 px-4 py-2 rounded-full inline-flex items-center gap-2 mb-4 font-bold animate-pulse">
                         <i class="fas fa-clock"></i>
-                        เหลือเวลา <span id="timer">60:00</span> นาที
+                        {% trans "เหลือเวลา" %} <span id="timer">60:00</span> {% trans "นาที" %}
                     </div>
 
                     <div class="flex justify-center mb-4">
@@ -117,28 +116,28 @@
                         </div>
                     </div>
 
-                    <p class="text-sm text-gray-500 mb-2">สแกนด้วยแอปธนาคารเพื่อชำระเงิน</p>
+                    <p class="text-sm text-gray-500 mb-2">{% trans "สแกนด้วยแอปธนาคารเพื่อชำระเงิน" %}</p>
                     
-                    <div class="text-2xl font-bold text-blue-600">{{ platform_fee|intcomma }} บาท</div>
+                    <div class="text-2xl font-bold text-blue-600">{{ platform_fee|intcomma }} {% trans "บาท" %}</div>
                 </div>
 
                 <form method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
                     {% csrf_token %}
-                    <h4 class="font-bold text-gray-800 mb-3"><i class="fas fa-receipt mr-2"></i>แนบหลักฐานการโอนเงิน</h4>
+                    <h4 class="font-bold text-gray-800 mb-3"><i class="fas fa-receipt mr-2"></i>{% trans "แนบหลักฐานการโอนเงิน" %}</h4>
                     
                     <div class="mb-4">
                         <label class="block w-full cursor-pointer bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:bg-gray-100 transition relative">
                             <input type="file" name="slip_image" accept="image/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="previewImage(this)">
                             <div id="upload-placeholder">
                                 <i class="fas fa-cloud-upload-alt text-gray-400 text-3xl mb-2"></i>
-                                <p class="text-sm text-gray-500">คลิกเพื่อเลือกรูปสลิป</p>
+                                <p class="text-sm text-gray-500">{% trans "คลิกเพื่อเลือกรูปสลิป" %}</p>
                             </div>
                             <img id="image-preview" class="hidden max-h-48 mx-auto rounded shadow-sm">
                         </label>
                     </div>
 
                     <button type="submit" id="confirm-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xl font-bold py-3 rounded-lg shadow-lg transition transform hover:-translate-y-1">
-                        แจ้งชำระเงิน
+                        {% trans "แจ้งชำระเงิน" %}
                     </button>
                 </form>
 

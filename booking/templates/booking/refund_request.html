@@ -1,29 +1,33 @@
 {% extends 'basereview.html' %}
-{% block content %}
+{% load static %}
+{% load humanize %}
+{% load i18n %} {% block content %}
+{% trans "คุณจะไม่ได้รับเงินคืน ยืนยันที่จะยกเลิกหรือไม่?" as msg_confirm_no_refund %}
+
 <div class="container mx-auto p-8 pt-24 max-w-lg">
     <div class="bg-white p-8 rounded-lg shadow-lg">
-        <h2 class="text-2xl font-bold text-gray-800 mb-4">ขอยกเลิกและรับเงินคืน</h2>
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">{% trans "ขอยกเลิกและรับเงินคืน" %}</h2>
         
         <div class="bg-gray-50 p-4 rounded-lg border mb-6">
-            <h3 class="font-bold text-gray-700 border-b pb-2 mb-2">สรุปยอดเงินคืน</h3>
+            <h3 class="font-bold text-gray-700 border-b pb-2 mb-2">{% trans "สรุปยอดเงินคืน" %}</h3>
             
             <div class="flex justify-between mb-1">
-                <span class="text-gray-600">ยอดที่ชำระมา:</span>
-                <span class="font-semibold">{{ paid_amount_display }} บาท</span>
+                <span class="text-gray-600">{% trans "ยอดที่ชำระมา:" %}</span>
+                <span class="font-semibold">{{ paid_amount_display }} {% trans "บาท" %}</span>
             </div>
             
             <div class="flex justify-between mb-1">
-                <span class="text-gray-600">นโยบาย:</span>
+                <span class="text-gray-600">{% trans "นโยบาย:" %}</span>
                 <span class="text-sm text-gray-500">{{ policy_message }}</span>
             </div>
 
             <div class="flex justify-between mt-3 pt-2 border-t text-lg font-bold">
-                <span class="text-gray-800">ยอดที่จะได้รับคืน:</span>
+                <span class="text-gray-800">{% trans "ยอดที่จะได้รับคืน:" %}</span>
                 
                 {% if refund_amount_val > 0 %}
-                    <span class="text-green-600">{{ refund_amount_display }} บาท</span>
+                    <span class="text-green-600">{{ refund_amount_display }} {% trans "บาท" %}</span>
                 {% else %}
-                    <span class="text-red-500">0.00 บาท</span>
+                    <span class="text-red-500">0.00 {% trans "บาท" %}</span>
                 {% endif %}
             </div>
         </div>
@@ -33,41 +37,41 @@
             
             {% if refund_amount_val > 0 %}
                 <div class="mb-4">
-                    <p class="text-sm text-blue-600 mb-2">กรุณาระบุบัญชีเพื่อรับเงินโอนคืน</p>
+                    <p class="text-sm text-blue-600 mb-2">{% trans "กรุณาระบุบัญชีเพื่อรับเงินโอนคืน" %}</p>
                     <div class="space-y-3">
                         <div>
-                            <label class="text-xs text-gray-500">ธนาคาร</label>
+                            <label class="text-xs text-gray-500">{% trans "ธนาคาร" %}</label>
                             {{ form.refund_bank_name }}
                         </div>
                         <div>
-                            <label class="text-xs text-gray-500">เลขที่บัญชี</label>
+                            <label class="text-xs text-gray-500">{% trans "เลขที่บัญชี" %}</label>
                             <input type="text" name="refund_account_no" class="w-full border p-2 rounded" required>
                         </div>
                         <div>
-                            <label class="text-xs text-gray-500">ชื่อบัญชี</label>
+                            <label class="text-xs text-gray-500">{% trans "ชื่อบัญชี" %}</label>
                             <input type="text" name="refund_account_name" class="w-full border p-2 rounded" required>
                         </div>
                     </div>
                 </div>
                 
                 <button type="submit" class="w-full bg-red-500 text-white py-3 rounded-lg font-bold hover:bg-red-600 shadow">
-                    ยืนยันยกเลิกและขอคืนเงิน
+                    {% trans "ยืนยันยกเลิกและขอคืนเงิน" %}
                 </button>
 
             {% else %}
                 <div class="bg-red-50 text-red-600 p-3 rounded text-sm mb-4 border border-red-200">
                     <i class="fas fa-exclamation-triangle mr-1"></i>
-                    การยกเลิกครั้งนี้ <b>จะไม่ได้รับเงินคืน</b> ตามนโยบาย <br>
-                    <span class="text-xs ml-5">(เนื่องจากเลยกำหนดเวลา หรือใกล้เวลารับรถเกินไป)</span>
+                    {% trans "การยกเลิกครั้งนี้ <b>จะไม่ได้รับเงินคืน</b> ตามนโยบาย" %} <br>
+                    <span class="text-xs ml-5">{% trans "(เนื่องจากเลยกำหนดเวลา หรือใกล้เวลารับรถเกินไป)" %}</span>
                 </div>
                 
                 <button type="submit" class="w-full bg-gray-500 text-white py-3 rounded-lg font-bold hover:bg-gray-600" 
-                        onclick="return confirm('คุณจะไม่ได้รับเงินคืน ยืนยันที่จะยกเลิกหรือไม่?');">
-                    ยืนยันยกเลิก (ไม่รับเงินคืน)
+                        onclick="return confirm('{{ msg_confirm_no_refund|escapejs }}');">
+                    {% trans "ยืนยันยกเลิก (ไม่รับเงินคืน)" %}
                 </button>
             {% endif %}
             
-            <a href="{% url 'booking_history' %}" class="block text-center text-gray-500 mt-4 text-sm hover:underline">ย้อนกลับ</a>
+            <a href="{% url 'booking_history' %}" class="block text-center text-gray-500 mt-4 text-sm hover:underline">{% trans "ย้อนกลับ" %}</a>
         </form>
     </div>
 </div>

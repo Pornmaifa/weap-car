@@ -1,30 +1,22 @@
 {% extends 'base.html' %} 
 {% load static %}
-
-{% block content %}
+{% load i18n %} {% block content %}
 <div class="relative h-screen">
 
     <div class="absolute inset-0">
         <img src="{% static 'images/background.jpeg' %}" alt="Background Car" class="w-full h-160 object-cover">
-        
-
     </div>
-
 
     <div class="relative z-10 flex items-center justify-center h-full">
         <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-4xl">
             
             <div class="flex border-b mb-6">
-    
                 <button type="button" id="btn-self"
                     class="py-2 px-6 text-blue-600 border-b-2 border-blue-600 font-semibold text-lg">
-                    เช่ารถขับเอง
+                    {% trans "เช่ารถขับเอง" %}
                 </button>
-
                 <input type="hidden" name="service_type_form" id="service_type_form" value="SELF_DRIVE">
-
             </div>
-
 
             <form action="{% url 'search_cars' %}" method="get" class="w-full" id="search-form" autocomplete="off">
 
@@ -35,59 +27,57 @@
                     
                     <div>
                         <div class="mb-4 relative ">
-                            <label class="block mb-2">จุดรับรถ</label>
-                            <input type="text" name="pickup" id="pickup-input" placeholder="เลือกสถานที่"
+                            <label class="block mb-2">{% trans "จุดรับรถ" %}</label>
+                            <input type="text" name="pickup" id="pickup-input" placeholder="{% trans 'เลือกสถานที่' %}"
                                 class="w-full p-3 border border-gray-300 rounded-lg">
                             <button type="button" id="pickup-clear-btn" style="display:none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #999;">×</button>
                             <div id="pickup-suggestions" class="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg" style="display:none;">
-                                </div>
+                            </div>
                         </div>
 
-                        <label class="block mb-2">วันและเวลา</label>
+                        <label class="block mb-2">{% trans "วันและเวลา" %}</label>
                         <div class="flex gap-2">
-                            <input type="text" name="start_date" id="datepicker-start" placeholder="ว/ด/ป"
+                            <input type="text" name="start_date" id="datepicker-start" placeholder="{% trans 'ว/ด/ป' %}"
                                 class="w-1/3 p-3 border rounded-lg">
 
-                            <input type="text" name="start_time" id="timepicker-start" placeholder="เวลา"
+                            <input type="text" name="start_time" id="timepicker-start" placeholder="{% trans 'เวลา' %}"
                                 class="w-1/3 p-3 border rounded-lg">
 
-                            <span class="text-gray-500 flex items-center">ถึง</span>
+                            <span class="text-gray-500 flex items-center">{% trans "ถึง" %}</span>
 
-                            <input type="text" name="end_date" id="datepicker-end" placeholder="ว/ด/ป"
+                            <input type="text" name="end_date" id="datepicker-end" placeholder="{% trans 'ว/ด/ป' %}"
                                 class="w-1/3 p-3 border rounded-lg">
 
-                            <input type="text" name="end_time" id="timepicker-end" placeholder="เวลา"
+                            <input type="text" name="end_time" id="timepicker-end" placeholder="{% trans 'เวลา' %}"
                                 class="w-1/3 p-3 border rounded-lg">
                         </div>
                     </div>
 
                     <div>
                         <div class="mb-4 relative">
-                            <label class="block mb-2">จุดคืนรถ</label>
-                            <input type="text" name="dropoff" id="dropoff-input" placeholder="เลือกสถานที่"
+                            <label class="block mb-2">{% trans "จุดคืนรถ" %}</label>
+                            <input type="text" name="dropoff" id="dropoff-input" placeholder="{% trans 'เลือกสถานที่' %}"
                                 class="w-full p-3 border border-gray-300 rounded-lg">
                             <button type="button" id="dropoff-clear-btn" style="display:none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #999;">×</button>
                             <div id="dropoff-suggestions" class="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg" style="display:none;">
-                                </div>
-                            
+                            </div>
                         </div>
 
                         <div class="flex items-end gap-4">
                             <div class="flex-1">
-                                <label class="block mb-2">ตัวกรอง</label>
+                                <label class="block mb-2">{% trans "ตัวกรอง" %}</label>
                                 <select name="car_type" class="w-full p-3 border border-gray-300 rounded-lg">
-                                    <option value="">-- เลือกประเภทรถ --</option>
-                                    <option value="SEDAN" {% if car_type == "SEDAN" %}selected{% endif %}>รถเก๋งขนาดเล็ก</option>
-                                    <option value="TRUCK" {% if car_type == "TRUCK" %}selected{% endif %}>รถกระบะ</option>
-                                    <option value="VAN" {% if car_type == "VAN" %}selected{% endif %}>รถตู้</option>
-                                    <option value="EV" {% if car_type == "EV" %}selected{% endif %}>รถไฟฟ้า (EV)</option>
-
+                                    <option value="">-- {% trans "เลือกประเภทรถ" %} --</option>
+                                    <option value="SEDAN" {% if car_type == "SEDAN" %}selected{% endif %}>{% trans "รถเก๋งขนาดเล็ก" %}</option>
+                                    <option value="TRUCK" {% if car_type == "TRUCK" %}selected{% endif %}>{% trans "รถกระบะ" %}</option>
+                                    <option value="VAN" {% if car_type == "VAN" %}selected{% endif %}>{% trans "รถตู้" %}</option>
+                                    <option value="EV" {% if car_type == "EV" %}selected{% endif %}>{% trans "รถไฟฟ้า (EV)" %}</option>
                                 </select>
                             </div>
 
                             <button type="submit" id="search-btn"
                                     class="bg-warp-blue text-white px-6 py-3 rounded-lg">
-                                ค้นหา
+                                {% trans "ค้นหา" %}
                             </button>
                         </div>
                     </div>
@@ -98,56 +88,56 @@
     </div>
 </div>
 
-
 {% endblock %} 
+
 {% block scripts %}
 {% if promotions %}
-        <div class="bg-gradient-to-r bg-warp-blue to-indigo-700 py-6 mb-8 shadow-lg">
-            <div class="container mx-auto px-4">
-                
-                <div class="flex items-center justify-between mb-4 text-white">
-                    <h2 class="text-2xl font-bold flex items-center">
-                        <i class="fas fa-tags mr-2 text-yellow-100"></i> โค้ดส่วนลดพิเศษ
-                    </h2>
-                    <span class="text-sm bg-white/20 px-3 py-1 rounded-full">
-                        มี {{ promotions.count }} โปรโมชั่น
-                    </span>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {% for promo in promotions %}
-                    <div class="bg-white rounded-lg p-4 shadow-md flex justify-between items-center relative overflow-hidden group hover:shadow-xl transition transform hover:-translate-y-1">
-                        
-                        <div class="absolute -right-6 -top-6 w-20 h-20  rounded-full opacity-50 group-hover:bg-yellow-200 transition"></div>
-
-                        <div>
-                            <h3 class="font-bold text-gray-800 text-lg">{{ promo.title }}</h3>
-                            <p class="text-sm text-gray-500 mb-2">{{ promo.description|truncatechars:40 }}</p>
-                            <div class="flex items-center gap-2">
-                                <span class="text-red-500 font-bold text-xl">ลด {{ latest_promo.discount_rate|floatformat:0 }}%</span>
-                                <span class="text-xs text-gray-400 border border-gray-200 px-2 py-0.5 rounded">
-                                    หมดเขต {{ promo.end_date|date:"d M y" }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="text-center z-10">
-                            <div class="bg-gray-100 border-2 border-dashed border-gray-400 rounded p-2 mb-1 cursor-pointer hover:bg-blue-50 hover:border-blue-400 transition"
-                                onclick="copyCode('{{ promo.code }}')">
-                                <span class="font-mono font-bold text-gray-700 text-lg tracking-wider block">
-                                    {{ promo.code }}
-                                </span>
-                                <span class="text-[10px] text-gray-400">แตะเพื่อคัดลอก</span>
-                            </div>
-                        </div>
-
-                    </div>
-                    {% endfor %}
-                </div>
-
+    <div class="bg-gradient-to-r bg-warp-blue to-indigo-700 py-6 mb-8 shadow-lg">
+        <div class="container mx-auto px-4">
+            
+            <div class="flex items-center justify-between mb-4 text-white">
+                <h2 class="text-2xl font-bold flex items-center">
+                    <i class="fas fa-tags mr-2 text-yellow-100"></i> {% trans "โค้ดส่วนลดพิเศษ" %}
+                </h2>
+                <span class="text-sm bg-white/20 px-3 py-1 rounded-full">
+                    {% trans "มี" %} {{ promotions.count }} {% trans "โปรโมชั่น" %}
+                </span>
             </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for promo in promotions %}
+                <div class="bg-white rounded-lg p-4 shadow-md flex justify-between items-center relative overflow-hidden group hover:shadow-xl transition transform hover:-translate-y-1">
+                    
+                    <div class="absolute -right-6 -top-6 w-20 h-20  rounded-full opacity-50 group-hover:bg-yellow-200 transition"></div>
+
+                    <div>
+                        <h3 class="font-bold text-gray-800 text-lg">{{ promo.title }}</h3>
+                        <p class="text-sm text-gray-500 mb-2">{{ promo.description|truncatechars:40 }}</p>
+                        <div class="flex items-center gap-2">
+                            <span class="text-red-500 font-bold text-xl">{% trans "ลด" %} {{ promo.discount_rate|floatformat:0 }}%</span>
+                            <span class="text-xs text-gray-400 border border-gray-200 px-2 py-0.5 rounded">
+                                {% trans "หมดเขต" %} {{ promo.end_date|date:"d M y" }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="text-center z-10">
+                        <div class="bg-gray-100 border-2 border-dashed border-gray-400 rounded p-2 mb-1 cursor-pointer hover:bg-blue-50 hover:border-blue-400 transition"
+                            onclick="copyCode('{{ promo.code }}')">
+                            <span class="font-mono font-bold text-gray-700 text-lg tracking-wider block">
+                                {{ promo.code }}
+                            </span>
+                            <span class="text-[10px] text-gray-400">{% trans "แตะเพื่อคัดลอก" %}</span>
+                        </div>
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+
         </div>
-        {% endif %}
+    </div>
+{% endif %}
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -156,378 +146,377 @@
     // ============================================
     // ภาคกลาง (Central)
     // ============================================
+    { name: "{% trans 'กรุงเทพมหานคร' %}", type: "province", keywords: "bangkok krung thep maha nakhon bkk กรุงเทพ กทม", province: "กรุงเทพมหานคร" },
+    { name: "{% trans 'สนามบินสุวรรณภูมิ (BKK)' %}", type: "airport", keywords: "suvarnabhumi bangkok airport bkk กรุงเทพ", province: "สมุทรปราการ" },
+    { name: "{% trans 'สนามบินดอนเมือง (DMK)' %}", type: "airport", keywords: "don mueang bangkok airport dmk กรุงเทพ", province: "กรุงเทพมหานคร" },
+    { name: "{% trans 'สถานีรถไฟกรุงเทพ (หัวลำโพง)' %}", type: "train", keywords: "hua lamphong railway station bangkok กรุงเทพ", province: "กรุงเทพมหานคร" },
+    { name: "{% trans 'สถานีกลางกรุงเทพอภิวัฒน์ (บางซื่อ)' %}", type: "train", keywords: "krung thep aphiwat central terminal bang sue กรุงเทพ", province: "กรุงเทพมหานคร" },
+    { name: "{% trans 'สถานีขนส่งหมอชิต 2' %}", type: "bus", keywords: "mo chit 2 bus terminal bangkok northern กรุงเทพ", province: "กรุงเทพมหานคร" },
+    { name: "{% trans 'สถานีขนส่งสายใต้ใหม่' %}", type: "bus", keywords: "sai tai mai southern bus terminal bangkok กรุงเทพ", province: "กรุงเทพมหานคร" },
+    { name: "{% trans 'สถานีขนส่งเอกมัย' %}", type: "bus", keywords: "ekkamai eastern bus terminal bangkok กรุงเทพ", province: "กรุงเทพมหานคร" },
+    { name: "{% trans 'ไอคอนสยาม' %}", type: "landmark", keywords: "iconsiam bangkok thonburi กรุงเทพ", province: "กรุงเทพมหานคร" },
+    { name: "{% trans 'เซ็นทรัลเวิลด์ (ราชประสงค์)' %}", type: "landmark", keywords: "central world ratchaprasong bangkok siam กรุงเทพ", province: "กรุงเทพมหานคร" },
+    { name: "{% trans 'สยามพารากอน' %}", type: "landmark", keywords: "siam paragon bangkok", province: "กรุงเทพมหานคร" },
+    { name: "{% trans 'ถนนข้าวสาร' %}", type: "landmark", keywords: "khaosan road bangkok", province: "กรุงเทพมหานคร" },
 
-    { name: "กรุงเทพมหานคร", type: "province", keywords: "bangkok krung thep maha nakhon bkk กรุงเทพ กทม", province: "กรุงเทพมหานคร" },
-    { name: "สนามบินสุวรรณภูมิ (BKK)", type: "airport", keywords: "suvarnabhumi bangkok airport bkk กรุงเทพ", province: "สมุทรปราการ" },
-    { name: "สนามบินดอนเมือง (DMK)", type: "airport", keywords: "don mueang bangkok airport dmk กรุงเทพ", province: "กรุงเทพมหานคร" },
-    { name: "สถานีรถไฟกรุงเทพ (หัวลำโพง)", type: "train", keywords: "hua lamphong railway station bangkok กรุงเทพ", province: "กรุงเทพมหานคร" },
-    { name: "สถานีกลางกรุงเทพอภิวัฒน์ (บางซื่อ)", type: "train", keywords: "krung thep aphiwat central terminal bang sue กรุงเทพ", province: "กรุงเทพมหานคร" },
-    { name: "สถานีขนส่งหมอชิต 2", type: "bus", keywords: "mo chit 2 bus terminal bangkok northern กรุงเทพ", province: "กรุงเทพมหานคร" },
-    { name: "สถานีขนส่งสายใต้ใหม่", type: "bus", keywords: "sai tai mai southern bus terminal bangkok กรุงเทพ", province: "กรุงเทพมหานคร" },
-    { name: "สถานีขนส่งเอกมัย", type: "bus", keywords: "ekkamai eastern bus terminal bangkok กรุงเทพ", province: "กรุงเทพมหานคร" },
-    { name: "ไอคอนสยาม", type: "landmark", keywords: "iconsiam bangkok thonburi กรุงเทพ", province: "กรุงเทพมหานคร" },
-    { name: "เซ็นทรัลเวิลด์ (ราชประสงค์)", type: "landmark", keywords: "central world ratchaprasong bangkok siam กรุงเทพ", province: "กรุงเทพมหานคร" },
-    { name: "สยามพารากอน", type: "landmark", keywords: "siam paragon bangkok", province: "กรุงเทพมหานคร" },
-    { name: "ถนนข้าวสาร", type: "landmark", keywords: "khaosan road bangkok", province: "กรุงเทพมหานคร" },
+    { name: "{% trans 'สมุทรปราการ' %}", type: "province", keywords: "samut prakan สมุทรปราการ ปากน้ำ", province: "สมุทรปราการ" },
+    { name: "{% trans 'เมกาบางนา' %}", type: "landmark", keywords: "mega bangna samut prakan สมุทรปราการ เมกา", province: "สมุทรปราการ" },
+    { name: "{% trans 'เมืองโบราณ' %}", type: "landmark", keywords: "ancient city muang boran samut prakan สมุทรปราการ เมืองโบราณ", province: "สมุทรปราการ" },
+    { name: "{% trans 'พิพิธภัณฑ์ช้างเอราวัณ' %}", type: "landmark", keywords: "erawan museum samut prakan สมุทรปราการ ช้างสามเศียร", province: "สมุทรปราการ" },
+    { name: "{% trans 'สถานตากอากาศบางปู' %}", type: "landmark", keywords: "bang pu recreation center samut prakan สมุทรปราการ บางปู", province: "สมุทรปราการ" },
+    { name: "{% trans 'วัดพระสมุทรเจดีย์' %}", type: "landmark", keywords: "phra samut chedi samut prakan สมุทรปราการ เจดีย์กลางน้ำ", province: "สมุทรปราการ" },
 
-    { name: "สมุทรปราการ", type: "province", keywords: "samut prakan สมุทรปราการ ปากน้ำ", province: "สมุทรปราการ" },
-    { name: "เมกาบางนา", type: "landmark", keywords: "mega bangna samut prakan สมุทรปราการ เมกา", province: "สมุทรปราการ" },
-    { name: "เมืองโบราณ", type: "landmark", keywords: "ancient city muang boran samut prakan สมุทรปราการ เมืองโบราณ", province: "สมุทรปราการ" },
-    { name: "พิพิธภัณฑ์ช้างเอราวัณ", type: "landmark", keywords: "erawan museum samut prakan สมุทรปราการ ช้างสามเศียร", province: "สมุทรปราการ" },
-    { name: "สถานตากอากาศบางปู", type: "landmark", keywords: "bang pu recreation center samut prakan สมุทรปราการ บางปู", province: "สมุทรปราการ" },
-    { name: "วัดพระสมุทรเจดีย์", type: "landmark", keywords: "phra samut chedi samut prakan สมุทรปราการ เจดีย์กลางน้ำ", province: "สมุทรปราการ" },
+    { name: "{% trans 'นนทบุรี' %}", type: "province", keywords: "nonthaburi", province: "นนทบุรี" },
+    { name: "{% trans 'เซ็นทรัล เวสต์เกต' %}", type: "landmark", keywords: "central westgate nonthaburi bang yai นนทบุรี", province: "นนทบุรี" },
+    { name: "{% trans 'อิมแพ็ค เมืองทองธานี' %}", type: "landmark", keywords: "impact muang thong thani", province: "นนทบุรี" },
 
-    { name: "นนทบุรี", type: "province", keywords: "nonthaburi", province: "นนทบุรี" },
-    { name: "เซ็นทรัล เวสต์เกต", type: "landmark", keywords: "central westgate nonthaburi bang yai นนทบุรี", province: "นนทบุรี" },
-    { name: "อิมแพ็ค เมืองทองธานี", type: "landmark", keywords: "impact muang thong thani", province: "นนทบุรี" },
+    { name: "{% trans 'ปทุมธานี' %}", type: "province", keywords: "pathum thani", province: "ปทุมธานี" },
+    { name: "{% trans 'ฟิวเจอร์พาร์ค รังสิต' %}", type: "landmark", keywords: "future park rangsit pathum thani ปทุมธานี", province: "ปทุมธานี" },
+    { name: "{% trans 'ดรีมเวิลด์' %}", type: "landmark", keywords: "dream world amusement park", province: "ปทุมธานี" },
 
-    { name: "ปทุมธานี", type: "province", keywords: "pathum thani", province: "ปทุมธานี" },
-    { name: "ฟิวเจอร์พาร์ค รังสิต", type: "landmark", keywords: "future park rangsit pathum thani ปทุมธานี", province: "ปทุมธานี" },
-    { name: "ดรีมเวิลด์", type: "landmark", keywords: "dream world amusement park", province: "ปทุมธานี" },
+    { name: "{% trans 'พระนครศรีอยุธยา' %}", type: "province", keywords: "phra nakhon si ayutthaya ayutthaya", province: "พระนครศรีอยุธยา" },
+    { name: "{% trans 'สถานีรถไฟอยุธยา' %}", type: "train", keywords: "ayutthaya railway station อยุธยา", province: "พระนครศรีอยุธยา" },
+    { name: "{% trans 'อุทยานประวัติศาสตร์อยุธยา' %}", type: "landmark", keywords: "ayutthaya historical park", province: "พระนครศรีอยุธยา" },
 
-    { name: "พระนครศรีอยุธยา", type: "province", keywords: "phra nakhon si ayutthaya ayutthaya", province: "พระนครศรีอยุธยา" },
-    { name: "สถานีรถไฟอยุธยา", type: "train", keywords: "ayutthaya railway station อยุธยา", province: "พระนครศรีอยุธยา" },
-    { name: "อุทยานประวัติศาสตร์อยุธยา", type: "landmark", keywords: "ayutthaya historical park", province: "พระนครศรีอยุธยา" },
+    { name: "{% trans 'ลพบุรี' %}", type: "province", keywords: "lopburi", province: "ลพบุรี" },
+    { name: "{% trans 'สถานีรถไฟลพบุรี' %}", type: "train", keywords: "lopburi railway station ลพบุรี", province: "ลพบุรี" },
+    { name: "{% trans 'ศาลพระกาฬ' %}", type: "landmark", keywords: "phra kan shrine lopburi monkey temple", province: "ลพบุรี" },
 
-    { name: "ลพบุรี", type: "province", keywords: "lopburi", province: "ลพบุรี" },
-    { name: "สถานีรถไฟลพบุรี", type: "train", keywords: "lopburi railway station ลพบุรี", province: "ลพบุรี" },
-    { name: "ศาลพระกาฬ", type: "landmark", keywords: "phra kan shrine lopburi monkey temple", province: "ลพบุรี" },
+    { name: "{% trans 'สระบุรี' %}", type: "province", keywords: "saraburi สระบุรี", province: "สระบุรี" },
+    { name: "{% trans 'สถานีขนส่งสระบุรี' %}", type: "bus", keywords: "saraburi bus terminal บขส สระบุรี", province: "สระบุรี" },
+    { name: "{% trans 'วัดพระพุทธบาทราชวรมหาวิหาร' %}", type: "landmark", keywords: "wat phra phutthabat saraburi สระบุรี", province: "สระบุรี" },
+    { name: "{% trans 'น้ำตกเจ็ดสาวน้อย (มวกเหล็ก)' %}", type: "landmark", keywords: "chet sao noi waterfall muak lek saraburi สระบุรี มวกเหล็ก", province: "สระบุรี" },
 
-    { name: "สระบุรี", type: "province", keywords: "saraburi สระบุรี", province: "สระบุรี" },
-    { name: "สถานีขนส่งสระบุรี", type: "bus", keywords: "saraburi bus terminal บขส สระบุรี", province: "สระบุรี" },
-    { name: "วัดพระพุทธบาทราชวรมหาวิหาร", type: "landmark", keywords: "wat phra phutthabat saraburi สระบุรี", province: "สระบุรี" },
-    { name: "น้ำตกเจ็ดสาวน้อย (มวกเหล็ก)", type: "landmark", keywords: "chet sao noi waterfall muak lek saraburi สระบุรี มวกเหล็ก", province: "สระบุรี" },
+    { name: "{% trans 'สิงห์บุรี' %}", type: "province", keywords: "sing buri สิงห์บุรี", province: "สิงห์บุรี" },
+    { name: "{% trans 'สถานีขนส่งสิงห์บุรี' %}", type: "bus", keywords: "sing buri bus terminal บขส สิงห์บุรี", province: "สิงห์บุรี" },
+    { name: "{% trans 'วัดพิกุลทอง (พระพุทธรูปองค์ใหญ่)' %}", type: "landmark", keywords: "wat phikun thong sing buri สิงห์บุรี", province: "สิงห์บุรี" },
+    { name: "{% trans 'ตลาดไทยย้อนยุคบ้านระจัน' %}", type: "landmark", keywords: "ban rachan ancient market sing buri สิงห์บุรี บางระจัน", province: "สิงห์บุรี" },
 
-    { name: "สิงห์บุรี", type: "province", keywords: "sing buri สิงห์บุรี", province: "สิงห์บุรี" },
-    { name: "สถานีขนส่งสิงห์บุรี", type: "bus", keywords: "sing buri bus terminal บขส สิงห์บุรี", province: "สิงห์บุรี" },
-    { name: "วัดพิกุลทอง (พระพุทธรูปองค์ใหญ่)", type: "landmark", keywords: "wat phikun thong sing buri สิงห์บุรี", province: "สิงห์บุรี" },
-    { name: "ตลาดไทยย้อนยุคบ้านระจัน", type: "landmark", keywords: "ban rachan ancient market sing buri สิงห์บุรี บางระจัน", province: "สิงห์บุรี" },
+    { name: "{% trans 'ชัยนาท' %}", type: "province", keywords: "chai nat ชัยนาท", province: "ชัยนาท" },
+    { name: "{% trans 'สถานีขนส่งชัยนาท' %}", type: "bus", keywords: "chai nat bus terminal บขส ชัยนาท", province: "ชัยนาท" },
+    { name: "{% trans 'สวนนกชัยนาท' %}", type: "landmark", keywords: "chai nat bird park ชัยนาท สวนนก", province: "ชัยนาท" },
+    { name: "{% trans 'เขื่อนเจ้าพระยา' %}", type: "landmark", keywords: "chao phraya dam chai nat ชัยนาท", province: "ชัยนาท" },
 
-    { name: "ชัยนาท", type: "province", keywords: "chai nat ชัยนาท", province: "ชัยนาท" },
-    { name: "สถานีขนส่งชัยนาท", type: "bus", keywords: "chai nat bus terminal บขส ชัยนาท", province: "ชัยนาท" },
-    { name: "สวนนกชัยนาท", type: "landmark", keywords: "chai nat bird park ชัยนาท สวนนก", province: "ชัยนาท" },
-    { name: "เขื่อนเจ้าพระยา", type: "landmark", keywords: "chao phraya dam chai nat ชัยนาท", province: "ชัยนาท" },
+    { name: "{% trans 'อ่างทอง' %}", type: "province", keywords: "ang thong อ่างทอง", province: "อ่างทอง" },
+    { name: "{% trans 'สถานีขนส่งอ่างทอง' %}", type: "bus", keywords: "ang thong bus terminal บขส อ่างทอง", province: "อ่างทอง" },
+    { name: "{% trans 'วัดม่วง (หลวงพ่อใหญ่)' %}", type: "landmark", keywords: "wat muang big buddha ang thong อ่างทอง", province: "อ่างทอง" },
 
-    { name: "อ่างทอง", type: "province", keywords: "ang thong อ่างทอง", province: "อ่างทอง" },
-    { name: "สถานีขนส่งอ่างทอง", type: "bus", keywords: "ang thong bus terminal บขส อ่างทอง", province: "อ่างทอง" },
-    { name: "วัดม่วง (หลวงพ่อใหญ่)", type: "landmark", keywords: "wat muang big buddha ang thong อ่างทอง", province: "อ่างทอง" },
+    { name: "{% trans 'นครนายก' %}", type: "province", keywords: "nakhon nayok นครนายก", province: "นครนายก" },
+    { name: "{% trans 'สถานีขนส่งนครนายก' %}", type: "bus", keywords: "nakhon nayok bus terminal บขส นครนายก", province: "นครนายก" },
+    { name: "{% trans 'เขื่อนขุนด่านปราการชล' %}", type: "landmark", keywords: "khun dan prakarn chon dam nakhon nayok นครนายก เขื่อน", province: "นครนายก" },
+    { name: "{% trans 'น้ำตกนางรอง / สาริกา' %}", type: "landmark", keywords: "nang rong sarika waterfall nakhon nayok นครนายก", province: "นครนายก" },
 
-    { name: "นครนายก", type: "province", keywords: "nakhon nayok นครนายก", province: "นครนายก" },
-    { name: "สถานีขนส่งนครนายก", type: "bus", keywords: "nakhon nayok bus terminal บขส นครนายก", province: "นครนายก" },
-    { name: "เขื่อนขุนด่านปราการชล", type: "landmark", keywords: "khun dan prakarn chon dam nakhon nayok นครนายก เขื่อน", province: "นครนายก" },
-    { name: "น้ำตกนางรอง / สาริกา", type: "landmark", keywords: "nang rong sarika waterfall nakhon nayok นครนายก", province: "นครนายก" },
+    { name: "{% trans 'นครปฐม' %}", type: "province", keywords: "nakhon pathom นครปฐม", province: "นครปฐม" },
+    { name: "{% trans 'องค์พระปฐมเจดีย์' %}", type: "landmark", keywords: "phra pathom chedi nakhon pathom นครปฐม", province: "นครปฐม" },
+    { name: "{% trans 'มหาวิทยาลัยมหิดล (ศาลายา)' %}", type: "landmark", keywords: "mahidol university salaya nakhon pathom นครปฐม ศาลายา", province: "นครปฐม" },
+    { name: "{% trans 'สถานีรถไฟนครปฐม' %}", type: "train", keywords: "nakhon pathom railway station นครปฐม", province: "นครปฐม" },
 
-    { name: "นครปฐม", type: "province", keywords: "nakhon pathom นครปฐม", province: "นครปฐม" },
-    { name: "องค์พระปฐมเจดีย์", type: "landmark", keywords: "phra pathom chedi nakhon pathom นครปฐม", province: "นครปฐม" },
-    { name: "มหาวิทยาลัยมหิดล (ศาลายา)", type: "landmark", keywords: "mahidol university salaya nakhon pathom นครปฐม ศาลายา", province: "นครปฐม" },
-    { name: "สถานีรถไฟนครปฐม", type: "train", keywords: "nakhon pathom railway station นครปฐม", province: "นครปฐม" },
+    { name: "{% trans 'สมุทรสาคร' %}", type: "province", keywords: "samut sakhon สมุทรสาคร มหาชัย", province: "สมุทรสาคร" },
+    { name: "{% trans 'ตลาดมหาชัย' %}", type: "landmark", keywords: "mahachai market samut sakhon สมุทรสาคร มหาชัย", province: "สมุทรสาคร" },
+    { name: "{% trans 'ศาลพันท้ายนรสิงห์' %}", type: "landmark", keywords: "phantai norasing shrine samut sakhon สมุทรสาคร", province: "สมุทรสาคร" },
+    { name: "{% trans 'สถานีรถไฟมหาชัย' %}", type: "train", keywords: "mahachai railway station samut sakhon สมุทรสาคร มหาชัย", province: "สมุทรสาคร" },
 
-    { name: "สมุทรสาคร", type: "province", keywords: "samut sakhon สมุทรสาคร มหาชัย", province: "สมุทรสาคร" },
-    { name: "ตลาดมหาชัย", type: "landmark", keywords: "mahachai market samut sakhon สมุทรสาคร มหาชัย", province: "สมุทรสาคร" },
-    { name: "ศาลพันท้ายนรสิงห์", type: "landmark", keywords: "phantai norasing shrine samut sakhon สมุทรสาคร", province: "สมุทรสาคร" },
-    { name: "สถานีรถไฟมหาชัย", type: "train", keywords: "mahachai railway station samut sakhon สมุทรสาคร มหาชัย", province: "สมุทรสาคร" },
+    { name: "{% trans 'สมุทรสงคราม' %}", type: "province", keywords: "samut songkhram amphawa สมุทรสงคราม อัมพวา", province: "สมุทรสงคราม" },
+    { name: "{% trans 'ตลาดน้ำอัมพวา' %}", type: "landmark", keywords: "amphawa floating market samut songkhram สมุทรสงคราม อัมพวา", province: "สมุทรสงคราม" },
+    { name: "{% trans 'ตลาดร่มหุบ (สถานีรถไฟแม่กลอง)' %}", type: "landmark", keywords: "maeklong railway market rom hup samut songkhram สมุทรสงคราม แม่กลอง", province: "สมุทรสงคราม" },
+    { name: "{% trans 'วัดจุฬามณี' %}", type: "landmark", keywords: "wat chulamanee samut songkhram สมุทรสงคราม ท้าวเวสสุวรรณ", province: "สมุทรสงคราม" },
 
-    { name: "สมุทรสงคราม", type: "province", keywords: "samut songkhram amphawa สมุทรสงคราม อัมพวา", province: "สมุทรสงคราม" },
-    { name: "ตลาดน้ำอัมพวา", type: "landmark", keywords: "amphawa floating market samut songkhram สมุทรสงคราม อัมพวา", province: "สมุทรสงคราม" },
-    { name: "ตลาดร่มหุบ (สถานีรถไฟแม่กลอง)", type: "landmark", keywords: "maeklong railway market rom hup samut songkhram สมุทรสงคราม แม่กลอง", province: "สมุทรสงคราม" },
-    { name: "วัดจุฬามณี", type: "landmark", keywords: "wat chulamanee samut songkhram สมุทรสงคราม ท้าวเวสสุวรรณ", province: "สมุทรสงคราม" },
+    { name: "{% trans 'สุพรรณบุรี' %}", type: "province", keywords: "suphan buri สุพรรณบุรี สุพรรณ", province: "สุพรรณบุรี" },
+    { name: "{% trans 'สถานีขนส่งสุพรรณบุรี' %}", type: "bus", keywords: "suphan buri bus terminal บขส สุพรรณบุรี", province: "สุพรรณบุรี" },
+    { name: "{% trans 'อุทยานมังกรสวรรค์ (ศาลหลักเมือง)' %}", type: "landmark", keywords: "dragon descendants museum suphan buri สุพรรณบุรี มังกร", province: "สุพรรณบุรี" },
+    { name: "{% trans 'บึงฉวาก' %}", type: "landmark", keywords: "bueng chawak aquarium suphan buri สุพรรณบุรี", province: "สุพรรณบุรี" },
+    { name: "{% trans 'วัดป่าเลไลยก์วรวิหาร' %}", type: "landmark", keywords: "wat pa lelai worawihan suphan buri สุพรรณบุรี", province: "สุพรรณบุรี" },
 
-    { name: "สุพรรณบุรี", type: "province", keywords: "suphan buri สุพรรณบุรี สุพรรณ", province: "สุพรรณบุรี" },
-    { name: "สถานีขนส่งสุพรรณบุรี", type: "bus", keywords: "suphan buri bus terminal บขส สุพรรณบุรี", province: "สุพรรณบุรี" },
-    { name: "อุทยานมังกรสวรรค์ (ศาลหลักเมือง)", type: "landmark", keywords: "dragon descendants museum suphan buri สุพรรณบุรี มังกร", province: "สุพรรณบุรี" },
-    { name: "บึงฉวาก", type: "landmark", keywords: "bueng chawak aquarium suphan buri สุพรรณบุรี", province: "สุพรรณบุรี" },
-    { name: "วัดป่าเลไลยก์วรวิหาร", type: "landmark", keywords: "wat pa lelai worawihan suphan buri สุพรรณบุรี", province: "สุพรรณบุรี" },
+    { name: "{% trans 'กาญจนบุรี' %}", type: "province", keywords: "kanchanaburi กาญจนบุรี กาญ", province: "กาญจนบุรี" },
+    { name: "{% trans 'สถานีขนส่งกาญจนบุรี' %}", type: "bus", keywords: "kanchanaburi bus terminal บขส กาญจนบุรี", province: "กาญจนบุรี" },
+    { name: "{% trans 'สถานีรถไฟกาญจนบุรี' %}", type: "train", keywords: "kanchanaburi railway station กาญจนบุรี", province: "กาญจนบุรี" },
+    { name: "{% trans 'สะพานข้ามแม่น้ำแคว' %}", type: "landmark", keywords: "river kwai bridge kanchanaburi กาญจนบุรี สะพาน", province: "กาญจนบุรี" },
+    { name: "{% trans 'น้ำตกเอราวัณ' %}", type: "landmark", keywords: "erawan waterfall kanchanaburi กาญจนบุรี", province: "กาญจนบุรี" },
 
-    { name: "กาญจนบุรี", type: "province", keywords: "kanchanaburi กาญจนบุรี กาญ", province: "กาญจนบุรี" },
-    { name: "สถานีขนส่งกาญจนบุรี", type: "bus", keywords: "kanchanaburi bus terminal บขส กาญจนบุรี", province: "กาญจนบุรี" },
-    { name: "สถานีรถไฟกาญจนบุรี", type: "train", keywords: "kanchanaburi railway station กาญจนบุรี", province: "กาญจนบุรี" },
-    { name: "สะพานข้ามแม่น้ำแคว", type: "landmark", keywords: "river kwai bridge kanchanaburi กาญจนบุรี สะพาน", province: "กาญจนบุรี" },
-    { name: "น้ำตกเอราวัณ", type: "landmark", keywords: "erawan waterfall kanchanaburi กาญจนบุรี", province: "กาญจนบุรี" },
+    { name: "{% trans 'ราชบุรี' %}", type: "province", keywords: "ratchaburi ราชบุรี ราชรี", province: "ราชบุรี" },
+    { name: "{% trans 'สถานีรถไฟราชบุรี' %}", type: "train", keywords: "ratchaburi railway station ราชบุรี", province: "ราชบุรี" },
+    { name: "{% trans 'ตลาดน้ำดำเนินสะดวก' %}", type: "landmark", keywords: "damnoen saduak floating market ratchaburi ราชบุรี ดำเนิน", province: "ราชบุรี" },
+    { name: "{% trans 'สวนผึ้ง' %}", type: "landmark", keywords: "suan phueng ratchaburi ราชบุรี สวนผึ้ง", province: "ราชบุรี" },
 
-    { name: "ราชบุรี", type: "province", keywords: "ratchaburi ราชบุรี ราชรี", province: "ราชบุรี" },
-    { name: "สถานีรถไฟราชบุรี", type: "train", keywords: "ratchaburi railway station ราชบุรี", province: "ราชบุรี" },
-    { name: "ตลาดน้ำดำเนินสะดวก", type: "landmark", keywords: "damnoen saduak floating market ratchaburi ราชบุรี ดำเนิน", province: "ราชบุรี" },
-    { name: "สวนผึ้ง", type: "landmark", keywords: "suan phueng ratchaburi ราชบุรี สวนผึ้ง", province: "ราชบุรี" },
+    { name: "{% trans 'เพชรบุรี' %}", type: "province", keywords: "phetchaburi cha-am เพชรบุรี ชะอำ", province: "เพชรบุรี" },
+    { name: "{% trans 'สถานีรถไฟเพชรบุรี' %}", type: "train", keywords: "phetchaburi railway station เพชรบุรี", province: "เพชรบุรี" },
+    { name: "{% trans 'หาดชะอำ' %}", type: "landmark", keywords: "cha-am beach phetchaburi เพชรบุรี ชะอำ", province: "เพชรบุรี" },
+    { name: "{% trans 'เขาวัง (อุทยานประวัติศาสตร์พระนครคีรี)' %}", type: "landmark", keywords: "khao wang phra nakhon khiri phetchaburi เพชรบุรี เขาวัง", province: "เพชรบุรี" },
+    { name: "{% trans 'สถานีรถไฟชะอำ' %}", type: "train", keywords: "cha-am railway station phetchaburi เพชรบุรี ชะอำ", province: "เพชรบุรี" },
 
-    { name: "เพชรบุรี", type: "province", keywords: "phetchaburi cha-am เพชรบุรี ชะอำ", province: "เพชรบุรี" },
-    { name: "สถานีรถไฟเพชรบุรี", type: "train", keywords: "phetchaburi railway station เพชรบุรี", province: "เพชรบุรี" },
-    { name: "หาดชะอำ", type: "landmark", keywords: "cha-am beach phetchaburi เพชรบุรี ชะอำ", province: "เพชรบุรี" },
-    { name: "เขาวัง (อุทยานประวัติศาสตร์พระนครคีรี)", type: "landmark", keywords: "khao wang phra nakhon khiri phetchaburi เพชรบุรี เขาวัง", province: "เพชรบุรี" },
-    { name: "สถานีรถไฟชะอำ", type: "train", keywords: "cha-am railway station phetchaburi เพชรบุรี ชะอำ", province: "เพชรบุรี" },
-
-    { name: "ประจวบคีรีขันธ์", type: "province", keywords: "prachuap khiri khan hua hin", province: "ประจวบคีรีขันธ์" },
-    { name: "สนามบินหัวหิน (HHQ)", type: "airport", keywords: "hua hin airport prachuap hhq ประจวบ", province: "ประจวบคีรีขันธ์" },
-    { name: "สถานีรถไฟหัวหิน", type: "train", keywords: "hua hin railway station ประจวบ", province: "ประจวบคีรีขันธ์" },
-    { name: "สถานีขนส่งหัวหิน", type: "bus", keywords: "hua hin bus terminal ประจวบ", province: "ประจวบคีรีขันธ์" },
-    { name: "หอนาฬิกาหัวหิน", type: "landmark", keywords: "hua hin clock tower city center prachuap ประจวบ", province: "ประจวบคีรีขันธ์" },
+    { name: "{% trans 'ประจวบคีรีขันธ์' %}", type: "province", keywords: "prachuap khiri khan hua hin", province: "ประจวบคีรีขันธ์" },
+    { name: "{% trans 'สนามบินหัวหิน (HHQ)' %}", type: "airport", keywords: "hua hin airport prachuap hhq ประจวบ", province: "ประจวบคีรีขันธ์" },
+    { name: "{% trans 'สถานีรถไฟหัวหิน' %}", type: "train", keywords: "hua hin railway station ประจวบ", province: "ประจวบคีรีขันธ์" },
+    { name: "{% trans 'สถานีขนส่งหัวหิน' %}", type: "bus", keywords: "hua hin bus terminal ประจวบ", province: "ประจวบคีรีขันธ์" },
+    { name: "{% trans 'หอนาฬิกาหัวหิน' %}", type: "landmark", keywords: "hua hin clock tower city center prachuap ประจวบ", province: "ประจวบคีรีขันธ์" },
 
     // ============================================
     // ภาคตะวันออก (East)
     // ============================================
-    { name: "ชลบุรี", type: "province", keywords: "chon buri pattaya", province: "ชลบุรี" },
-    { name: "สถานีขนส่งพัทยา (รุ่งเรือง)", type: "bus", keywords: "pattaya bus terminal rung ruang ชลบุรี", province: "ชลบุรี" },
-    { name: "บางแสน (ม.บูรพา)", type: "landmark", keywords: "bang saen burapha chon buri ชลบุรี", province: "ชลบุรี" },
-    { name: "พัทยากลาง (เซ็นทรัลเฟสติวัล)", type: "landmark", keywords: "central festival pattaya beach chon buri ชลบุรี", province: "ชลบุรี" },
-    { name: "หาดจอมเทียน", type: "landmark", keywords: "jomtien beach pattaya ชลบุรี", province: "ชลบุรี" },
-    { name: "ท่าเรือแหลมบาลีฮาย (พัทยา)", type: "pier", keywords: "bali hai pier pattaya koh larn ชลบุรี เกาะล้าน", province: "ชลบุรี" },
+    { name: "{% trans 'ชลบุรี' %}", type: "province", keywords: "chon buri pattaya", province: "ชลบุรี" },
+    { name: "{% trans 'สถานีขนส่งพัทยา (รุ่งเรือง)' %}", type: "bus", keywords: "pattaya bus terminal rung ruang ชลบุรี", province: "ชลบุรี" },
+    { name: "{% trans 'บางแสน (ม.บูรพา)' %}", type: "landmark", keywords: "bang saen burapha chon buri ชลบุรี", province: "ชลบุรี" },
+    { name: "{% trans 'พัทยากลาง (เซ็นทรัลเฟสติวัล)' %}", type: "landmark", keywords: "central festival pattaya beach chon buri ชลบุรี", province: "ชลบุรี" },
+    { name: "{% trans 'หาดจอมเทียน' %}", type: "landmark", keywords: "jomtien beach pattaya ชลบุรี", province: "ชลบุรี" },
+    { name: "{% trans 'ท่าเรือแหลมบาลีฮาย (พัทยา)' %}", type: "pier", keywords: "bali hai pier pattaya koh larn ชลบุรี เกาะล้าน", province: "ชลบุรี" },
 
-    { name: "ระยอง", type: "province", keywords: "rayong", province: "ระยอง" },
-    { name: "สนามบินอู่ตะเภา (UTP)", type: "airport", keywords: "u-tapao pattaya rayong utp ระยอง", province: "ระยอง" },
-    { name: "สถานีขนส่งระยอง 2", type: "bus", keywords: "rayong bus terminal 2 ระยอง", province: "ระยอง" },
-    { name: "นิคมอุตสาหกรรมอมตะซิตี้", type: "landmark", keywords: "amata city rayong industrial estate ระยอง", province: "ระยอง" },
-    { name: "ท่าเรือบ้านเพ (ระยอง)", type: "pier", keywords: "ban phe pier rayong koh samet ระยอง เสม็ด", province: "ระยอง" },
+    { name: "{% trans 'ระยอง' %}", type: "province", keywords: "rayong", province: "ระยอง" },
+    { name: "{% trans 'สนามบินอู่ตะเภา (UTP)' %}", type: "airport", keywords: "u-tapao pattaya rayong utp ระยอง", province: "ระยอง" },
+    { name: "{% trans 'สถานีขนส่งระยอง 2' %}", type: "bus", keywords: "rayong bus terminal 2 ระยอง", province: "ระยอง" },
+    { name: "{% trans 'นิคมอุตสาหกรรมอมตะซิตี้' %}", type: "landmark", keywords: "amata city rayong industrial estate ระยอง", province: "ระยอง" },
+    { name: "{% trans 'ท่าเรือบ้านเพ (ระยอง)' %}", type: "pier", keywords: "ban phe pier rayong koh samet ระยอง เสม็ด", province: "ระยอง" },
 
-    { name: "จันทบุรี", type: "province", keywords: "chanthaburi จันทบุรี จันท์", province: "จันทบุรี" },
-    { name: "สถานีขนส่งจันทบุรี", type: "bus", keywords: "chanthaburi bus terminal บขส จันทบุรี", province: "จันทบุรี" },
-    { name: "ชุมชนริมน้ำจันทบูร", type: "landmark", keywords: "chantaboon waterfront community chanthaburi จันทบุรี", province: "จันทบุรี" },
-    { name: "อุทยานแห่งชาติน้ำตกพลิ้ว", type: "landmark", keywords: "namtok phlio national park chanthaburi จันทบุรี", province: "จันทบุรี" },
+    { name: "{% trans 'จันทบุรี' %}", type: "province", keywords: "chanthaburi จันทบุรี จันท์", province: "จันทบุรี" },
+    { name: "{% trans 'สถานีขนส่งจันทบุรี' %}", type: "bus", keywords: "chanthaburi bus terminal บขส จันทบุรี", province: "จันทบุรี" },
+    { name: "{% trans 'ชุมชนริมน้ำจันทบูร' %}", type: "landmark", keywords: "chantaboon waterfront community chanthaburi จันทบุรี", province: "จันทบุรี" },
+    { name: "{% trans 'อุทยานแห่งชาติน้ำตกพลิ้ว' %}", type: "landmark", keywords: "namtok phlio national park chanthaburi จันทบุรี", province: "จันทบุรี" },
 
-    { name: "ตราด", type: "province", keywords: "trat koh chang", province: "ตราด" },
-    { name: "สนามบินตราด (TDX)", type: "airport", keywords: "trat airport tdx ตราด", province: "ตราด" },
-    { name: "ท่าเรืออ่าวธรรมชาติ (ตราด)", type: "pier", keywords: "ao thammachat pier trat koh chang ferry ตราด เกาะช้าง", province: "ตราด" },
+    { name: "{% trans 'ตราด' %}", type: "province", keywords: "trat koh chang", province: "ตราด" },
+    { name: "{% trans 'สนามบินตราด (TDX)' %}", type: "airport", keywords: "trat airport tdx ตราด", province: "ตราด" },
+    { name: "{% trans 'ท่าเรืออ่าวธรรมชาติ (ตราด)' %}", type: "pier", keywords: "ao thammachat pier trat koh chang ferry ตราด เกาะช้าง", province: "ตราด" },
 
-    { name: "ฉะเชิงเทรา", type: "province", keywords: "chachoengsao ฉะเชิงเทรา แปดริ้ว", province: "ฉะเชิงเทรา" },
-    { name: "วัดโสธรวรารามวรวิหาร", type: "landmark", keywords: "wat sothon wararam worawihan chachoengsao ฉะเชิงเทรา แปดริ้ว วัดโสธร", province: "ฉะเชิงเทรา" },
-    { name: "สถานีรถไฟชุมทางฉะเชิงเทรา", type: "train", keywords: "chachoengsao junction railway station ฉะเชิงเทรา แปดริ้ว", province: "ฉะเชิงเทรา" },
-    { name: "สถานีขนส่งฉะเชิงเทรา", type: "bus", keywords: "chachoengsao bus terminal บขส ฉะเชิงเทรา", province: "ฉะเชิงเทรา" },
+    { name: "{% trans 'ฉะเชิงเทรา' %}", type: "province", keywords: "chachoengsao ฉะเชิงเทรา แปดริ้ว", province: "ฉะเชิงเทรา" },
+    { name: "{% trans 'วัดโสธรวรารามวรวิหาร' %}", type: "landmark", keywords: "wat sothon wararam worawihan chachoengsao ฉะเชิงเทรา แปดริ้ว วัดโสธร", province: "ฉะเชิงเทรา" },
+    { name: "{% trans 'สถานีรถไฟชุมทางฉะเชิงเทรา' %}", type: "train", keywords: "chachoengsao junction railway station ฉะเชิงเทรา แปดริ้ว", province: "ฉะเชิงเทรา" },
+    { name: "{% trans 'สถานีขนส่งฉะเชิงเทรา' %}", type: "bus", keywords: "chachoengsao bus terminal บขส ฉะเชิงเทรา", province: "ฉะเชิงเทรา" },
 
-    { name: "ปราจีนบุรี", type: "province", keywords: "prachin buri ปราจีนบุรี", province: "ปราจีนบุรี" },
-    { name: "สถานีรถไฟปราจีนบุรี", type: "train", keywords: "prachin buri railway station ปราจีนบุรี", province: "ปราจีนบุรี" },
-    { name: "นิคมอุตสาหกรรม 304", type: "landmark", keywords: "304 industrial park prachin buri ปราจีนบุรี นิคม 304", province: "ปราจีนบุรี" },
-    { name: "รพ.เจ้าพระยาอภัยภูเบศร", type: "landmark", keywords: "chaophraya abhaibhubejhr hospital prachin buri ปราจีนบุรี", province: "ปราจีนบุรี" },
+    { name: "{% trans 'ปราจีนบุรี' %}", type: "province", keywords: "prachin buri ปราจีนบุรี", province: "ปราจีนบุรี" },
+    { name: "{% trans 'สถานีรถไฟปราจีนบุรี' %}", type: "train", keywords: "prachin buri railway station ปราจีนบุรี", province: "ปราจีนบุรี" },
+    { name: "{% trans 'นิคมอุตสาหกรรม 304' %}", type: "landmark", keywords: "304 industrial park prachin buri ปราจีนบุรี นิคม 304", province: "ปราจีนบุรี" },
+    { name: "{% trans 'รพ.เจ้าพระยาอภัยภูเบศร' %}", type: "landmark", keywords: "chaophraya abhaibhubejhr hospital prachin buri ปราจีนบุรี", province: "ปราจีนบุรี" },
 
-    { name: "สระแก้ว", type: "province", keywords: "sa kaeo สระแก้ว", province: "สระแก้ว" },
-    { name: "ตลาดโรงเกลือ (อรัญประเทศ)", type: "landmark", keywords: "rong kluea market aranyaprathet sa kaeo สระแก้ว อรัญ", province: "สระแก้ว" },
-    { name: "สถานีรถไฟด่านพรมแดนบ้านคลองลึก", type: "train", keywords: "ban khlong luk border railway station sa kaeo สระแก้ว อรัญ", province: "สระแก้ว" },
-    { name: "สถานีขนส่งสระแก้ว", type: "bus", keywords: "sa kaeo bus terminal บขส สระแก้ว", province: "สระแก้ว" },
+    { name: "{% trans 'สระแก้ว' %}", type: "province", keywords: "sa kaeo สระแก้ว", province: "สระแก้ว" },
+    { name: "{% trans 'ตลาดโรงเกลือ (อรัญประเทศ)' %}", type: "landmark", keywords: "rong kluea market aranyaprathet sa kaeo สระแก้ว อรัญ", province: "สระแก้ว" },
+    { name: "{% trans 'สถานีรถไฟด่านพรมแดนบ้านคลองลึก' %}", type: "train", keywords: "ban khlong luk border railway station sa kaeo สระแก้ว อรัญ", province: "สระแก้ว" },
+    { name: "{% trans 'สถานีขนส่งสระแก้ว' %}", type: "bus", keywords: "sa kaeo bus terminal บขส สระแก้ว", province: "สระแก้ว" },
 
     // ============================================
     // ภาคเหนือ (North)
     // ============================================
-    { name: "เชียงใหม่", type: "province", keywords: "chiang mai", province: "เชียงใหม่" },
-    { name: "สนามบินเชียงใหม่ (CNX)", type: "airport", keywords: "chiang mai airport cnx เชียงใหม่", province: "เชียงใหม่" },
-    { name: "สถานีรถไฟเชียงใหม่", type: "train", keywords: "chiang mai railway station เชียงใหม่", province: "เชียงใหม่" },
-    { name: "สถานีขนส่งอาเขต เชียงใหม่ 2", type: "bus", keywords: "chiang mai arcade bus terminal 2 เชียงใหม่", province: "เชียงใหม่" },
-    { name: "สถานีขนส่งอาเขต เชียงใหม่ 3", type: "bus", keywords: "chiang mai arcade bus terminal 3 เชียงใหม่", province: "เชียงใหม่" },
-    { name: "ประตูท่าแพ", type: "landmark", keywords: "tha phae gate chiang mai old city เชียงใหม่", province: "เชียงใหม่" },
-    { name: "ถนนนิมมานเหมินท์", type: "landmark", keywords: "nimmanhemin nimman chiang mai เชียงใหม่", province: "เชียงใหม่" },
+    { name: "{% trans 'เชียงใหม่' %}", type: "province", keywords: "chiang mai", province: "เชียงใหม่" },
+    { name: "{% trans 'สนามบินเชียงใหม่ (CNX)' %}", type: "airport", keywords: "chiang mai airport cnx เชียงใหม่", province: "เชียงใหม่" },
+    { name: "{% trans 'สถานีรถไฟเชียงใหม่' %}", type: "train", keywords: "chiang mai railway station เชียงใหม่", province: "เชียงใหม่" },
+    { name: "{% trans 'สถานีขนส่งอาเขต เชียงใหม่ 2' %}", type: "bus", keywords: "chiang mai arcade bus terminal 2 เชียงใหม่", province: "เชียงใหม่" },
+    { name: "{% trans 'สถานีขนส่งอาเขต เชียงใหม่ 3' %}", type: "bus", keywords: "chiang mai arcade bus terminal 3 เชียงใหม่", province: "เชียงใหม่" },
+    { name: "{% trans 'ประตูท่าแพ' %}", type: "landmark", keywords: "tha phae gate chiang mai old city เชียงใหม่", province: "เชียงใหม่" },
+    { name: "{% trans 'ถนนนิมมานเหมินท์' %}", type: "landmark", keywords: "nimmanhemin nimman chiang mai เชียงใหม่", province: "เชียงใหม่" },
 
-    { name: "เชียงราย", type: "province", keywords: "chiang rai", province: "เชียงราย" },
-    { name: "สนามบินแม่ฟ้าหลวง เชียงราย (CEI)", type: "airport", keywords: "chiang rai airport cei เชียงราย", province: "เชียงราย" },
-    { name: "สถานีขนส่งเชียงราย 1", type: "bus", keywords: "chiang rai bus terminal 1 เชียงราย", province: "เชียงราย" },
-    { name: "หอนาฬิกาเชียงราย", type: "landmark", keywords: "chiang rai clock tower city center เชียงราย", province: "เชียงราย" },
-    { name: "สิงห์ปาร์ค (ไร่บุญรอด)", type: "landmark", keywords: "singha park chiang rai เชียงราย", province: "เชียงราย" },
+    { name: "{% trans 'เชียงราย' %}", type: "province", keywords: "chiang rai", province: "เชียงราย" },
+    { name: "{% trans 'สนามบินแม่ฟ้าหลวง เชียงราย (CEI)' %}", type: "airport", keywords: "chiang rai airport cei เชียงราย", province: "เชียงราย" },
+    { name: "{% trans 'สถานีขนส่งเชียงราย 1' %}", type: "bus", keywords: "chiang rai bus terminal 1 เชียงราย", province: "เชียงราย" },
+    { name: "{% trans 'หอนาฬิกาเชียงราย' %}", type: "landmark", keywords: "chiang rai clock tower city center เชียงราย", province: "เชียงราย" },
+    { name: "{% trans 'สิงห์ปาร์ค (ไร่บุญรอด)' %}", type: "landmark", keywords: "singha park chiang rai เชียงราย", province: "เชียงราย" },
 
-    { name: "แม่ฮ่องสอน", type: "province", keywords: "mae hong son pai", province: "แม่ฮ่องสอน" },
-    { name: "สนามบินแม่ฮ่องสอน (HGN)", type: "airport", keywords: "mae hong son airport hgn แม่ฮ่องสอน", province: "แม่ฮ่องสอน" },
-    { name: "สนามบินปาย (PYY)", type: "airport", keywords: "pai airport mae hong son pyy แม่ฮ่องสอน ปาย", province: "แม่ฮ่องสอน" },
+    { name: "{% trans 'แม่ฮ่องสอน' %}", type: "province", keywords: "mae hong son pai", province: "แม่ฮ่องสอน" },
+    { name: "{% trans 'สนามบินแม่ฮ่องสอน (HGN)' %}", type: "airport", keywords: "mae hong son airport hgn แม่ฮ่องสอน", province: "แม่ฮ่องสอน" },
+    { name: "{% trans 'สนามบินปาย (PYY)' %}", type: "airport", keywords: "pai airport mae hong son pyy แม่ฮ่องสอน ปาย", province: "แม่ฮ่องสอน" },
 
-    { name: "ลำปาง", type: "province", keywords: "lampang", province: "ลำปาง" },
-    { name: "สนามบินลำปาง (LPT)", type: "airport", keywords: "lampang airport lpt ลำปาง", province: "ลำปาง" },
+    { name: "{% trans 'ลำปาง' %}", type: "province", keywords: "lampang", province: "ลำปาง" },
+    { name: "{% trans 'สนามบินลำปาง (LPT)' %}", type: "airport", keywords: "lampang airport lpt ลำปาง", province: "ลำปาง" },
 
-    { name: "พิษณุโลก", type: "province", keywords: "phitsanulok", province: "พิษณุโลก" },
-    { name: "สนามบินพิษณุโลก (PHS)", type: "airport", keywords: "phitsanulok airport phs พิษณุโลก", province: "พิษณุโลก" },
-    { name: "สถานีรถไฟพิษณุโลก", type: "train", keywords: "phitsanulok railway station พิษณุโลก", province: "พิษณุโลก" },
-    { name: "สถานีขนส่งพิษณุโลก 2", type: "bus", keywords: "phitsanulok bus terminal 2 พิษณุโลก", province: "พิษณุโลก" },
+    { name: "{% trans 'พิษณุโลก' %}", type: "province", keywords: "phitsanulok", province: "พิษณุโลก" },
+    { name: "{% trans 'สนามบินพิษณุโลก (PHS)' %}", type: "airport", keywords: "phitsanulok airport phs พิษณุโลก", province: "พิษณุโลก" },
+    { name: "{% trans 'สถานีรถไฟพิษณุโลก' %}", type: "train", keywords: "phitsanulok railway station พิษณุโลก", province: "พิษณุโลก" },
+    { name: "{% trans 'สถานีขนส่งพิษณุโลก 2' %}", type: "bus", keywords: "phitsanulok bus terminal 2 พิษณุโลก", province: "พิษณุโลก" },
 
-    { name: "นครสวรรค์", type: "province", keywords: "nakhon sawan", province: "นครสวรรค์" },
-    { name: "สถานีรถไฟนครสวรรค์", type: "train", keywords: "nakhon sawan railway station นครสวรรค์", province: "นครสวรรค์" },
+    { name: "{% trans 'นครสวรรค์' %}", type: "province", keywords: "nakhon sawan", province: "นครสวรรค์" },
+    { name: "{% trans 'สถานีรถไฟนครสวรรค์' %}", type: "train", keywords: "nakhon sawan railway station นครสวรรค์", province: "นครสวรรค์" },
 
-    { name: "น่าน", type: "province", keywords: "nan", province: "น่าน" },
-    { name: "สนามบินน่านนคร (NNT)", type: "airport", keywords: "nan nakhon airport nnt น่าน", province: "น่าน" },
+    { name: "{% trans 'น่าน' %}", type: "province", keywords: "nan", province: "น่าน" },
+    { name: "{% trans 'สนามบินน่านนคร (NNT)' %}", type: "airport", keywords: "nan nakhon airport nnt น่าน", province: "น่าน" },
 
-    { name: "ตาก", type: "province", keywords: "tak mae sot", province: "ตาก" },
-    { name: "สนามบินแม่สอด (MAQ)", type: "airport", keywords: "mae sot airport tak maq ตาก แม่สอด", province: "ตาก" },
+    { name: "{% trans 'ตาก' %}", type: "province", keywords: "tak mae sot", province: "ตาก" },
+    { name: "{% trans 'สนามบินแม่สอด (MAQ)' %}", type: "airport", keywords: "mae sot airport tak maq ตาก แม่สอด", province: "ตาก" },
 
-    { name: "สุโขทัย", type: "province", keywords: "sukhothai", province: "สุโขทัย" },
-    { name: "สนามบินสุโขทัย (THS)", type: "airport", keywords: "sukhothai airport ths สุโขทัย", province: "สุโขทัย" },
+    { name: "{% trans 'สุโขทัย' %}", type: "province", keywords: "sukhothai", province: "สุโขทัย" },
+    { name: "{% trans 'สนามบินสุโขทัย (THS)' %}", type: "airport", keywords: "sukhothai airport ths สุโขทัย", province: "สุโขทัย" },
 
-    { name: "แพร่", type: "province", keywords: "phrae แพร่", province: "แพร่" },
-    { name: "สนามบินแพร่ (PRH)", type: "airport", keywords: "phrae airport prh แพร่", province: "แพร่" },
-    { name: "สถานีขนส่งแพร่", type: "bus", keywords: "phrae bus terminal บขส แพร่", province: "แพร่" },
-    { name: "วัดพระธาตุช่อแฮ", type: "landmark", keywords: "wat phra that cho hae phrae แพร่", province: "แพร่" },
+    { name: "{% trans 'แพร่' %}", type: "province", keywords: "phrae แพร่", province: "แพร่" },
+    { name: "{% trans 'สนามบินแพร่ (PRH)' %}", type: "airport", keywords: "phrae airport prh แพร่", province: "แพร่" },
+    { name: "{% trans 'สถานีขนส่งแพร่' %}", type: "bus", keywords: "phrae bus terminal บขส แพร่", province: "แพร่" },
+    { name: "{% trans 'วัดพระธาตุช่อแฮ' %}", type: "landmark", keywords: "wat phra that cho hae phrae แพร่", province: "แพร่" },
 
-    { name: "พะเยา", type: "province", keywords: "phayao พะเยา", province: "พะเยา" },
-    { name: "สถานีขนส่งพะเยา", type: "bus", keywords: "phayao bus terminal บขส พะเยา", province: "พะเยา" },
-    { name: "กว๊านพะเยา", type: "landmark", keywords: "kwan phayao lake พะเยา", province: "พะเยา" },
-    { name: "มหาวิทยาลัยพะเยา", type: "landmark", keywords: "university of phayao พะเยา มพ", province: "พะเยา" },
+    { name: "{% trans 'พะเยา' %}", type: "province", keywords: "phayao พะเยา", province: "พะเยา" },
+    { name: "{% trans 'สถานีขนส่งพะเยา' %}", type: "bus", keywords: "phayao bus terminal บขส พะเยา", province: "พะเยา" },
+    { name: "{% trans 'กว๊านพะเยา' %}", type: "landmark", keywords: "kwan phayao lake พะเยา", province: "พะเยา" },
+    { name: "{% trans 'มหาวิทยาลัยพะเยา' %}", type: "landmark", keywords: "university of phayao พะเยา มพ", province: "พะเยา" },
 
-    { name: "อุตรดิตถ์", type: "province", keywords: "uttaradit อุตรดิตถ์", province: "อุตรดิตถ์" },
-    { name: "สถานีรถไฟอุตรดิตถ์", type: "train", keywords: "uttaradit railway station อุตรดิตถ์", province: "อุตรดิตถ์" },
-    { name: "สถานีขนส่งอุตรดิตถ์", type: "bus", keywords: "uttaradit bus terminal บขส อุตรดิตถ์", province: "อุตรดิตถ์" },
+    { name: "{% trans 'อุตรดิตถ์' %}", type: "province", keywords: "uttaradit อุตรดิตถ์", province: "อุตรดิตถ์" },
+    { name: "{% trans 'สถานีรถไฟอุตรดิตถ์' %}", type: "train", keywords: "uttaradit railway station อุตรดิตถ์", province: "อุตรดิตถ์" },
+    { name: "{% trans 'สถานีขนส่งอุตรดิตถ์' %}", type: "bus", keywords: "uttaradit bus terminal บขส อุตรดิตถ์", province: "อุตรดิตถ์" },
 
-    { name: "ลำพูน", type: "province", keywords: "lamphun ลำพูน", province: "ลำพูน" },
-    { name: "สถานีรถไฟลำพูน", type: "train", keywords: "lamphun railway station ลำพูน", province: "ลำพูน" },
-    { name: "วัดพระธาตุหริภุญชัย", type: "landmark", keywords: "wat phra that hariphunchai lamphun ลำพูน", province: "ลำพูน" },
-    { name: "นิคมอุตสาหกรรมภาคเหนือ (ลำพูน)", type: "landmark", keywords: "northern region industrial estate lamphun ลำพูน นิคม", province: "ลำพูน" },
+    { name: "{% trans 'ลำพูน' %}", type: "province", keywords: "lamphun ลำพูน", province: "ลำพูน" },
+    { name: "{% trans 'สถานีรถไฟลำพูน' %}", type: "train", keywords: "lamphun railway station ลำพูน", province: "ลำพูน" },
+    { name: "{% trans 'วัดพระธาตุหริภุญชัย' %}", type: "landmark", keywords: "wat phra that hariphunchai lamphun ลำพูน", province: "ลำพูน" },
+    { name: "{% trans 'นิคมอุตสาหกรรมภาคเหนือ (ลำพูน)' %}", type: "landmark", keywords: "northern region industrial estate lamphun ลำพูน นิคม", province: "ลำพูน" },
 
-    { name: "อุทัยธานี", type: "province", keywords: "uthai thani อุทัยธานี", province: "อุทัยธานี" },
-    { name: "สถานีขนส่งอุทัยธานี", type: "bus", keywords: "uthai thani bus terminal บขส อุทัยธานี", province: "อุทัยธานี" },
-    { name: "วัดท่าซุง (วิหารแก้ว)", type: "landmark", keywords: "wat tha sung crystal temple uthai thani อุทัยธานี", province: "อุทัยธานี" },
+    { name: "{% trans 'อุทัยธานี' %}", type: "province", keywords: "uthai thani อุทัยธานี", province: "อุทัยธานี" },
+    { name: "{% trans 'สถานีขนส่งอุทัยธานี' %}", type: "bus", keywords: "uthai thani bus terminal บขส อุทัยธานี", province: "อุทัยธานี" },
+    { name: "{% trans 'วัดท่าซุง (วิหารแก้ว)' %}", type: "landmark", keywords: "wat tha sung crystal temple uthai thani อุทัยธานี", province: "อุทัยธานี" },
 
-    { name: "กำแพงเพชร", type: "province", keywords: "kamphaeng phet กำแพงเพชร", province: "กำแพงเพชร" },
-    { name: "สถานีขนส่งกำแพงเพชร", type: "bus", keywords: "kamphaeng phet bus terminal บขส กำแพงเพชร", province: "กำแพงเพชร" },
-    { name: "อุทยานประวัติศาสตร์กำแพงเพชร", type: "landmark", keywords: "kamphaeng phet historical park กำแพงเพชร", province: "กำแพงเพชร" },
+    { name: "{% trans 'กำแพงเพชร' %}", type: "province", keywords: "kamphaeng phet กำแพงเพชร", province: "กำแพงเพชร" },
+    { name: "{% trans 'สถานีขนส่งกำแพงเพชร' %}", type: "bus", keywords: "kamphaeng phet bus terminal บขส กำแพงเพชร", province: "กำแพงเพชร" },
+    { name: "{% trans 'อุทยานประวัติศาสตร์กำแพงเพชร' %}", type: "landmark", keywords: "kamphaeng phet historical park กำแพงเพชร", province: "กำแพงเพชร" },
 
-    { name: "พิจิตร", type: "province", keywords: "phichit พิจิตร", province: "พิจิตร" },
-    { name: "สถานีรถไฟพิจิตร", type: "train", keywords: "phichit railway station พิจิตร", province: "พิจิตร" },
-    { name: "วัดท่าหลวง (หลวงพ่อเพชร)", type: "landmark", keywords: "wat tha luang phichit พิจิตร", province: "พิจิตร" },
+    { name: "{% trans 'พิจิตร' %}", type: "province", keywords: "phichit พิจิตร", province: "พิจิตร" },
+    { name: "{% trans 'สถานีรถไฟพิจิตร' %}", type: "train", keywords: "phichit railway station พิจิตร", province: "พิจิตร" },
+    { name: "{% trans 'วัดท่าหลวง (หลวงพ่อเพชร)' %}", type: "landmark", keywords: "wat tha luang phichit พิจิตร", province: "พิจิตร" },
 
-    { name: "เพชรบูรณ์", type: "province", keywords: "phetchabun khao kho เพชรบูรณ์ เขาค้อ", province: "เพชรบูรณ์" },
-    { name: "เขาค้อ (จุดชมวิว)", type: "landmark", keywords: "khao kho view point phetchabun เพชรบูรณ์", province: "เพชรบูรณ์" },
-    { name: "ภูทับเบิก", type: "landmark", keywords: "phu thap boek phetchabun เพชรบูรณ์", province: "เพชรบูรณ์" },
-    { name: "สถานีขนส่งหล่มสัก", type: "bus", keywords: "lom sak bus terminal phetchabun เพชรบูรณ์ หล่มสัก", province: "เพชรบูรณ์" },
+    { name: "{% trans 'เพชรบูรณ์' %}", type: "province", keywords: "phetchabun khao kho เพชรบูรณ์ เขาค้อ", province: "เพชรบูรณ์" },
+    { name: "{% trans 'เขาค้อ (จุดชมวิว)' %}", type: "landmark", keywords: "khao kho view point phetchabun เพชรบูรณ์", province: "เพชรบูรณ์" },
+    { name: "{% trans 'ภูทับเบิก' %}", type: "landmark", keywords: "phu thap boek phetchabun เพชรบูรณ์", province: "เพชรบูรณ์" },
+    { name: "{% trans 'สถานีขนส่งหล่มสัก' %}", type: "bus", keywords: "lom sak bus terminal phetchabun เพชรบูรณ์ หล่มสัก", province: "เพชรบูรณ์" },
 
     // ============================================
     // ภาคตะวันออกเฉียงเหนือ (Isan)
     // ============================================
-    { name: "นครราชสีมา", type: "province", keywords: "nakhon ratchasima korat", province: "นครราชสีมา" },
-    { name: "สถานีรถไฟนครราชสีมา", type: "train", keywords: "nakhon ratchasima railway station korat โคราช นครราชสีมา", province: "นครราชสีมา" },
-    { name: "สถานีขนส่งนครราชสีมา 2", type: "bus", keywords: "nakhon ratchasima bus terminal 2 korat โคราช นครราชสีมา", province: "นครราชสีมา" },
-    { name: "เขาใหญ่ (ปากช่อง)", type: "landmark", keywords: "khao yai pak chong nakhon ratchasima โคราช นครราชสีมา", province: "นครราชสีมา" },
-    { name: "เซ็นทรัล โคราช", type: "landmark", keywords: "central korat nakhon ratchasima โคราช นครราชสีมา", province: "นครราชสีมา" },
+    { name: "{% trans 'นครราชสีมา' %}", type: "province", keywords: "nakhon ratchasima korat", province: "นครราชสีมา" },
+    { name: "{% trans 'สถานีรถไฟนครราชสีมา' %}", type: "train", keywords: "nakhon ratchasima railway station korat โคราช นครราชสีมา", province: "นครราชสีมา" },
+    { name: "{% trans 'สถานีขนส่งนครราชสีมา 2' %}", type: "bus", keywords: "nakhon ratchasima bus terminal 2 korat โคราช นครราชสีมา", province: "นครราชสีมา" },
+    { name: "{% trans 'เขาใหญ่ (ปากช่อง)' %}", type: "landmark", keywords: "khao yai pak chong nakhon ratchasima โคราช นครราชสีมา", province: "นครราชสีมา" },
+    { name: "{% trans 'เซ็นทรัล โคราช' %}", type: "landmark", keywords: "central korat nakhon ratchasima โคราช นครราชสีมา", province: "นครราชสีมา" },
 
-    { name: "ขอนแก่น", type: "province", keywords: "khon kaen", province: "ขอนแก่น" },
-    { name: "สนามบินขอนแก่น (KKC)", type: "airport", keywords: "khon kaen airport kkc ขอนแก่น", province: "ขอนแก่น" },
-    { name: "สถานีรถไฟขอนแก่น", type: "train", keywords: "khon kaen railway station ขอนแก่น", province: "ขอนแก่น" },
-    { name: "สถานีขนส่งขอนแก่น 3", type: "bus", keywords: "khon kaen bus terminal 3 ขอนแก่น", province: "ขอนแก่น" },
-    { name: "มหาวิทยาลัยขอนแก่น", type: "landmark", keywords: "khon kaen university kku ขอนแก่น มข", province: "ขอนแก่น" },
+    { name: "{% trans 'ขอนแก่น' %}", type: "province", keywords: "khon kaen", province: "ขอนแก่น" },
+    { name: "{% trans 'สนามบินขอนแก่น (KKC)' %}", type: "airport", keywords: "khon kaen airport kkc ขอนแก่น", province: "ขอนแก่น" },
+    { name: "{% trans 'สถานีรถไฟขอนแก่น' %}", type: "train", keywords: "khon kaen railway station ขอนแก่น", province: "ขอนแก่น" },
+    { name: "{% trans 'สถานีขนส่งขอนแก่น 3' %}", type: "bus", keywords: "khon kaen bus terminal 3 ขอนแก่น", province: "ขอนแก่น" },
+    { name: "{% trans 'มหาวิทยาลัยขอนแก่น' %}", type: "landmark", keywords: "khon kaen university kku ขอนแก่น มข", province: "ขอนแก่น" },
 
-    { name: "อุดรธานี", type: "province", keywords: "udon thani udon", province: "อุดรธานี" },
-    { name: "สนามบินอุดรธานี (UTH)", type: "airport", keywords: "udon thani airport uth อุดร", province: "อุดรธานี" },
-    { name: "สถานีรถไฟอุดรธานี", type: "train", keywords: "udon thani railway station อุดร", province: "อุดรธานี" },
-    { name: "สถานีขนส่งอุดรธานี 1", type: "bus", keywords: "udon thani bus terminal 1 อุดร", province: "อุดรธานี" },
-    { name: "เซ็นทรัล อุดรธานี", type: "landmark", keywords: "central udon thani city center อุดร", province: "อุดรธานี" },
+    { name: "{% trans 'อุดรธานี' %}", type: "province", keywords: "udon thani udon", province: "อุดรธานี" },
+    { name: "{% trans 'สนามบินอุดรธานี (UTH)' %}", type: "airport", keywords: "udon thani airport uth อุดร", province: "อุดรธานี" },
+    { name: "{% trans 'สถานีรถไฟอุดรธานี' %}", type: "train", keywords: "udon thani railway station อุดร", province: "อุดรธานี" },
+    { name: "{% trans 'สถานีขนส่งอุดรธานี 1' %}", type: "bus", keywords: "udon thani bus terminal 1 อุดร", province: "อุดรธานี" },
+    { name: "{% trans 'เซ็นทรัล อุดรธานี' %}", type: "landmark", keywords: "central udon thani city center อุดร", province: "อุดรธานี" },
 
-    { name: "อุบลราชธานี", type: "province", keywords: "ubon ratchathani ubon", province: "อุบลราชธานี" },
-    { name: "สนามบินอุบลราชธานี (UBP)", type: "airport", keywords: "ubon ratchathani airport ubp อุบล", province: "อุบลราชธานี" },
-    { name: "สถานีรถไฟอุบลราชธานี", type: "train", keywords: "ubon ratchathani railway station warin chamrap อุบล", province: "อุบลราชธานี" },
-    { name: "สถานีขนส่งอุบลราชธานี", type: "bus", keywords: "ubon ratchathani bus terminal อุบล", province: "อุบลราชธานี" },
+    { name: "{% trans 'อุบลราชธานี' %}", type: "province", keywords: "ubon ratchathani ubon", province: "อุบลราชธานี" },
+    { name: "{% trans 'สนามบินอุบลราชธานี (UBP)' %}", type: "airport", keywords: "ubon ratchathani airport ubp อุบล", province: "อุบลราชธานี" },
+    { name: "{% trans 'สถานีรถไฟอุบลราชธานี' %}", type: "train", keywords: "ubon ratchathani railway station warin chamrap อุบล", province: "อุบลราชธานี" },
+    { name: "{% trans 'สถานีขนส่งอุบลราชธานี' %}", type: "bus", keywords: "ubon ratchathani bus terminal อุบล", province: "อุบลราชธานี" },
 
-    { name: "บุรีรัมย์", type: "province", keywords: "buri ram", province: "บุรีรัมย์" },
-    { name: "สนามบินบุรีรัมย์ (BFV)", type: "airport", keywords: "buri ram airport bfv บุรีรัมย์", province: "บุรีรัมย์" },
-    { name: "สถานีรถไฟบุรีรัมย์", type: "train", keywords: "buri ram railway station บุรีรัมย์", province: "บุรีรัมย์" },
+    { name: "{% trans 'บุรีรัมย์' %}", type: "province", keywords: "buri ram", province: "บุรีรัมย์" },
+    { name: "{% trans 'สนามบินบุรีรัมย์ (BFV)' %}", type: "airport", keywords: "buri ram airport bfv บุรีรัมย์", province: "บุรีรัมย์" },
+    { name: "{% trans 'สถานีรถไฟบุรีรัมย์' %}", type: "train", keywords: "buri ram railway station บุรีรัมย์", province: "บุรีรัมย์" },
 
-    { name: "สุรินทร์", type: "province", keywords: "surin", province: "สุรินทร์" },
-    { name: "สถานีรถไฟสุรินทร์", type: "train", keywords: "surin railway station สุรินทร์", province: "สุรินทร์" },
+    { name: "{% trans 'สุรินทร์' %}", type: "province", keywords: "surin", province: "สุรินทร์" },
+    { name: "{% trans 'สถานีรถไฟสุรินทร์' %}", type: "train", keywords: "surin railway station สุรินทร์", province: "สุรินทร์" },
 
-    { name: "ศรีสะเกษ", type: "province", keywords: "si sa ket", province: "ศรีสะเกษ" },
-    { name: "สถานีรถไฟศรีสะเกษ", type: "train", keywords: "si sa ket railway station ศรีสะเกษ", province: "ศรีสะเกษ" },
+    { name: "{% trans 'ศรีสะเกษ' %}", type: "province", keywords: "si sa ket", province: "ศรีสะเกษ" },
+    { name: "{% trans 'สถานีรถไฟศรีสะเกษ' %}", type: "train", keywords: "si sa ket railway station ศรีสะเกษ", province: "ศรีสะเกษ" },
 
-    { name: "หนองคาย", type: "province", keywords: "nong khai", province: "หนองคาย" },
-    { name: "สถานีรถไฟหนองคาย", type: "train", keywords: "nong khai railway station หนองคาย", province: "หนองคาย" },
+    { name: "{% trans 'หนองคาย' %}", type: "province", keywords: "nong khai", province: "หนองคาย" },
+    { name: "{% trans 'สถานีรถไฟหนองคาย' %}", type: "train", keywords: "nong khai railway station หนองคาย", province: "หนองคาย" },
 
-    { name: "เลย", type: "province", keywords: "loei chiang khan", province: "เลย" },
-    { name: "สนามบินเลย (LOE)", type: "airport", keywords: "loei airport loe เลย", province: "เลย" },
+    { name: "{% trans 'เลย' %}", type: "province", keywords: "loei chiang khan", province: "เลย" },
+    { name: "{% trans 'สนามบินเลย (LOE)' %}", type: "airport", keywords: "loei airport loe เลย", province: "เลย" },
 
-    { name: "สกลนคร", type: "province", keywords: "sakon nakhon", province: "สกลนคร" },
-    { name: "สนามบินสกลนคร (SNO)", type: "airport", keywords: "sakon nakhon airport sno สกลนคร", province: "สกลนคร" },
+    { name: "{% trans 'สกลนคร' %}", type: "province", keywords: "sakon nakhon", province: "สกลนคร" },
+    { name: "{% trans 'สนามบินสกลนคร (SNO)' %}", type: "airport", keywords: "sakon nakhon airport sno สกลนคร", province: "สกลนคร" },
 
-    { name: "นครพนม", type: "province", keywords: "nakhon phanom", province: "นครพนม" },
-    { name: "สนามบินนครพนม (KOP)", type: "airport", keywords: "nakhon phanom airport kop นครพนม", province: "นครพนม" },
+    { name: "{% trans 'นครพนม' %}", type: "province", keywords: "nakhon phanom", province: "นครพนม" },
+    { name: "{% trans 'สนามบินนครพนม (KOP)' %}", type: "airport", keywords: "nakhon phanom airport kop นครพนม", province: "นครพนม" },
 
-    { name: "ร้อยเอ็ด", type: "province", keywords: "roi et", province: "ร้อยเอ็ด" },
-    { name: "สนามบินร้อยเอ็ด (ROI)", type: "airport", keywords: "roi et airport roi ร้อยเอ็ด", province: "ร้อยเอ็ด" },
+    { name: "{% trans 'ร้อยเอ็ด' %}", type: "province", keywords: "roi et", province: "ร้อยเอ็ด" },
+    { name: "{% trans 'สนามบินร้อยเอ็ด (ROI)' %}", type: "airport", keywords: "roi et airport roi ร้อยเอ็ด", province: "ร้อยเอ็ด" },
 
-    { name: "ยโสธร", type: "province", keywords: "yasothon ยโสธร", province: "ยโสธร" },
-    { name: "สถานีขนส่งยโสธร", type: "bus", keywords: "yasothon bus terminal บขส ยโสธร", province: "ยโสธร" },
-    { name: "วิมานพญาแถน (พญาคันคาก)", type: "landmark", keywords: "vimarn phaya tan toad museum yasothon ยโสธร พญาคันคาก", province: "ยโสธร" },
+    { name: "{% trans 'ยโสธร' %}", type: "province", keywords: "yasothon ยโสธร", province: "ยโสธร" },
+    { name: "{% trans 'สถานีขนส่งยโสธร' %}", type: "bus", keywords: "yasothon bus terminal บขส ยโสธร", province: "ยโสธร" },
+    { name: "{% trans 'วิมานพญาแถน (พญาคันคาก)' %}", type: "landmark", keywords: "vimarn phaya tan toad museum yasothon ยโสธร พญาคันคาก", province: "ยโสธร" },
 
-    { name: "ชัยภูมิ", type: "province", keywords: "chaiyaphum ชัยภูมิ", province: "ชัยภูมิ" },
-    { name: "สถานีขนส่งชัยภูมิ", type: "bus", keywords: "chaiyaphum bus terminal บขส ชัยภูมิ", province: "ชัยภูมิ" },
-    { name: "อนุสาวรีย์พระยาแล", type: "landmark", keywords: "phaya lae monument chaiyaphum city center ชัยภูมิ เจ้าพ่อพญาแล", province: "ชัยภูมิ" },
-    { name: "โรบินสัน ชัยภูมิ", type: "landmark", keywords: "robinson chaiyaphum mall ชัยภูมิ", province: "ชัยภูมิ" },
+    { name: "{% trans 'ชัยภูมิ' %}", type: "province", keywords: "chaiyaphum ชัยภูมิ", province: "ชัยภูมิ" },
+    { name: "{% trans 'สถานีขนส่งชัยภูมิ' %}", type: "bus", keywords: "chaiyaphum bus terminal บขส ชัยภูมิ", province: "ชัยภูมิ" },
+    { name: "{% trans 'อนุสาวรีย์พระยาแล' %}", type: "landmark", keywords: "phaya lae monument chaiyaphum city center ชัยภูมิ เจ้าพ่อพญาแล", province: "ชัยภูมิ" },
+    { name: "{% trans 'โรบินสัน ชัยภูมิ' %}", type: "landmark", keywords: "robinson chaiyaphum mall ชัยภูมิ", province: "ชัยภูมิ" },
 
-    { name: "อำนาจเจริญ", type: "province", keywords: "amnat charoen อำนาจเจริญ", province: "อำนาจเจริญ" },
-    { name: "สถานีขนส่งอำนาจเจริญ", type: "bus", keywords: "amnat charoen bus terminal บขส อำนาจเจริญ", province: "อำนาจเจริญ" },
-    { name: "หอนาฬิกาอำนาจเจริญ", type: "landmark", keywords: "amnat charoen clock tower city center อำนาจเจริญ", province: "อำนาจเจริญ" },
+    { name: "{% trans 'อำนาจเจริญ' %}", type: "province", keywords: "amnat charoen อำนาจเจริญ", province: "อำนาจเจริญ" },
+    { name: "{% trans 'สถานีขนส่งอำนาจเจริญ' %}", type: "bus", keywords: "amnat charoen bus terminal บขส อำนาจเจริญ", province: "อำนาจเจริญ" },
+    { name: "{% trans 'หอนาฬิกาอำนาจเจริญ' %}", type: "landmark", keywords: "amnat charoen clock tower city center อำนาจเจริญ", province: "อำนาจเจริญ" },
 
-    { name: "บึงกาฬ", type: "province", keywords: "bueng kan บึงกาฬ", province: "บึงกาฬ" },
-    { name: "สถานีขนส่งบึงกาฬ", type: "bus", keywords: "bueng kan bus terminal บขส บึงกาฬ", province: "บึงกาฬ" },
-    { name: "ลานพญานาค (ริมโขง)", type: "landmark", keywords: "naga monument mekong river bueng kan บึงกาฬ", province: "บึงกาฬ" },
+    { name: "{% trans 'บึงกาฬ' %}", type: "province", keywords: "bueng kan บึงกาฬ", province: "บึงกาฬ" },
+    { name: "{% trans 'สถานีขนส่งบึงกาฬ' %}", type: "bus", keywords: "bueng kan bus terminal บขส บึงกาฬ", province: "บึงกาฬ" },
+    { name: "{% trans 'ลานพญานาค (ริมโขง)' %}", type: "landmark", keywords: "naga monument mekong river bueng kan บึงกาฬ", province: "บึงกาฬ" },
 
-    { name: "หนองบัวลำภู", type: "province", keywords: "nong bua lam phu หนองบัวลำภู", province: "หนองบัวลำภู" },
-    { name: "สถานีขนส่งหนองบัวลำภู", type: "bus", keywords: "nong bua lam phu bus terminal บขส หนองบัวลำภู", province: "หนองบัวลำภู" },
-    { name: "ศาลสมเด็จพระนเรศวร", type: "landmark", keywords: "naresuan shrine nong bua lam phu หนองบัวลำภู", province: "หนองบัวลำภู" },
+    { name: "{% trans 'หนองบัวลำภู' %}", type: "province", keywords: "nong bua lam phu หนองบัวลำภู", province: "หนองบัวลำภู" },
+    { name: "{% trans 'สถานีขนส่งหนองบัวลำภู' %}", type: "bus", keywords: "nong bua lam phu bus terminal บขส หนองบัวลำภู", province: "หนองบัวลำภู" },
+    { name: "{% trans 'ศาลสมเด็จพระนเรศวร' %}", type: "landmark", keywords: "naresuan shrine nong bua lam phu หนองบัวลำภู", province: "หนองบัวลำภู" },
 
-    { name: "มหาสารคาม", type: "province", keywords: "maha sarakham มหาสารคาม", province: "มหาสารคาม" },
-    { name: "สถานีขนส่งมหาสารคาม", type: "bus", keywords: "maha sarakham bus terminal บขส มหาสารคาม", province: "มหาสารคาม" },
-    { name: "มหาวิทยาลัยมหาสารคาม (มมส)", type: "landmark", keywords: "mahasarakham university msu มหาสารคาม มมส ขามเรียง", province: "มหาสารคาม" },
-    { name: "เสริมไทยคอมเพล็กซ์", type: "landmark", keywords: "sermthai complex maha sarakham mall มหาสารคาม", province: "มหาสารคาม" },
+    { name: "{% trans 'มหาสารคาม' %}", type: "province", keywords: "maha sarakham มหาสารคาม", province: "มหาสารคาม" },
+    { name: "{% trans 'สถานีขนส่งมหาสารคาม' %}", type: "bus", keywords: "maha sarakham bus terminal บขส มหาสารคาม", province: "มหาสารคาม" },
+    { name: "{% trans 'มหาวิทยาลัยมหาสารคาม (มมส)' %}", type: "landmark", keywords: "mahasarakham university msu มหาสารคาม มมส ขามเรียง", province: "มหาสารคาม" },
+    { name: "{% trans 'เสริมไทยคอมเพล็กซ์' %}", type: "landmark", keywords: "sermthai complex maha sarakham mall มหาสารคาม", province: "มหาสารคาม" },
 
-    { name: "กาฬสินธุ์", type: "province", keywords: "kalasin กาฬสินธุ์", province: "กาฬสินธุ์" },
-    { name: "สถานีขนส่งกาฬสินธุ์", type: "bus", keywords: "kalasin bus terminal บขส กาฬสินธุ์", province: "กาฬสินธุ์" },
-    { name: "พิพิธภัณฑ์สิรินธร (ไดโนเสาร์)", type: "landmark", keywords: "sirindhorn museum dinosaur park kalasin กาฬสินธุ์ ภูกุ้มข้าว", province: "กาฬสินธุ์" },
+    { name: "{% trans 'กาฬสินธุ์' %}", type: "province", keywords: "kalasin กาฬสินธุ์", province: "กาฬสินธุ์" },
+    { name: "{% trans 'สถานีขนส่งกาฬสินธุ์' %}", type: "bus", keywords: "kalasin bus terminal บขส กาฬสินธุ์", province: "กาฬสินธุ์" },
+    { name: "{% trans 'พิพิธภัณฑ์สิรินธร (ไดโนเสาร์)' %}", type: "landmark", keywords: "sirindhorn museum dinosaur park kalasin กาฬสินธุ์ ภูกุ้มข้าว", province: "กาฬสินธุ์" },
 
-    { name: "มุกดาหาร", type: "province", keywords: "mukdahan มุกดาหาร", province: "มุกดาหาร" },
-    { name: "สถานีขนส่งมุกดาหาร", type: "bus", keywords: "mukdahan bus terminal บขส มุกดาหาร", province: "มุกดาหาร" },
-    { name: "หอแก้วมุกดาหาร", type: "landmark", keywords: "ho kaeo mukdahan tower city center มุกดาหาร", province: "มุกดาหาร" },
-    { name: "ตลาดอินโดจีน", type: "landmark", keywords: "indochina market mekong mukdahan มุกดาหาร", province: "มุกดาหาร" },
-    { name: "สะพานมิตรภาพไทย-ลาว 2", type: "landmark", keywords: "thai lao friendship bridge 2 mukdahan มุกดาหาร", province: "มุกดาหาร" },
+    { name: "{% trans 'มุกดาหาร' %}", type: "province", keywords: "mukdahan มุกดาหาร", province: "มุกดาหาร" },
+    { name: "{% trans 'สถานีขนส่งมุกดาหาร' %}", type: "bus", keywords: "mukdahan bus terminal บขส มุกดาหาร", province: "มุกดาหาร" },
+    { name: "{% trans 'หอแก้วมุกดาหาร' %}", type: "landmark", keywords: "ho kaeo mukdahan tower city center มุกดาหาร", province: "มุกดาหาร" },
+    { name: "{% trans 'ตลาดอินโดจีน' %}", type: "landmark", keywords: "indochina market mekong mukdahan มุกดาหาร", province: "มุกดาหาร" },
+    { name: "{% trans 'สะพานมิตรภาพไทย-ลาว 2' %}", type: "landmark", keywords: "thai lao friendship bridge 2 mukdahan มุกดาหาร", province: "มุกดาหาร" },
 
     // ============================================
     // ภาคใต้ (South)
     // ============================================
-    { name: "ภูเก็ต", type: "province", keywords: "phuket", province: "ภูเก็ต" },
-    { name: "สนามบินภูเก็ต (HKT)", type: "airport", keywords: "phuket airport hkt ภูเก็ต", province: "ภูเก็ต" },
-    { name: "สถานีขนส่งภูเก็ต 2", type: "bus", keywords: "phuket bus terminal 2 ภูเก็ต", province: "ภูเก็ต" },
-    { name: "หาดป่าตอง", type: "landmark", keywords: "patong beach phuket kathu ภูเก็ต ป่าตอง", province: "ภูเก็ต" },
-    { name: "เมืองเก่าภูเก็ต", type: "landmark", keywords: "phuket old town city center ภูเก็ต", province: "ภูเก็ต" },
-    { name: "ท่าเรือรัษฎา (ภูเก็ต)", type: "pier", keywords: "rassada pier phuket koh phi phi ภูเก็ต พีพี", province: "ภูเก็ต" },
+    { name: "{% trans 'ภูเก็ต' %}", type: "province", keywords: "phuket", province: "ภูเก็ต" },
+    { name: "{% trans 'สนามบินภูเก็ต (HKT)' %}", type: "airport", keywords: "phuket airport hkt ภูเก็ต", province: "ภูเก็ต" },
+    { name: "{% trans 'สถานีขนส่งภูเก็ต 2' %}", type: "bus", keywords: "phuket bus terminal 2 ภูเก็ต", province: "ภูเก็ต" },
+    { name: "{% trans 'หาดป่าตอง' %}", type: "landmark", keywords: "patong beach phuket kathu ภูเก็ต ป่าตอง", province: "ภูเก็ต" },
+    { name: "{% trans 'เมืองเก่าภูเก็ต' %}", type: "landmark", keywords: "phuket old town city center ภูเก็ต", province: "ภูเก็ต" },
+    { name: "{% trans 'ท่าเรือรัษฎา (ภูเก็ต)' %}", type: "pier", keywords: "rassada pier phuket koh phi phi ภูเก็ต พีพี", province: "ภูเก็ต" },
 
-    { name: "สุราษฎร์ธานี", type: "province", keywords: "surat thani samui", province: "สุราษฎร์ธานี" },
-    { name: "สนามบินสุราษฎร์ธานี (URT)", type: "airport", keywords: "surat thani airport urt สุราษฎร์", province: "สุราษฎร์ธานี" },
-    { name: "สนามบินสมุย (USM)", type: "airport", keywords: "samui airport surat thani usm สุราษฎร์ สมุย", province: "สุราษฎร์ธานี" },
-    { name: "สถานีรถไฟสุราษฎร์ธานี", type: "train", keywords: "surat thani railway station phunphin สุราษฎร์ พุนพิน", province: "สุราษฎร์ธานี" },
-    { name: "สถานีขนส่งสุราษฎร์ธานี", type: "bus", keywords: "surat thani bus terminal สุราษฎร์", province: "สุราษฎร์ธานี" },
-    { name: "ท่าเรือดอนสัก (สุราษฎร์ธานี)", type: "pier", keywords: "donsak pier surat thani samui phangan ferry สุราษฎร์ ดอนสัก", province: "สุราษฎร์ธานี" },
-    { name: "หาดเฉวง (สมุย)", type: "landmark", keywords: "chaweng beach samui surat thani สุราษฎร์ สมุย", province: "สุราษฎร์ธานี" },
+    { name: "{% trans 'สุราษฎร์ธานี' %}", type: "province", keywords: "surat thani samui", province: "สุราษฎร์ธานี" },
+    { name: "{% trans 'สนามบินสุราษฎร์ธานี (URT)' %}", type: "airport", keywords: "surat thani airport urt สุราษฎร์", province: "สุราษฎร์ธานี" },
+    { name: "{% trans 'สนามบินสมุย (USM)' %}", type: "airport", keywords: "samui airport surat thani usm สุราษฎร์ สมุย", province: "สุราษฎร์ธานี" },
+    { name: "{% trans 'สถานีรถไฟสุราษฎร์ธานี' %}", type: "train", keywords: "surat thani railway station phunphin สุราษฎร์ พุนพิน", province: "สุราษฎร์ธานี" },
+    { name: "{% trans 'สถานีขนส่งสุราษฎร์ธานี' %}", type: "bus", keywords: "surat thani bus terminal สุราษฎร์", province: "สุราษฎร์ธานี" },
+    { name: "{% trans 'ท่าเรือดอนสัก (สุราษฎร์ธานี)' %}", type: "pier", keywords: "donsak pier surat thani samui phangan ferry สุราษฎร์ ดอนสัก", province: "สุราษฎร์ธานี" },
+    { name: "{% trans 'หาดเฉวง (สมุย)' %}", type: "landmark", keywords: "chaweng beach samui surat thani สุราษฎร์ สมุย", province: "สุราษฎร์ธานี" },
 
-    { name: "สงขลา", type: "province", keywords: "songkhla hat yai", province: "สงขลา" },
-    { name: "สนามบินหาดใหญ่ (HDY)", type: "airport", keywords: "hat yai airport songkhla hdy สงขลา หาดใหญ่", province: "สงขลา" },
-    { name: "สถานีรถไฟชุมทางหาดใหญ่", type: "train", keywords: "hat yai junction railway station สงขลา หาดใหญ่", province: "สงขลา" },
-    { name: "สถานีขนส่งหาดใหญ่", type: "bus", keywords: "hat yai bus terminal สงขลา หาดใหญ่", province: "สงขลา" },
-    { name: "ตลาดกิมหยง", type: "landmark", keywords: "gimyong market hat yai songkhla สงขลา หาดใหญ่", province: "สงขลา" },
+    { name: "{% trans 'สงขลา' %}", type: "province", keywords: "songkhla hat yai", province: "สงขลา" },
+    { name: "{% trans 'สนามบินหาดใหญ่ (HDY)' %}", type: "airport", keywords: "hat yai airport songkhla hdy สงขลา หาดใหญ่", province: "สงขลา" },
+    { name: "{% trans 'สถานีรถไฟชุมทางหาดใหญ่' %}", type: "train", keywords: "hat yai junction railway station สงขลา หาดใหญ่", province: "สงขลา" },
+    { name: "{% trans 'สถานีขนส่งหาดใหญ่' %}", type: "bus", keywords: "hat yai bus terminal สงขลา หาดใหญ่", province: "สงขลา" },
+    { name: "{% trans 'ตลาดกิมหยง' %}", type: "landmark", keywords: "gimyong market hat yai songkhla สงขลา หาดใหญ่", province: "สงขลา" },
 
-    { name: "กระบี่", type: "province", keywords: "krabi", province: "กระบี่" },
-    { name: "สนามบินกระบี่ (KBV)", type: "airport", keywords: "krabi airport kbv กระบี่", province: "กระบี่" },
-    { name: "สถานีขนส่งกระบี่", type: "bus", keywords: "krabi bus terminal กระบี่", province: "กระบี่" },
-    { name: "อ่าวนาง", type: "landmark", keywords: "ao nang krabi กระบี่", province: "กระบี่" },
+    { name: "{% trans 'กระบี่' %}", type: "province", keywords: "krabi", province: "กระบี่" },
+    { name: "{% trans 'สนามบินกระบี่ (KBV)' %}", type: "airport", keywords: "krabi airport kbv กระบี่", province: "กระบี่" },
+    { name: "{% trans 'สถานีขนส่งกระบี่' %}", type: "bus", keywords: "krabi bus terminal กระบี่", province: "กระบี่" },
+    { name: "{% trans 'อ่าวนาง' %}", type: "landmark", keywords: "ao nang krabi กระบี่", province: "กระบี่" },
 
-    { name: "นครศรีธรรมราช", type: "province", keywords: "nakhon si thammarat", province: "นครศรีธรรมราช" },
-    { name: "สนามบินนครศรีธรรมราช (NST)", type: "airport", keywords: "nakhon si thammarat airport nst นครศรี", province: "นครศรีธรรมราช" },
-    { name: "สถานีรถไฟนครศรีธรรมราช", type: "train", keywords: "nakhon si thammarat railway station นครศรี", province: "นครศรีธรรมราช" },
+    { name: "{% trans 'นครศรีธรรมราช' %}", type: "province", keywords: "nakhon si thammarat", province: "นครศรีธรรมราช" },
+    { name: "{% trans 'สนามบินนครศรีธรรมราช (NST)' %}", type: "airport", keywords: "nakhon si thammarat airport nst นครศรี", province: "นครศรีธรรมราช" },
+    { name: "{% trans 'สถานีรถไฟนครศรีธรรมราช' %}", type: "train", keywords: "nakhon si thammarat railway station นครศรี", province: "นครศรีธรรมราช" },
 
-    { name: "ตรัง", type: "province", keywords: "trang", province: "ตรัง" },
-    { name: "สนามบินตรัง (TST)", type: "airport", keywords: "trang airport tst ตรัง", province: "ตรัง" },
-    { name: "สถานีรถไฟตรัง", type: "train", keywords: "trang railway station ตรัง", province: "ตรัง" },
+    { name: "{% trans 'ตรัง' %}", type: "province", keywords: "trang", province: "ตรัง" },
+    { name: "{% trans 'สนามบินตรัง (TST)' %}", type: "airport", keywords: "trang airport tst ตรัง", province: "ตรัง" },
+    { name: "{% trans 'สถานีรถไฟตรัง' %}", type: "train", keywords: "trang railway station ตรัง", province: "ตรัง" },
 
-    { name: "ชุมพร", type: "province", keywords: "chumphon", province: "ชุมพร" },
-    { name: "สนามบินชุมพร (CJM)", type: "airport", keywords: "chumphon airport cjm ชุมพร", province: "ชุมพร" },
-    { name: "สถานีรถไฟชุมพร", type: "train", keywords: "chumphon railway station ชุมพร", province: "ชุมพร" },
+    { name: "{% trans 'ชุมพร' %}", type: "province", keywords: "chumphon", province: "ชุมพร" },
+    { name: "{% trans 'สนามบินชุมพร (CJM)' %}", type: "airport", keywords: "chumphon airport cjm ชุมพร", province: "ชุมพร" },
+    { name: "{% trans 'สถานีรถไฟชุมพร' %}", type: "train", keywords: "chumphon railway station ชุมพร", province: "ชุมพร" },
 
-    { name: "ระนอง", type: "province", keywords: "ranong", province: "ระนอง" },
-    { name: "สนามบินระนอง (UNN)", type: "airport", keywords: "ranong airport unn ระนอง", province: "ระนอง" },
+    { name: "{% trans 'ระนอง' %}", type: "province", keywords: "ranong", province: "ระนอง" },
+    { name: "{% trans 'สนามบินระนอง (UNN)' %}", type: "airport", keywords: "ranong airport unn ระนอง", province: "ระนอง" },
 
-    { name: "พังงา", type: "province", keywords: "phangnga khao lak", province: "พังงา" },
-    { name: "เขาหลัก", type: "landmark", keywords: "khao lak phang nga พังงา", province: "พังงา" },
+    { name: "{% trans 'พังงา' %}", type: "province", keywords: "phangnga khao lak", province: "พังงา" },
+    { name: "{% trans 'เขาหลัก' %}", type: "landmark", keywords: "khao lak phang nga พังงา", province: "พังงา" },
 
-    { name: "นราธิวาส", type: "province", keywords: "narathiwat", province: "นราธิวาส" },
-    { name: "สนามบินนราธิวาส (NAW)", type: "airport", keywords: "narathiwat airport naw นราธิวาส", province: "นราธิวาส" },
+    { name: "{% trans 'นราธิวาส' %}", type: "province", keywords: "narathiwat", province: "นราธิวาส" },
+    { name: "{% trans 'สนามบินนราธิวาส (NAW)' %}", type: "airport", keywords: "narathiwat airport naw นราธิวาส", province: "นราธิวาส" },
 
-    { name: "ยะลา", type: "province", keywords: "yala betong", province: "ยะลา" },
-    { name: "สนามบินเบตง (BTZ)", type: "airport", keywords: "betong airport yala btz ยะลา เบตง", province: "ยะลา" },
-    { name: "สถานีรถไฟยะลา", type: "train", keywords: "yala railway station ยะลา", province: "ยะลา" },
+    { name: "{% trans 'ยะลา' %}", type: "province", keywords: "yala betong", province: "ยะลา" },
+    { name: "{% trans 'สนามบินเบตง (BTZ)' %}", type: "airport", keywords: "betong airport yala btz ยะลา เบตง", province: "ยะลา" },
+    { name: "{% trans 'สถานีรถไฟยะลา' %}", type: "train", keywords: "yala railway station ยะลา", province: "ยะลา" },
 
-    { name: "สตูล", type: "province", keywords: "satun lipe", province: "สตูล" },
-    { name: "ท่าเรือปากบารา (สตูล)", type: "pier", keywords: "pak bara pier satun koh lipe สตูล หลีเป๊ะ", province: "สตูล" },
+    { name: "{% trans 'สตูล' %}", type: "province", keywords: "satun lipe", province: "สตูล" },
+    { name: "{% trans 'ท่าเรือปากบารา (สตูล)' %}", type: "pier", keywords: "pak bara pier satun koh lipe สตูล หลีเป๊ะ", province: "สตูล" },
 
-    { name: "พัทลุง", type: "province", keywords: "phatthalung", province: "พัทลุง" },
-    { name: "สถานีรถไฟพัทลุง", type: "train", keywords: "phatthalung railway station พัทลุง", province: "พัทลุง" },
+    { name: "{% trans 'พัทลุง' %}", type: "province", keywords: "phatthalung", province: "พัทลุง" },
+    { name: "{% trans 'สถานีรถไฟพัทลุง' %}", type: "train", keywords: "phatthalung railway station พัทลุง", province: "พัทลุง" },
 
-    { name: "ปัตตานี", type: "province", keywords: "pattani", province: "ปัตตานี" },
-    { name: "มัสยิดกลางปัตตานี", type: "landmark", keywords: "pattani central mosque ปัตตานี", province: "ปัตตานี" }
-];  
+    { name: "{% trans 'ปัตตานี' %}", type: "province", keywords: "pattani", province: "ปัตตานี" },
+    { name: "{% trans 'มัสยิดกลางปัตตานี' %}", type: "landmark", keywords: "pattani central mosque ปัตตานี", province: "ปัตตานี" }
+];
 
         // --- 2. การสลับปุ่มบริการ (ขับเอง/พร้อมคนขับ) ---
         const btnSelf = document.getElementById('btn-self');

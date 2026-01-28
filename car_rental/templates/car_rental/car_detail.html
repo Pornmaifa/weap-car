@@ -1,38 +1,37 @@
+{% extends 'basereview.html' %}
 {% load static %}
 {% load humanize %}
-{% load star_filters %}
+{% load star_filters %} {% load i18n %} {% block content %}
+{% trans "ไม่มีข้อห้าม" as msg_no_rules %}
+{% trans "ไม่ได้ระบุความคิดเห็น" as msg_no_comment %}
 
-{% block content %}
 {% include 'car_rental/navbar_detail.html' %}
 
 <div class="bg-gray-50 font-sarabun">
 
-    <!-- Progress Steps -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 mb-2">
         <div class="flex justify-between items-center bg-white rounded-lg shadow-sm p-4 border border-gray-300">
             <div class="flex flex-col items-center flex-1 text-[#48a9b9]">
                 <i class="fas fa-check-circle text-2xl mb-1"></i>
-                <span class="text-xs font-bold">ผลการค้นหา</span>
+                <span class="text-xs font-bold">{% trans "ผลการค้นหา" %}</span>
             </div>
             <div class="flex flex-col items-center flex-1 text-[#48a9b9]">
                 <i class="fas fa-check-circle text-2xl mb-1"></i>
-                <span class="text-xs font-bold">รายละเอียดรถ</span>
+                <span class="text-xs font-bold">{% trans "รายละเอียดรถ" %}</span>
             </div>
             <div class="flex flex-col items-center flex-1 text-gray-400">
                 <i class="far fa-circle text-2xl mb-1"></i>
-                <span class="text-xs">ข้อมูลผู้ใช้</span>
+                <span class="text-xs">{% trans "ข้อมูลผู้ใช้" %}</span>
             </div>
             <div class="flex flex-col items-center flex-1 text-gray-400">
                 <i class="far fa-circle text-2xl mb-1"></i>
-                <span class="text-xs">ชำระเงิน</span>
+                <span class="text-xs">{% trans "ชำระเงิน" %}</span>
             </div>
         </div>
     </div>
 
-    <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
 
-        <!-- Car Images -->
         <div class="flex overflow-x-auto gap-4 p-2 no-scrollbar border-b border-gray-200 mb-4">
             {% for image in car.images.all %}
             <div class="flex-shrink-0 w-full md:w-2/3 lg:w-1/2">
@@ -40,65 +39,57 @@
             </div>
             {% empty %}
             <div class="w-full h-80 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500 text-2xl shadow-xl">
-                ไม่มีรูปภาพ
+                {% trans "ไม่มีรูปภาพ" %}
             </div>
             {% endfor %}
         </div>
 
-        <!-- 2 Columns Layout -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            <!-- LEFT SIDE -->
             <div class="lg:col-span-2 space-y-6">
 
-                <!-- Car Detail Card -->
                 <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
                     <h1 class="text-3xl font-bold mb-4">{{ car.brand }} {{ car.model }}</h1>
 
                     <hr class="my-4">
 
-                    <!-- รายละเอียดรถ -->
-                    <h2 class="text-2xl font-semibold mb-4">รายละเอียดรถ</h2>
+                    <h2 class="text-2xl font-semibold mb-4">{% trans "รายละเอียดรถ" %}</h2>
 
                     <div class="grid grid-cols-2 gap-4 text-lg">
-                        <div><strong>ประเภทบริการ:</strong> {{ car.get_service_type_display }}</div>
-                        <div><strong>ประเภทรถ:</strong> {{ car.get_car_type_display }}</div>
-                        <div><strong>ระบบเกียร์:</strong> {{ car.get_transmission_display }}</div>
-                        <div><strong>จำนวนที่นั่ง:</strong> {{ car.num_seats }} คน</div>
-                        <div><strong>จำนวนสัมภาระ:</strong> {{ car.num_luggage }} ใบ</div>
-                        <div><strong>ระบบเชื้อเพลิง:</strong> {{ car.get_fuel_system_display }}</div>
+                        <div><strong>{% trans "ประเภทบริการ:" %}</strong> {{ car.get_service_type_display }}</div>
+                        <div><strong>{% trans "ประเภทรถ:" %}</strong> {{ car.get_car_type_display }}</div>
+                        <div><strong>{% trans "ระบบเกียร์:" %}</strong> {{ car.get_transmission_display }}</div>
+                        <div><strong>{% trans "จำนวนที่นั่ง:" %}</strong> {{ car.num_seats }} {% trans "คน" %}</div>
+                        <div><strong>{% trans "จำนวนสัมภาระ:" %}</strong> {{ car.num_luggage }} {% trans "ใบ" %}</div>
+                        <div><strong>{% trans "ระบบเชื้อเพลิง:" %}</strong> {{ car.get_fuel_system_display }}</div>
                     </div>
 
-                    <!-- รายละเอียดเพิ่มเติม -->
-                    <h2 class="text-2xl font-semibold mt-8 mb-4">รายละเอียดเพิ่มเติมของรถ</h2>
+                    <h2 class="text-2xl font-semibold mt-8 mb-4">{% trans "รายละเอียดเพิ่มเติมของรถ" %}</h2>
                     <p class="text-gray-700 text-lg whitespace-pre-line">{{ car.description }}</p>
 
-                    <!-- กฎและข้อห้าม -->
-                    <h2 class="text-2xl font-semibold mt-8 mb-4">กฎและข้อห้าม</h2>
-                    <p class="text-gray-700 text-lg whitespace-pre-line">{{ car.rules|default:"ไม่มีข้อห้าม" }}</p>
+                    <h2 class="text-2xl font-semibold mt-8 mb-4">{% trans "กฎและข้อห้าม" %}</h2>
+                    <p class="text-gray-700 text-lg whitespace-pre-line">{{ car.rules|default:msg_no_rules }}</p>
 
-                    <!-- อุปกรณ์เสริม -->
-                    <h2 class="text-2xl font-semibold mt-8 mb-4">อุปกรณ์เสริม</h2>
+                    <h2 class="text-2xl font-semibold mt-8 mb-4">{% trans "อุปกรณ์เสริม" %}</h2>
 
                     {% if car.has_child_seat %}
                     <div class="flex items-center p-4 border rounded-lg bg-gray-50">
                         <img src="{% static 'images/child_seat_icon.png' %}" class="w-16 h-16 mr-4">
                         <div>
-                            <strong class="text-lg">ที่นั่งเด็ก</strong>
-                            <p class="text-gray-600">เหมาะสำหรับเด็กอายุ 1–3 ปี</p>
-                            <p class="text-lg font-semibold text-green-600">+ {{ car.accessory_price }} บ./วัน</p>
+                            <strong class="text-lg">{% trans "ที่นั่งเด็ก" %}</strong>
+                            <p class="text-gray-600">{% trans "เหมาะสำหรับเด็กอายุ 1–3 ปี" %}</p>
+                            <p class="text-lg font-semibold text-green-600">+ {{ car.accessory_price }} {% trans "บ./วัน" %}</p>
                         </div>
                     </div>
                     {% else %}
-                    <p class="text-gray-500">ไม่มีอุปกรณ์เสริม</p>
+                    <p class="text-gray-500">{% trans "ไม่มีอุปกรณ์เสริม" %}</p>
                     {% endif %}
                 </div>
 
-                <!-- Reviews Section -->                                 
                 <div class="mt-12 bg-white rounded-xl shadow-sm p-6 md:p-8 border border-gray-100">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                        <i class="fas fa-comments text-[#47B3C4] mr-3"></i> รีวิวจากผู้ใช้งาน 
-                        <span class="ml-2 text-sm font-normal text-gray-500">({{ car.reviews.count }} รีวิว)</span>
+                        <i class="fas fa-comments text-[#47B3C4] mr-3"></i> {% trans "รีวิวจากผู้ใช้งาน" %} 
+                        <span class="ml-2 text-sm font-normal text-gray-500">({{ car.reviews.count }} {% trans "รีวิว" %})</span>
                     </h2>
 
                     <div class="space-y-6">
@@ -134,14 +125,14 @@
                                 {% if review.comment %}
                                     <p>"{{ review.comment }}"</p>
                                 {% else %}
-                                    <p class="text-gray-400 italic">ไม่มีความคิดเห็นเพิ่มเติม</p>
+                                    <p class="text-gray-400 italic">{% trans "ไม่ได้ระบุความคิดเห็น" %}</p>
                                 {% endif %}
                             </div>
 
                             {% for reply in review.replies.all %}
                                 <div class="mt-4 ml-14 bg-gray-50 p-4 rounded-lg border-l-4 border-[#47B3C4]">
                                     <p class="text-xs font-bold text-[#47B3C4] mb-1">
-                                        <i class="fas fa-reply"></i> ตอบกลับจากเจ้าของรถ
+                                        <i class="fas fa-reply"></i> {% trans "ตอบกลับจากเจ้าของรถ" %}
                                     </p>
                                     <p class="text-sm text-gray-600">{{ reply.comment }}</p>
                                 </div>
@@ -151,10 +142,10 @@
                                 <form action="{% url 'reply_to_car_review' review.id %}" method="POST" class="mt-2 ml-4">
                                     {% csrf_token %}
                                     <div class="flex gap-2">
-                                        <input type="text" name="comment" placeholder="ตอบกลับรีวิวนี้..." required
+                                        <input type="text" name="comment" placeholder="{% trans 'ตอบกลับรีวิวนี้...' %}" required
                                             class="flex-1 text-sm border rounded px-2 py-1 outline-none focus:border-[#47B3C4]">
                                         <button type="submit" class="bg-gray-600 text-white text-xs px-3 py-1 rounded hover:bg-gray-700">
-                                            ส่ง
+                                            {% trans "ส่ง" %}
                                         </button>
                                     </div>
                                 </form>
@@ -163,15 +154,12 @@
                         {% empty %}
                             <div class="text-center py-8 text-gray-400">
                                 <i class="far fa-comment-dots text-4xl mb-3"></i>
-                                <p>ยังไม่มีรีวิวสำหรับรถคันนี้ เป็นคนแรกที่รีวิวเลย!</p>
+                                <p>{% trans "ยังไม่มีรีวิวสำหรับรถคันนี้ เป็นคนแรกที่รีวิวเลย!" %}</p>
                             </div>
                         {% endfor %}
                     </div>
                 </div>
 
-
-
-                <!-- Additional Accessories -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {% for item in accessories %}
                     <div class="flex flex-col items-center border rounded-lg p-3 hover:shadow-md transition bg-gray-50">
@@ -179,57 +167,54 @@
                              onerror="this.onerror=null; this.src='https://placehold.co/80x80?text=ADDON'"
                              class="w-16 h-16 object-contain mb-2">
                         <span class="text-sm font-medium text-gray-800 text-center">{{ item.name }}</span>
-                        <span class="text-xs text-red-500 mt-1">฿{{ item.price|intcomma }}/วัน</span>
+                        <span class="text-xs text-red-500 mt-1">฿{{ item.price|intcomma }}/{% trans "วัน" %}</span>
                         <input type="checkbox" name="addon_{{ forloop.counter }}" class="w-4 h-4 mt-2 text-green-500">
                     </div>
                     {% endfor %}
                 </div>
             </div>
 
-            <!-- RIGHT SIDE -->
             <div class="lg:col-span-1 space-y-6">
 
-                <!-- Pickup & Return Info -->
                 <div class="p-6 rounded-lg shadow-lg bg-gray-200 border border-gray-300">
-                    <h2 class="text-xl font-bold mb-4 text-gray-800">การรับและคืนรถ</h2>
+                    <h2 class="text-xl font-bold mb-4 text-gray-800">{% trans "การรับและคืนรถ" %}</h2>
 
                     <div class="space-y-6 border-l-2 border-dashed border-gray-400 pl-4">
                         <div class="relative">
                             <span class="absolute -left-5 top-0 w-4 h-4 bg-gray-600 rounded-full border-2 border-white"></span>
-                            <p class="text-sm text-gray-700">รับรถวันที่ {{ pickup_datetime|date:"d M Y" }}</p>
-                            <p class="font-bold text-gray-900">{{ pickup_datetime|time:"H:i" }} น.</p>
-                            <p class="text-sm text-gray-700">สถานที่: {{ location }}</p>
+                            <p class="text-sm text-gray-700">{% trans "รับรถวันที่" %} {{ pickup_datetime|date:"d M Y" }}</p>
+                            <p class="font-bold text-gray-900">{{ pickup_datetime|time:"H:i" }} {% trans "น." %}</p>
+                            <p class="text-sm text-gray-700">{% trans "สถานที่:" %} {{ location }}</p>
                         </div>
 
                         <div class="relative">
                             <span class="absolute -left-5 top-0 w-4 h-4 bg-gray-600 rounded-full border-2 border-white"></span>
-                            <p class="text-sm text-gray-700">คืนรถวันที่ {{ dropoff_datetime|date:"d M Y" }}</p>
-                            <p class="font-bold text-gray-900">{{ dropoff_datetime|time:"H:i" }} น.</p>
-                            <p class="text-sm text-gray-700">สถานที่: {{ location }}</p>
+                            <p class="text-sm text-gray-700">{% trans "คืนรถวันที่" %} {{ dropoff_datetime|date:"d M Y" }}</p>
+                            <p class="font-bold text-gray-900">{{ dropoff_datetime|time:"H:i" }} {% trans "น." %}</p>
+                            <p class="text-sm text-gray-700">{% trans "สถานที่:" %} {{ location }}</p>
                         </div>
                     </div>
 
                     <p class="mt-6 text-center text-lg font-bold text-gray-800">
-                        รวมเช่า {{ rental_days }} วัน
+                        {% trans "รวมเช่า" %} {{ rental_days }} {% trans "วัน" %}
                     </p>
                 </div>
 
-                <!-- Price Summary -->
                 <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-100 sticky top-24">
-                    <h2 class="text-xl font-bold mb-4 border-b pb-2">สรุปราคา</h2>
+                    <h2 class="text-xl font-bold mb-4 border-b pb-2">{% trans "สรุปราคา" %}</h2>
 
                     <div class="flex justify-between mb-2">
-                        <p class="text-gray-600">ค่าเช่ารถ ({{ rental_days }} วัน)</p>
+                        <p class="text-gray-600">{% trans "ค่าเช่ารถ" %} ({{ rental_days }} {% trans "วัน" %})</p>
                         <p class="font-bold text-gray-800">฿{{ total_price|intcomma }}</p>
                     </div>
 
                     <div class="flex justify-between mb-4">
-                        <p class="text-gray-600">ค่าประกัน/บริการ</p>
+                        <p class="text-gray-600">{% trans "ค่าประกัน/บริการ" %}</p>
                         <p class="font-bold text-green-500">฿{{ car.deposit|intcomma }}</p>
                     </div>
 
                     <div class="flex justify-between items-center border-t border-gray-200 pt-4">
-                        <p class="text-lg font-bold text-gray-800">ราคารวมสุทธิ</p>
+                        <p class="text-lg font-bold text-gray-800">{% trans "ราคารวมสุทธิ" %}</p>
                         <p class="text-3xl font-extrabold text-red-600">฿{{ total_price|intcomma }}</p>
                     </div>
 
@@ -237,7 +222,7 @@
                     <div class="mt-6">
                         <a href="{% url 'user_info' car.id %}?pickup_datetime={{ pickup_datetime|date:'c' }}&dropoff_datetime={{ dropoff_datetime|date:'c' }}&location={{ location|urlencode }}"
                         class="block w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-lg shadow-lg transition transform hover:-translate-y-1 text-center text-xl">
-                            จอง {{ total_price|intcomma }} THB
+                            {% trans "จอง" %} {{ total_price|intcomma }} THB
                         </a>
                     </div>
 

@@ -1,5 +1,5 @@
 {% load static %}
-<!DOCTYPE html>
+{% load i18n %} <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
@@ -20,25 +20,41 @@
             </a>
 
             <div class="flex items-center space-x-4">
-                <div class="hidden md:flex items-center">
-                    <a href="#" class="font-bold text-white">ไทย</a>
-                    <span class="text-gray-300 mx-2">|</span> <a href="#" class="text-gray-300 hover:text-white">EN</a>
-                </div>
+                
+                <form action="{% url 'set_language' %}" method="post" class="hidden md:flex items-center">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                    {% get_current_language as LANGUAGE_CODE %}
+
+                    <button type="submit" name="language" value="th" 
+                        class="font-bold transition cursor-pointer
+                        {% if LANGUAGE_CODE|slice:':2' == 'th' %} text-white border-b border-white {% else %} text-gray-300 hover:text-white {% endif %}">
+                        ไทย
+                    </button>
+
+                    <span class="text-gray-300 mx-2">|</span> 
+
+                    <button type="submit" name="language" value="en" 
+                        class="font-bold transition cursor-pointer
+                        {% if LANGUAGE_CODE|slice:':2' == 'en' %} text-white border-b border-white {% else %} text-gray-300 hover:text-white {% endif %}">
+                        EN
+                    </button>
+                </form>
 
                 <a href="{% url 'manage_booking' %}" class="text-white font-semibold hover:text-gray-200 transition">
-                    ตรวจสอบการจอง
+                    {% trans "ตรวจสอบการจอง" %}
                 </a>
                 
-
                 {% if user.is_authenticated %}
                     <a href="{% url 'become_owner' %}" class="bg-white text-blue-600 px-4 py-2 rounded-full font-semibold shadow hover:bg-gray-100">
-                    เป็นเจ้าของรถ
+                        {% trans "เป็นเจ้าของรถ" %}
                     </a>
+                    
                     <div class="relative" x-data="{ open: false }">
                         <button
                             @click="open = !open"
                             @click.away="open = false"
-                            class="fas fa-bars text-gray-500 text-sm ml-1">
+                            class="fas fa-bars text-gray-500 text-sm ml-1 cursor-pointer focus:outline-none">
                             {% if user.profile.image %}
                                 <img src="{{ user.profile.image.url }}" alt="Profile" 
                                     class="h-10 w-10 rounded-full object-cover ring-2 ring-gray-200 shadow-md">
@@ -57,11 +73,9 @@
                                 bg-white rounded-2xl shadow-2xl
                                 py-3 text-gray-700
                                 ring-1 ring-black ring-opacity-5
-                                origin-top-right"
+                                origin-top-right z-50"
                             style="display: none;">
                         
-
-                            
                             <div class="px-8 py-6 bg-gray-50">
                                 <p class="text-lg font-semibold text-gray-900 truncate">
                                     {{ user.first_name|default:user.username }}
@@ -71,24 +85,21 @@
                                 </p>
                             </div>
 
-
-
                             <a href="{% url 'booking_history' %}" class="block px-4 py-2 text-sm hover:bg-blue-50 hover:text-blue-600 transition">
-                                 ประวัติการเช่าของฉัน
+                                 {% trans "ประวัติการเช่าของฉัน" %}
                             </a>
                             <a href="{% url 'profile' %}" class="block px-4 py-2 text-sm hover:bg-blue-50 hover:text-blue-600 transition">
-                                 ข้อมูลส่วนตัว
+                                 {% trans "ข้อมูลส่วนตัว" %}
                             </a>
                             <a href="{% url 'dashboard' %}" class="block px-4 py-2 text-sm hover:bg-blue-50 hover:text-blue-600 transition">
-                                 โหมดโฮสต์
+                                 {% trans "โหมดโฮสต์" %}
                             </a>
                             <div class="border-t border-gray-100 my-1"></div>
 
-                            
                             <form action="{% url 'logout' %}" method="post" class="block w-full">
                                 {% csrf_token %}
                                 <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition">
-                                     ออกจากระบบ
+                                    {% trans "ออกจากระบบ" %}
                                 </button>
                             </form>
                         </div>
@@ -96,10 +107,11 @@
 
                 {% else %}
                     <a href="{% url 'login' %}" class="bg-white text-blue-600 px-4 py-2 rounded-full font-semibold shadow hover:bg-gray-100">
-                        เข้าสู่ระบบ
+                        {% trans "เข้าสู่ระบบ" %}
                     </a>
                 {% endif %}
-            </div> </nav>
+            </div> 
+        </nav>
     </header>
 
     <main>
@@ -107,11 +119,10 @@
         {% endblock %}
     </main>
 
-    
-<script src="https://cdn.jsdelivr.net/npm/flatpickr?v=1"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js?v=1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr?v=1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js?v=1"></script>
 
-{% block scripts %}
-{% endblock %}
+    {% block scripts %}
+    {% endblock %}
 </body>
 </html>

@@ -1,10 +1,10 @@
 {% load static %}
-<!DOCTYPE html>
+{% load i18n %} <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เพิ่มรถเช่า - WarpCar</title>
+    <title>{% trans "เพิ่มรถเช่า - WarpCar" %}</title>
     <script src="{% static 'car_rental/js/thai_provinces.js' %}"></script>
     <link href="{% static 'dist/styles.css' %}?v=99" rel="stylesheet">
     <style>
@@ -21,86 +21,84 @@
             {% csrf_token %}
 
             <section id="step-1" class="step active min-h-[70vh] flex flex-col justify-center">
-                <h1 class="text-4xl font-bold text-center mb-12">รถของคุณเป็นประเภทไหน</h1>
+                <h1 class="text-4xl font-bold text-center mb-12">{% trans "รถของคุณเป็นประเภทไหน" %}</h1>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
                     <div>
                         <input type="radio" name="car_type" value="SEDAN" id="type_sedan" class="hidden peer">
                         <label for="type_sedan" class="flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:shadow-lg transition-all peer-checked:border-warp-blue peer-checked:ring-2 peer-checked:ring-warp-blue">
                             <img src="{% static 'car_rental/images/sedan.png' %}" class="w-full h-32 object-contain mb-2">
-                            <span class="font-semibold text-lg">รถเก๋งขนาดเล็ก</span>
+                            <span class="font-semibold text-lg">{% trans "รถเก๋งขนาดเล็ก" %}</span>
                         </label>
                     </div>
                     <div>
                         <input type="radio" name="car_type" value="TRUCK" id="type_truck" class="hidden peer">
                         <label for="type_truck" class="flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:shadow-lg transition-all peer-checked:border-warp-blue peer-checked:ring-2 peer-checked:ring-warp-blue">
                             <img src="{% static 'car_rental/images/truck.png' %}" class="w-full h-32 object-contain mb-2">
-                            <span class="font-semibold text-lg">รถกระบะ</span>
+                            <span class="font-semibold text-lg">{% trans "รถกระบะ" %}</span>
                         </label>
                     </div>
                     <div>
                         <input type="radio" name="car_type" value="VAN" id="type_van" class="hidden peer">
                         <label for="type_van" class="flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:shadow-lg transition-all peer-checked:border-warp-blue peer-checked:ring-2 peer-checked:ring-warp-blue">
                             <img src="{% static 'car_rental/images/van.png' %}" class="w-full h-32 object-contain mb-2">
-                            <span class="font-semibold text-lg">รถตู้</span>
+                            <span class="font-semibold text-lg">{% trans "รถตู้" %}</span>
                         </label>
                     </div>
                     <div>
                         <input type="radio" name="car_type" value="EV" id="type_ev" class="hidden peer">
                         <label for="type_ev" class="flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:shadow-lg transition-all peer-checked:border-warp-blue peer-checked:ring-2 peer-checked:ring-warp-blue">
                             <img src="{% static 'car_rental/images/ev.webp' %}" class="w-full h-32 object-contain mb-2">
-                            <span class="font-semibold text-lg">รถไฟฟ้า</span>
+                            <span class="font-semibold text-lg">{% trans "รถไฟฟ้า" %}</span>
                         </label>
                     </div>
                 </div>
                 <div class="fixed bottom-8 left-8">
-                    <a href="{% url 'become_owner' %}" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">ถอยกลับ</a>
+                    <a href="{% url 'become_owner' %}" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">{% trans "ถอยกลับ" %}</a>
                 </div>
                 <div class="fixed bottom-8 right-8">
-                    <button type="button" onclick="goNextStep(1)" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">ถัดไป</button>
+                    <button type="button" onclick="goNextStep(1)" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">{% trans "ถัดไป" %}</button>
                 </div>
             </section>
 
             <section id="step-2" class="step min-h-[70vh] flex flex-col justify-center">
-                <h1 class="text-4xl font-bold text-center mb-12">ประเภทบริการ</h1>
+                <h1 class="text-4xl font-bold text-center mb-12">{% trans "ประเภทบริการ" %}</h1>
                 <div class="flex flex-col items-center gap-8">
                     <div>
                         <input type="radio" name="service_type" value="SELF_DRIVE" id="service_self" class="hidden peer">
                         <label for="service_self" class="flex flex-col items-center justify-center w-64 h-48 p-6 bg-gray-100 text-gray-800 rounded-xl shadow-lg cursor-pointer transition-all hover:shadow-xl peer-checked:bg-warp-blue peer-checked:text-white peer-checked:ring-4 peer-checked:ring-offset-2 peer-checked:ring-warp-blue-dark">
-                            
-                            <span class="font-semibold text-2xl">ขับเอง</span>
+                            <span class="font-semibold text-2xl">{% trans "ขับเอง" %}</span>
                         </label>
                     </div>
-                    
                 </div>
                 <div class="fixed bottom-8 left-8">
-                    <button type="button" onclick="goPrevStep(2)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">ถอยกลับ</button>
+                    <button type="button" onclick="goPrevStep(2)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">{% trans "ถอยกลับ" %}</button>
                 </div>
                 <div class="fixed bottom-8 right-8">
-                    <button type="button" onclick="goNextStep(2)" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">ถัดไป</button>
+                    <button type="button" onclick="goNextStep(2)" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">{% trans "ถัดไป" %}</button>
                 </div>
             </section>
 
             <section id="step-3" class="step min-h-[70vh] flex flex-col justify-center">
                 <div class="max-w-xl mx-auto w-full">
-                    <h1 class="text-4xl font-bold text-center mb-8">ตำแหน่งรับรถของคุณ</h1>
+                    <h1 class="text-4xl font-bold text-center mb-8">{% trans "ตำแหน่งรับรถของคุณ" %}</h1>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-lg font-semibold mb-2">ประเทศ</label>
-                            <input type="text" name="country" placeholder="ประเทศไทย" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <label class="block text-lg font-semibold mb-2">{% trans "ประเทศ" %}</label>
+                            <input type="text" name="country" placeholder="{% trans 'ประเทศไทย' %}" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div>
-                            <label class="block text-lg font-semibold mb-2">ที่อยู่</label>
-                            <input type="text" name="street_address" placeholder="เช่น 123 ถนนหลัก" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <label class="block text-lg font-semibold mb-2">{% trans "ที่อยู่" %}</label>
+                            <input type="text" name="street_address" placeholder="{% trans 'เช่น 123 ถนนหลัก' %}" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-lg font-semibold mb-2">อำเภอ / เขต</label>
+                                <label class="block text-lg font-semibold mb-2">{% trans "อำเภอ / เขต" %}</label>
                                 <input type="text" name="city" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                             </div>
                         
                             <div>
-                                <label class="block text-lg font-semibold mb-2">จังหวัด</label>
-                                <input type="text" id="province-input-display" placeholder="เลือกจังหวัด"autocomplete="off" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <label class="block text-lg font-semibold mb-2">{% trans "จังหวัด" %}</label>
+                                <input type="text" id="province-input-display" placeholder="{% trans 'เลือกจังหวัด' %}" autocomplete="off" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <input type="hidden" name="state" id="province-input">
                                 <div id="province-suggestions"
                                     class="absolute z-50 w-64 bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto hidden">
@@ -108,45 +106,45 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-lg font-semibold mb-2">รหัสไปรษณีย์</label>
+                            <label class="block text-lg font-semibold mb-2">{% trans "รหัสไปรษณีย์" %}</label>
                             <input type="text" name="zip_code" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                     </div>
                 </div>
                 <div class="fixed bottom-8 left-8">
-                    <button type="button" onclick="goPrevStep(3)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">ถอยกลับ</button>
+                    <button type="button" onclick="goPrevStep(3)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">{% trans "ถอยกลับ" %}</button>
                 </div>
                 <div class="fixed bottom-8 right-8">
-                    <button type="button" onclick="goNextStep(3)" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">ถัดไป</button>
+                    <button type="button" onclick="goNextStep(3)" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">{% trans "ถัดไป" %}</button>
                 </div>
             </section>
 
             <section id="step-4" class="step min-h-[70vh] flex flex-col justify-center">
                 <div class="flex-grow flex flex-col justify-center">
-                    <h1 class="text-4xl font-bold text-center mb-4">เพิ่มรูปรถและเอกสาร</h1>
+                    <h1 class="text-4xl font-bold text-center mb-4">{% trans "เพิ่มรูปรถและเอกสาร" %}</h1>
                     
-                    <p class="text-lg text-gray-600 font-semibold mb-2 mt-4 ml-2">1. รูปรถ (สำหรับลูกค้า)</p>
+                    <p class="text-lg text-gray-600 font-semibold mb-2 mt-4 ml-2">1. {% trans "รูปรถ (สำหรับลูกค้า)" %}</p>
                     <div class="max-w-4xl mx-auto w-full border-2 border-dashed border-gray-300 rounded-lg p-6 mb-6">
                         <div id="image-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4"></div>
                         <div class="text-center">
-                            <button type="button" id="add-image-btn" class="bg-warp-blue text-white px-6 py-3 rounded-lg font-semibold hover:bg-warp-blue-dark text-lg">เพิ่มรูปภาพรถ</button>
+                            <button type="button" id="add-image-btn" class="bg-warp-blue text-white px-6 py-3 rounded-lg font-semibold hover:bg-warp-blue-dark text-lg">{% trans "เพิ่มรูปภาพรถ" %}</button>
                             <input type="file" id="image-input" accept="image/*" multiple class="hidden">
                         </div>
                     </div>
 
                     <div class="max-w-4xl mx-auto w-full mb-6">
-                        <p class="text-lg text-gray-600 font-semibold mb-2 flex items-center gap-2">2. เอกสารยืนยันรถ <span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full border border-red-200">Admin เห็นเท่านั้น</span></p>
+                        <p class="text-lg text-gray-600 font-semibold mb-2 flex items-center gap-2">2. {% trans "เอกสารยืนยันรถ" %} <span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full border border-red-200">{% trans "Admin เห็นเท่านั้น" %}</span></p>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-50 p-6 rounded-lg border border-gray-200">
                             <div>
-                                <label class="block font-semibold mb-2">สำเนาเล่มทะเบียนรถ</label>
+                                <label class="block font-semibold mb-2">{% trans "สำเนาเล่มทะเบียนรถ" %}</label>
                                 <input type="file" name="doc_registration" accept=".jpg,.jpeg,.png,.pdf" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-warp-blue hover:file:bg-blue-100">
                             </div>
                             <div>
-                                <label class="block font-semibold mb-2">กรมธรรม์ประกันภัย</label>
+                                <label class="block font-semibold mb-2">{% trans "กรมธรรม์ประกันภัย" %}</label>
                                 <input type="file" name="doc_insurance" accept=".jpg,.jpeg,.png,.pdf" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-warp-blue hover:file:bg-blue-100">
                             </div>
                             <div>
-                                <label class="block font-semibold mb-2">สำเนาบัตรประชาชน</label>
+                                <label class="block font-semibold mb-2">{% trans "สำเนาบัตรประชาชน" %}</label>
                                 <input type="file" name="doc_id_card" accept=".jpg,.jpeg,.png,.pdf" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-warp-blue hover:file:bg-blue-100">
                             </div>
                         </div>
@@ -156,76 +154,66 @@
                 <div id="hidden-images-container"></div>
 
                 <div class="fixed bottom-8 left-8">
-                    <button type="button" onclick="goPrevStep(4)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">ถอยกลับ</button>
+                    <button type="button" onclick="goPrevStep(4)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">{% trans "ถอยกลับ" %}</button>
                 </div>
                 <div class="fixed bottom-8 right-8">
-                    <button type="button" onclick="goNextStep(4)" id="step4-next-btn" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark opacity-50 cursor-not-allowed">ถัดไป</button>
+                    <button type="button" onclick="goNextStep(4)" id="step4-next-btn" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark opacity-50 cursor-not-allowed">{% trans "ถัดไป" %}</button>
                 </div>
             </section>
 
             <section id="step-5" class="step min-h-[70vh] flex flex-col justify-center">
                 <div class="max-w-2xl mx-auto w-full">
-                    <h1 class="text-4xl font-bold text-center mb-12">ชื่อรุ่น/ยี่ห้อรถ</h1>
-                    <label class="text-lg font-semibold mb-2 block">ชื่อรถ (ตัวอย่าง YARIS 1.2)</label>
-                    <input type="text" id="car_name" name="name" placeholder="กรอกชื่อรถของคุณ" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <h1 class="text-4xl font-bold text-center mb-12">{% trans "ชื่อรุ่น/ยี่ห้อรถ" %}</h1>
+                    <label class="text-lg font-semibold mb-2 block">{% trans "ชื่อรถ" %} {% trans "(ตัวอย่าง YARIS 1.2)" %}</label>
+                    <input type="text" id="car_name" name="name" placeholder="{% trans 'กรอกชื่อรถของคุณ' %}" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
 
-                    <h2 class="text-3xl font-bold text-center mt-12 mb-6">รายละเอียดรถเพื่อเป็นจุดขายของคุณ</h2>
-                    <textarea id="car_description" name="description" rows="5" maxlength="200" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="เช่น รถประหยัดน้ำมัน, มีประกันชั้น 1..." required></textarea>
+                    <h2 class="text-3xl font-bold text-center mt-12 mb-6">{% trans "รายละเอียดรถเพื่อเป็นจุดขายของคุณ" %}</h2>
+                    <textarea id="car_description" name="description" rows="5" maxlength="200" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="{% trans 'เช่น รถประหยัดน้ำมัน, มีประกันชั้น 1...' %}" required></textarea>
                     <div id="char-counter" class="text-right text-gray-500 mt-2">0/200</div>
 
-                    <h2 class="text-3xl font-bold text-center mt-8 mb-6">กติกาและข้อห้าม</h2>
-                    <label class="text-lg font-semibold mb-2 block">สิ่งที่ผู้เช่าควรรู้</label>
-                    <textarea id="car_rules" name="rules" rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="เช่น ห้ามสูบบุหรี่, ห้ามนำสัตว์เลี้ยงขึ้นรถ, คืนน้ำมันเต็มถัง..."></textarea>
+                    <h2 class="text-3xl font-bold text-center mt-8 mb-6">{% trans "กติกาและข้อห้าม" %}</h2>
+                    <label class="text-lg font-semibold mb-2 block">{% trans "สิ่งที่ผู้เช่าควรรู้" %}</label>
+                    <textarea id="car_rules" name="rules" rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="{% trans 'เช่น ห้ามสูบบุหรี่, ห้ามนำสัตว์เลี้ยงขึ้นรถ, คืนน้ำมันเต็มถัง...' %}"></textarea>
                 </div>
 
                 <div class="fixed bottom-8 left-8">
-                    <button type="button" onclick="goPrevStep(5)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">ถอยกลับ</button>
+                    <button type="button" onclick="goPrevStep(5)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">{% trans "ถอยกลับ" %}</button>
                 </div>
                 <div class="fixed bottom-8 right-8">
-                    <button type="button" onclick="goNextStep(5)" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">ถัดไป</button>
+                    <button type="button" onclick="goNextStep(5)" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">{% trans "ถัดไป" %}</button>
                 </div>
             </section>
 
             <section id="step-6" class="step min-h-[70vh] flex flex-col justify-center">
                 <div class="max-w-xl mx-auto w-full">
-                    <h1 class="text-4xl font-bold text-center mb-12">รายละเอียดรถ</h1>
+                    <h1 class="text-4xl font-bold text-center mb-12">{% trans "รายละเอียดรถ" %}</h1>
                     <div class="space-y-6">
                         <div>
-                            <label class="text-lg font-semibold mb-2 block">ป้ายทะเบียนรถ <span class="text-sm text-gray-500">(ตัวอย่าง กก 0000 อุบลราชธานี)</span></label>
+                            <label class="text-lg font-semibold mb-2 block">{% trans "ป้ายทะเบียนรถ" %} <span class="text-sm text-gray-500">{% trans "(ตัวอย่าง กก 0000 อุบลราชธานี)" %}</span></label>
                             <input type="text" name="license_plate" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
 
                         <div>
-                            <label class="text-lg font-semibold mb-2 block">ระบบเกียร์</label>
+                            <label class="text-lg font-semibold mb-2 block">{% trans "ระบบเกียร์" %}</label>
                             <div class="grid grid-cols-2 gap-4">
-
                                 <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" 
-                                        name="transmission" 
-                                        value="AUTO" 
-                                        class="w-5 h-5 accent-blue-500 cursor-pointer"
-                                        checked>
-                                    <span class="leading-none">ออโต้ (Auto)</span>
+                                    <input type="radio" name="transmission" value="AUTO" class="w-5 h-5 accent-blue-500 cursor-pointer" checked>
+                                    <span class="leading-none">{% trans "ออโต้ (Auto)" %}</span>
                                 </label>
-
                                 <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" 
-                                        name="transmission" 
-                                        value="MANUAL" 
-                                        class="w-5 h-5 accent-blue-500 cursor-pointer"
-                                        checked>
-                                    <span class="leading-none">ธรรมดา (Manual)</span>
+                                    <input type="radio" name="transmission" value="MANUAL" class="w-5 h-5 accent-blue-500 cursor-pointer">
+                                    <span class="leading-none">{% trans "ธรรมดา (Manual)" %}</span>
                                 </label>
                             </div>
                         </div>
 
                         <div>
-                             <label class="text-lg font-semibold mb-2 block">ปีจดทะเบียน</label>
+                             <label class="text-lg font-semibold mb-2 block">{% trans "ปีจดทะเบียน" %}</label>
                              <select name="year" id="year_select" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"></select>
                         </div>
 
                         <div>
-                            <label class="text-lg font-semibold mb-2 block">จำนวนที่นั่ง (คน)</label>
+                            <label class="text-lg font-semibold mb-2 block">{% trans "จำนวนที่นั่ง (คน)" %}</label>
                             <div class="flex items-center border border-gray-300 rounded-lg p-3">
                                 <button type="button" class="decrement-btn w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100" data-target="num_seats">-</button>
                                 <input type="number" id="num_seats" name="num_seats" value="5" min="2" max="15" required readonly class="flex-grow text-center text-lg font-semibold border-none focus:outline-none">
@@ -235,7 +223,7 @@
 
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="text-lg font-semibold mb-2 block">จำนวนประตู</label>
+                                <label class="text-lg font-semibold mb-2 block">{% trans "จำนวนประตู" %}</label>
                                 <div class="flex items-center border border-gray-300 rounded-lg p-3">
                                     <button type="button" class="decrement-btn w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100" data-target="num_doors">-</button>
                                     <input type="number" id="num_doors" name="num_doors" value="4" min="1" max="8" required readonly class="flex-grow text-center text-lg font-semibold border-none focus:outline-none">
@@ -243,7 +231,7 @@
                                 </div>
                             </div>
                             <div>
-                                <label class="text-lg font-semibold mb-2 block">จำนวนสัมภาระ</label>
+                                <label class="text-lg font-semibold mb-2 block">{% trans "จำนวนสัมภาระ" %}</label>
                                 <div class="flex items-center border border-gray-300 rounded-lg p-3">
                                     <button type="button" class="decrement-btn w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100" data-target="num_luggage">-</button>
                                     <input type="number" id="num_luggage" name="num_luggage" value="2" min="0" max="10" required readonly class="flex-grow text-center text-lg font-semibold border-none focus:outline-none">
@@ -253,24 +241,22 @@
                         </div>
 
                         <div>
-                            <label class="text-lg font-semibold mb-2 block">ระบบเชื้อเพลิง</label>
+                            <label class="text-lg font-semibold mb-2 block">{% trans "ระบบเชื้อเพลิง" %}</label>
                             <select name="fuel_system" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
-                                <option value="">เลือกประเภทเชื้อเพลิง</option>
-                                <option value="GASOLINE">เบนซิน</option>
-                                <option value="DIESEL">ดีเซล</option>
+                                <option value="">{% trans "เลือกประเภทเชื้อเพลิง" %}</option>
+                                <option value="GASOLINE">{% trans "เบนซิน" %}</option>
+                                <option value="DIESEL">{% trans "ดีเซล" %}</option>
                                 <option value="LPG">LPG</option>
                                 <option value="NGV">NGV</option>
-                                <option value="ELECTRIC">ไฟฟ้า (EV)</option>
-                                <option value="HYBRID">ไฮบริด</option>
+                                <option value="ELECTRIC">{% trans "ไฟฟ้า (EV)" %}</option>
+                                <option value="HYBRID">{% trans "ไฮบริด" %}</option>
                             </select>
                         </div>
 
-                        
-
-                        <h3 class="text-xl font-bold text-center mt-10 mb-4">ผู้เช่าสามารถเช่าได้นานเท่าใด</h3>
+                        <h3 class="text-xl font-bold text-center mt-10 mb-4">{% trans "ผู้เช่าสามารถเช่าได้นานเท่าใด" %}</h3>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="text-lg font-semibold mb-2 block">ต่ำสุด: วัน</label>
+                                <label class="text-lg font-semibold mb-2 block">{% trans "ต่ำสุด: วัน" %}</label>
                                 <div class="flex items-center border border-gray-300 rounded-lg p-3">
                                     <button type="button" class="decrement-btn w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100" data-target="min_rental_days">-</button>
                                     <input type="number" id="min_rental_days" name="min_rental_days" value="1" min="1" max="30" required readonly class="flex-grow text-center text-lg font-semibold border-none focus:outline-none">
@@ -278,7 +264,7 @@
                                 </div>
                             </div>
                             <div>
-                                <label class="text-lg font-semibold mb-2 block">สูงสุด: วัน</label>
+                                <label class="text-lg font-semibold mb-2 block">{% trans "สูงสุด: วัน" %}</label>
                                 <div class="flex items-center border border-gray-300 rounded-lg p-3">
                                     <button type="button" class="decrement-btn w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100" data-target="max_rental_days">-</button>
                                     <input type="number" id="max_rental_days" name="max_rental_days" value="30" min="1" max="90" required readonly class="flex-grow text-center text-lg font-semibold border-none focus:outline-none">
@@ -289,42 +275,42 @@
                     </div>
                 </div>
                 <div class="fixed bottom-8 left-8">
-                    <button type="button" onclick="goPrevStep(6)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">ถอยกลับ</button>
+                    <button type="button" onclick="goPrevStep(6)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">{% trans "ถอยกลับ" %}</button>
                 </div>
                 <div class="fixed bottom-8 right-8">
-                    <button type="button" onclick="goNextStep(6)" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">ถัดไป</button>
+                    <button type="button" onclick="goNextStep(6)" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">{% trans "ถัดไป" %}</button>
                 </div>
             </section>
 
             <section id="step-7" class="step min-h-[70vh] flex flex-col justify-center">
                 <div class="max-w-xl mx-auto w-full">
-                    <h1 class="text-4xl font-bold text-center mb-8">ตั้งราคาและมัดจำของคุณ</h1>
+                    <h1 class="text-4xl font-bold text-center mb-8">{% trans "ตั้งราคาและมัดจำของคุณ" %}</h1>
                     <div class="space-y-6">
                         <div>
-                            <label class="block text-lg font-semibold mb-2">ราคาต่อวัน (THB)</label>
+                            <label class="block text-lg font-semibold mb-2">{% trans "ราคาต่อวัน (THB)" %}</label>
                             <input type="number" name="price" min="0" step="10" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div>
-                            <label class="block text-lg font-semibold mb-2">ค่ามัดจำ (จ่ายวันรับรถ)</label>
+                            <label class="block text-lg font-semibold mb-2">{% trans "ค่ามัดจำ (จ่ายวันรับรถ)" %}</label>
                             <input type="number" name="deposit" min="0" step="100" value="3000" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <p class="text-sm text-gray-600 mt-2">
-                                * เงินส่วนนี้ <strong>ลูกค้าจะจ่ายให้คุณโดยตรง</strong> ณ วันรับรถ <br>
-                                และคุณต้องคืนให้ลูกค้าเมื่อจบการเช่า (ระบบจะไม่หักเปอร์เซ็นต์จากยอดนี้)
+                                * {% trans "เงินส่วนนี้" %} <strong>{% trans "ลูกค้าจะจ่ายให้คุณโดยตรง" %}</strong> {% trans "ณ วันรับรถ" %} <br>
+                                {% trans "และคุณต้องคืนให้ลูกค้าเมื่อจบการเช่า (ระบบจะไม่หักเปอร์เซ็นต์จากยอดนี้)" %}
                             </p>
                         </div>
                         </div>
                 </div>
                 <div class="fixed bottom-8 left-8">
-                    <button type="button" onclick="goPrevStep(7)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">ถอยกลับ</button>
+                    <button type="button" onclick="goPrevStep(7)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">{% trans "ถอยกลับ" %}</button>
                 </div>
                 <div class="fixed bottom-8 right-8">
-                    <button type="button" onclick="goPreview()" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">ดูตัวอย่างก่อนลงประกาศ</button>
+                    <button type="button" onclick="goPreview()" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">{% trans "ดูตัวอย่างก่อนลงประกาศ" %}</button>
                 </div>
             </section>
 
             <section id="step-8" class="step pb-40">
                 <div class="bg-yellow-100 border-b-4 border-yellow-400 text-yellow-800 p-4 text-center font-semibold">
-                    นี่คือตัวอย่างหน้าประกาศของคุณ (ยังไม่แสดงต่อสาธารณะ)
+                    {% trans "นี่คือตัวอย่างหน้าประกาศของคุณ (ยังไม่แสดงต่อสาธารณะ)" %}
                 </div>
 
                 <div class="container mx-auto p-4 md:p-8">
@@ -334,20 +320,20 @@
                         <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-lg">
                             <h1 class="text-3xl font-bold mb-4" id="preview-title"></h1>
                             <hr class="my-4">
-                            <h2 class="text-2xl font-semibold mb-4">รายละเอียดรถ</h2>
+                            <h2 class="text-2xl font-semibold mb-4">{% trans "รายละเอียดรถ" %}</h2>
                             <div class="grid grid-cols-2 gap-4 text-lg">
-                                <div><strong>ประเภทบริการ:</strong> <span id="preview-service"></span></div>
-                                <div><strong>ประเภทตัวรถ:</strong> <span id="preview-type"></span></div>
-                                <div><strong>จำนวนที่นั่ง:</strong> <span id="preview-seats"></span> ที่นั่ง</div>
-                                <div><strong>จำนวนประตู:</strong> <span id="preview-doors"></span></div>
-                                <div><strong>จำนวนสัมภาระ:</strong> <span id="preview-luggage"></span></div>
-                                <div><strong>ระบบเชื้อเพลิง:</strong> <span id="preview-fuel"></span></div>
+                                <div><strong>{% trans "ประเภทบริการ" %}:</strong> <span id="preview-service"></span></div>
+                                <div><strong>{% trans "ประเภทตัวรถ" %}:</strong> <span id="preview-type"></span></div>
+                                <div><strong>{% trans "จำนวนที่นั่ง" %}:</strong> <span id="preview-seats"></span> {% trans "ที่นั่ง" %}</div>
+                                <div><strong>{% trans "จำนวนประตู" %}:</strong> <span id="preview-doors"></span></div>
+                                <div><strong>{% trans "จำนวนสัมภาระ" %}:</strong> <span id="preview-luggage"></span></div>
+                                <div><strong>{% trans "ระบบเชื้อเพลิง" %}:</strong> <span id="preview-fuel"></span></div>
                             </div>
 
-                            <h2 class="text-2xl font-semibold mt-8 mb-4">คำอธิบายรถ</h2>
+                            <h2 class="text-2xl font-semibold mt-8 mb-4">{% trans "คำอธิบายรถ" %}</h2>
                             <p class="text-gray-700 text-lg whitespace-pre-line" id="preview-description"></p>
 
-                            <h2 class="text-2xl font-semibold mt-8 mb-4">กติกาและข้อห้าม</h2>
+                            <h2 class="text-2xl font-semibold mt-8 mb-4">{% trans "กติกาและข้อห้าม" %}</h2>
                             <p class="text-gray-700 text-lg whitespace-pre-line" id="preview-rules"></p>
 
                             
@@ -355,14 +341,14 @@
 
                         <div class="lg:col-span-1 space-y-6">
                             <div class="bg-white p-6 rounded-lg shadow-lg">
-                                <h2 class="text-2xl font-semibold mb-4">สถานที่รับรถ</h2>
+                                <h2 class="text-2xl font-semibold mb-4">{% trans "สถานที่รับรถ" %}</h2>
                                 <p class="text-gray-700 text-lg" id="preview-address"></p>
                             </div>
                             <div class="bg-white p-6 rounded-lg shadow-lg sticky top-8">
                                 <h2 class="text-3xl font-bold text-gray-900 mb-2">
-                                    <span id="preview-price"></span> THB <span class="text-lg font-normal text-gray-600">/วัน</span>
+                                    <span id="preview-price"></span> THB <span class="text-lg font-normal text-gray-600">/{% trans "วัน" %}</span>
                                 </h2>
-                                <button type="button" class="w-full bg-gray-400 text-white p-4 rounded-lg mt-4 font-bold cursor-not-allowed" disabled>จอง (ตัวอย่าง)</button>
+                                <button type="button" class="w-full bg-gray-400 text-white p-4 rounded-lg mt-4 font-bold cursor-not-allowed" disabled>{% trans "จอง (ตัวอย่าง)" %}</button>
                             </div>
                         </div>
                     </div>
@@ -370,15 +356,15 @@
                     <div class="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
                         <label class="flex items-start gap-3 cursor-pointer">
                             <input type="checkbox" id="agree_terms" class="mt-1 w-5 h-5 text-warp-blue rounded border-gray-300 focus:ring-warp-blue">
-                            <span class="text-gray-700">ข้าพเจ้ายืนยันว่าข้อมูลรถและเอกสารเป็นความจริง และยอมรับ <a href="#" class="text-warp-blue underline">ข้อกำหนดและเงื่อนไข</a> ของ WarpCar</span>
+                            <span class="text-gray-700">{% trans "ข้าพเจ้ายืนยันว่าข้อมูลรถและเอกสารเป็นความจริง และยอมรับ" %} <a href="#" class="text-warp-blue underline">{% trans "ข้อกำหนดและเงื่อนไข" %}</a> {% trans "ของ WarpCar" %}</span>
                         </label>
                     </div>
                 </div>
 
                 <div class="fixed bottom-0 left-0 w-full bg-white border-t shadow-inner py-4">
                     <div class="container mx-auto flex justify-between items-center px-8">
-                        <button type="button" onclick="showStep(7)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">ถอยกลับ (แก้ไข)</button>
-                        <button type="button" onclick="submitCarForm()" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">ยืนยันและลงประกาศ</button>
+                        <button type="button" onclick="showStep(7)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">{% trans "ถอยกลับ (แก้ไข)" %}</button>
+                        <button type="button" onclick="submitCarForm()" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">{% trans "ยืนยันและลงประกาศ" %}</button>
                     </div>
                 </div>
             </section>
@@ -420,9 +406,10 @@
     }
 
     function goNextStep(step) {
-        if (step === 1 && !document.querySelector('input[name="car_type"]:checked')) { alert("กรุณาเลือกประเภทรถ"); return; }
-        if (step === 2 && !document.querySelector('input[name="service_type"]:checked')) { alert("กรุณาเลือกประเภทบริการ"); return; }
-        if (step === 4 && imageList.length < 5) { alert("กรุณาอัปโหลดรูปอย่างน้อย 5 รูป"); return; }
+        // ✅ แปลข้อความ Alert
+        if (step === 1 && !document.querySelector('input[name="car_type"]:checked')) { alert("{% trans 'กรุณาเลือกประเภทรถ' %}"); return; }
+        if (step === 2 && !document.querySelector('input[name="service_type"]:checked')) { alert("{% trans 'กรุณาเลือกประเภทบริการ' %}"); return; }
+        if (step === 4 && imageList.length < 5) { alert("{% trans 'กรุณาอัปโหลดรูปอย่างน้อย 5 รูป' %}"); return; }
         saveDraft();
         if (step < totalSteps) showStep(step + 1);
     }
@@ -432,6 +419,8 @@
         if (step > 1) showStep(step - 1);
     }
 
+    // ... (ส่วน saveDraft, loadDraft, setupNumberButtons, setupDescriptionCounter, setupImageUpload เหมือนเดิม) ...
+    // ... (ผมละไว้เพื่อความกระชับ ถ้าคุณต้องการให้แปะเต็มๆ บอกได้ครับ) ...
     function saveDraft() {
         const form = document.getElementById("carForm");
         const data = {};
@@ -479,8 +468,6 @@
             }
         } catch (e) { console.log("loadDraft error", e); }
     }
-
-    
 
     function setupNumberButtons() {
         document.querySelectorAll(".increment-btn").forEach(btn => {
@@ -584,21 +571,19 @@
     }
 
     function buildPreviewUI() {
-        // ฟังก์ชันช่วยดึงค่า
         const getVal = n => (document.querySelector(`[name="${n}"]`)?.value || "").trim();
         const getRadio = n => document.querySelector(`input[name="${n}"]:checked`)?.value || "-";
 
-        // 1. แสดงรูปภาพ
         const imgWrap = document.getElementById("preview-images");
         imgWrap.innerHTML = "";
         imageList.forEach(src => {
             imgWrap.innerHTML += `<div class="aspect-w-3 aspect-h-2"><img src="${src}" class="w-full h-full object-cover"></div>`;
         });
 
-        // 2. แสดงข้อมูลทั่วไป
         document.getElementById("preview-title").innerText = (getVal("brand") + " " + getVal("model"));
         document.getElementById("preview-description").innerText = getVal("description");
-        document.getElementById("preview-rules").innerText = getVal("rules") || "ไม่มีข้อห้ามเพิ่มเติม";
+        // ✅ ใส่ trans ใน JS string
+        document.getElementById("preview-rules").innerText = getVal("rules") || "{% trans 'ไม่มีข้อห้ามเพิ่มเติม' %}";
         document.getElementById("preview-seats").innerText = getVal("num_seats");
 
         document.getElementById("preview-type").innerText = getRadio("car_type");
@@ -608,46 +593,40 @@
         document.getElementById("preview-luggage").innerText = getVal("num_luggage");
         document.getElementById("preview-address").innerText = `${getVal("street_address")} ${getVal("city")} ${getVal("state")} ${getVal("zip_code")}`;
         
-        // 3. แสดงราคาต่อวัน
         document.getElementById("preview-price").innerText = getVal("price");
 
-        // ✅ 4. (เพิ่มใหม่) ส่วนแสดงค่ามัดจำ
         const deposit = getVal("deposit");
         const priceElement = document.getElementById("preview-price");
         
         if (priceElement) {
-            const priceContainer = priceElement.parentElement; // หา container ของราคา (กล่องขวามือ)
-            
-            // ลบอันเก่าออกก่อน (กันซ้ำเวลาแก้ไปมา)
+            const priceContainer = priceElement.parentElement;
             const oldDeposit = document.getElementById("preview-deposit-display");
             if(oldDeposit) oldDeposit.remove();
 
-            // ถ้ามีค่ามัดจำ ให้สร้าง Element แสดงผล
             if (deposit && parseInt(deposit) > 0) {
                 const depositDiv = document.createElement("div");
                 depositDiv.id = "preview-deposit-display";
                 depositDiv.className = "mt-3 pt-3 border-t border-gray-100";
+                // ✅ ใส่ trans ใน JS innerHTML
                 depositDiv.innerHTML = `
                     <div class="flex justify-between items-center text-sm text-gray-600">
-                        <span><i class="fas fa-money-bill-wave text-yellow-500 mr-1"></i> มัดจำ (จ่ายวันรับรถ):</span>
+                        <span><i class="fas fa-money-bill-wave text-yellow-500 mr-1"></i> {% trans "มัดจำ (จ่ายวันรับรถ)" %}:</span>
                         <span class="font-bold text-gray-800">${parseInt(deposit).toLocaleString()} THB</span>
                     </div>
                 `;
                 priceContainer.appendChild(depositDiv);
             }
         }
-
-       
     }
 
-
     function submitCarForm() {
-        if (imageList.length < 5) { alert("กรุณาอัปโหลดรูปอย่างน้อย 5 รูป"); showStep(4); return; }
-        if (!document.getElementById("agree_terms").checked) { alert("กรุณายอมรับข้อกำหนดและเงื่อนไขก่อน"); return; }
+        if (imageList.length < 5) { alert("{% trans 'กรุณาอัปโหลดรูปอย่างน้อย 5 รูป' %}"); showStep(4); return; }
+        if (!document.getElementById("agree_terms").checked) { alert("{% trans 'กรุณายอมรับข้อกำหนดและเงื่อนไขก่อน' %}"); return; }
         localStorage.removeItem(STORAGE_KEY);
         document.getElementById("carForm").submit();
     }
     
+    // ... (ส่วน thai_provinces.js) ...
     document.addEventListener("DOMContentLoaded", () => {
         const input = document.getElementById("province-input-display");
         const hiddenInput = document.getElementById("province-input");
@@ -695,7 +674,6 @@
             }
         });
     });
-   
     </script>
 </body>
 </html>

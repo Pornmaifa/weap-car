@@ -1,10 +1,10 @@
-{% extends 'users/base.html' %} {% load static %}
-
-{% block content %}
+{% extends 'users/base.html' %} 
+{% load static %}
+{% load i18n %} {% block content %}
 <div class="relative pt-16 pb-16">
     <div class="w-full max-w-md p-8 mx-auto bg-white rounded-lg shadow-xl">
         
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">ลงทะเบียน</h1>
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">{% trans "ลงทะเบียน" %}</h1>
 
         <form method="POST" enctype="multipart/form-data" class="space-y-4">
             {% csrf_token %}
@@ -23,7 +23,9 @@
                         {{ field.label }}
                     </label>
                     
-                    {{ field }} {% if field.errors %}
+                    {{ field }} 
+                    
+                    {% if field.errors %}
                         <div class="mt-1 text-sm text-red-600">
                             {% for error in field.errors %}
                                 <p>{{ error }}</p>
@@ -34,13 +36,13 @@
             {% endfor %}
 
             <button type="submit" class="w-full bg-warp-blue hover:bg-warp-blue-dark text-white p-3 rounded-lg font-semibold text-lg mt-6">
-                ลงทะเบียน
+                {% trans "ลงทะเบียน" %}
             </button>
         </form>
 
         <div class="mt-6 text-center">
             <a href="{% url 'login' %}" class="font-medium text-warp-blue hover:text-warp-blue-dark">
-                มีบัญชีอยู่แล้ว? เข้าสู่ระบบ
+                {% trans "มีบัญชีอยู่แล้ว? เข้าสู่ระบบ" %}
             </a>
         </div>
     </div>

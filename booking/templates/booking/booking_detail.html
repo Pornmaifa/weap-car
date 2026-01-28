@@ -1,6 +1,5 @@
 {% load humanize %}
-
-{% block content %}
+{% load i18n %} {% block content %}
 {% include 'car_rental/navbar_detail.html' %}
 
 <div class="max-w-4xl mx-auto px-4 py-10 font-sarabun">
@@ -9,10 +8,10 @@
         <div class="px-4 py-5 sm:px-6 flex justify-between items-center bg-gray-50">
             <div>
                 <h3 class="text-lg leading-6 font-medium text-gray-900">
-                    รายละเอียดการจอง: {{ booking.booking_ref }}
+                    {% trans "รายละเอียดการจอง:" %} {{ booking.booking_ref }}
                 </h3>
                 <p class="mt-1 max-w-2xl text-sm text-gray-500">
-                    สถานะ: 
+                    {% trans "สถานะ:" %} 
                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                         {% if booking.status == 'confirmed' or booking.status == 'completed' %}bg-green-100 text-green-800
                         {% elif booking.status == 'approved' %}bg-blue-100 text-blue-800
@@ -23,27 +22,27 @@
                     </span>
                 </p>
             </div>
-            <a href="/" class="text-blue-600 hover:text-blue-900 text-sm">กลับหน้าหลัก</a>
+            <a href="/" class="text-blue-600 hover:text-blue-900 text-sm">{% trans "กลับหน้าหลัก" %}</a>
         </div>
 
         <div class="border-t border-gray-200">
             <dl>
                 <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt class="text-sm font-medium text-gray-500">รถที่เช่า</dt>
+                    <dt class="text-sm font-medium text-gray-500">{% trans "รถที่เช่า" %}</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                         {{ booking.car.brand }} {{ booking.car.model }} ({{ booking.car.license_plate }})
                     </dd>
                 </div>
 
                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt class="text-sm font-medium text-gray-500">วันรับรถ - คืนรถ</dt>
+                    <dt class="text-sm font-medium text-gray-500">{% trans "วันรับรถ - คืนรถ" %}</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                         {{ booking.pickup_datetime|date:"d M Y H:i" }} - {{ booking.dropoff_datetime|date:"d M Y H:i" }}
                     </dd>
                 </div>
 
                 <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt class="text-sm font-medium text-gray-500">ชื่อผู้จอง</dt>
+                    <dt class="text-sm font-medium text-gray-500">{% trans "ชื่อผู้จอง" %}</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                         {% if booking.user %}
                             {{ booking.user.first_name }} {{ booking.user.last_name }} (Member)
@@ -54,16 +53,16 @@
                 </div>
 
                 <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt class="text-sm font-medium text-gray-500">การชำระเงิน</dt>
+                    <dt class="text-sm font-medium text-gray-500">{% trans "การชำระเงิน" %}</dt>
                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                        <p>ค่าเช่ารวม: <strong>{{ booking.total_price|intcomma }} THB</strong></p>
-                        <p class="text-green-600">มัดจำที่ต้องจ่าย (15%): <strong>{{ booking.deposit_amount|intcomma }} THB</strong></p>
-                        <p class="text-red-600 text-xs mt-1">*ส่วนที่เหลือจ่ายวันรับรถ
+                        <p>{% trans "ค่าเช่ารวม:" %} <strong>{{ booking.total_price|intcomma }} THB</strong></p>
+                        <p class="text-green-600">{% trans "มัดจำที่ต้องจ่าย (15%):" %} <strong>{{ booking.deposit_amount|intcomma }} THB</strong></p>
+                        <p class="text-red-600 text-xs mt-1">{% trans "*ส่วนที่เหลือจ่ายวันรับรถ" %}
                             <strong>
                                 {% if booking.remaining_balance %} 
                                     {{ booking.remaining_balance|intcomma }} 
                                 {% else %}
-                                    - คำนวณหน้างาน -
+                                    - {% trans "คำนวณหน้างาน" %} -
                                 {% endif %}
                                 THB
                             </strong>
@@ -77,35 +76,35 @@
             
             {% if booking.status == 'pending' %}
                 <span class="text-yellow-600 text-sm flex items-center">
-                    <i class="fas fa-hourglass-half mr-2"></i> รอเจ้าของรถอนุมัติ...
+                    <i class="fas fa-hourglass-half mr-2"></i> {% trans "รอเจ้าของรถอนุมัติ..." %}
                 </span>
 
             {% elif booking.status == 'approved' %}
-                <span class="text-sm text-gray-500 mr-2">เจ้าของรถอนุมัติแล้ว กรุณาชำระเงิน</span>
+                <span class="text-sm text-gray-500 mr-2">{% trans "เจ้าของรถอนุมัติแล้ว กรุณาชำระเงิน" %}</span>
                 <a href="{% url 'payment_page' booking.id %}" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
-                    <i class="fas fa-file-invoice-dollar mr-2"></i> แจ้งชำระเงิน
+                    <i class="fas fa-file-invoice-dollar mr-2"></i> {% trans "แจ้งชำระเงิน" %}
                 </a>
 
             {% elif booking.status == 'waiting_verify' %}
                 <span class="text-orange-600 text-sm flex items-center">
-                    <i class="fas fa-search-dollar mr-2"></i> แจ้งโอนแล้ว รอเจ้าของรถตรวจสอบสลิป
+                    <i class="fas fa-search-dollar mr-2"></i> {% trans "แจ้งโอนแล้ว รอเจ้าของรถตรวจสอบสลิป" %}
                 </span>
 
             {% elif booking.status == 'confirmed' %}
                 <span class="text-green-600 text-sm flex items-center font-bold">
-                    <i class="fas fa-check-circle mr-2"></i> จองสำเร็จ! เตรียมเอกสารรับรถได้เลย
+                    <i class="fas fa-check-circle mr-2"></i> {% trans "จองสำเร็จ! เตรียมเอกสารรับรถได้เลย" %}
                 </span>
 
             {% elif booking.status == 'rejected' %}
                 <span class="text-red-600 text-sm flex items-center font-bold">
-                    <i class="fas fa-times-circle mr-2"></i> การจองถูกปฏิเสธ
+                    <i class="fas fa-times-circle mr-2"></i> {% trans "การจองถูกปฏิเสธ" %}
                 </span>
             {% endif %}
         </div>
 
         {% if booking.status == 'picked_up' or booking.status == 'completed' %}
         <div class="border-t border-gray-200 px-4 py-5 bg-white">
-            <h4 class="text-sm font-medium text-gray-500 mb-3">หลักฐานสภาพรถ (ส่งโดยเจ้าของรถ)</h4>
+            <h4 class="text-sm font-medium text-gray-500 mb-3">{% trans "หลักฐานสภาพรถ (ส่งโดยเจ้าของรถ)" %}</h4>
             
             {% if booking.inspections.all %}
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -121,12 +120,12 @@
                     {% endfor %}
                 </div>
             {% else %}
-                <p class="text-sm text-gray-400 italic">- ไม่มีรูปภาพ -</p>
+                <p class="text-sm text-gray-400 italic">{% trans "- ไม่มีรูปภาพ -" %}</p>
             {% endif %}
 
             {% if booking.status == 'completed' %}
                 <div class="mt-4 pt-4 border-t border-gray-100 text-center text-green-600 font-bold">
-                    <i class="fas fa-flag-checkered mr-2"></i> จบการเช่าเรียบร้อยแล้ว
+                    <i class="fas fa-flag-checkered mr-2"></i> {% trans "จบการเช่าเรียบร้อยแล้ว" %}
                 </div>
             {% endif %}
         </div>

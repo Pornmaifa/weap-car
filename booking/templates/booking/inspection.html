@@ -1,21 +1,30 @@
 {% load static %}
-<!DOCTYPE html>
+{% load i18n %} <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>ตรวจสภาพรถ - WarpCar</title>
+    <title>{% trans "ตรวจสภาพรถ - WarpCar" %}</title>
     <link href="{% static 'dist/styles.css' %}?v=4" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="bg-gray-100 font-sarabun">
+    
+    {% trans "ไม่ระบุ" as msg_unspecified %}
+
     {% include 'car_rental/navbar_detail.html' %}
 
     <div class="container mx-auto p-4 pt-24 max-w-3xl">
         
-        <h1 class="text-2xl font-bold mb-4">📸 ตรวจสภาพรถก่อนส่งมอบ</h1>
+        <h1 class="text-2xl font-bold mb-4">{% trans "📸 ตรวจสภาพรถก่อนส่งมอบ" %}</h1>
         
         <div class="bg-white p-4 rounded-lg shadow mb-6 flex gap-4 items-center">
-            <img src="{{ booking.car.images.first.image.url }}" class="w-20 h-20 object-cover rounded">
+            {% if booking.car.images.first %}
+                <img src="{{ booking.car.images.first.image.url }}" class="w-20 h-20 object-cover rounded">
+            {% else %}
+                <div class="w-20 h-20 bg-gray-200 rounded flex items-center justify-center text-gray-400">
+                    <i class="fas fa-car"></i>
+                </div>
+            {% endif %}
             <div>
                 <h2 class="font-bold">{{ booking.car.brand }} {{ booking.car.model }}</h2>
                 <p class="text-gray-500">{{ booking.car.license_plate }}</p>
@@ -28,24 +37,24 @@
             <div class="relative group">
                 <img src="{{ item.image.url }}" class="w-full h-32 object-cover rounded-lg shadow">
                 <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white text-xs p-1 text-center rounded-b-lg">
-                    {{ item.description|default:"ไม่ระบุ" }}
+                    {{ item.description|default:msg_unspecified }}
                 </div>
             </div>
             {% empty %}
             <div class="col-span-full text-center text-gray-400 py-4 bg-gray-50 rounded border border-dashed">
-                ยังไม่มีรูปบันทึกความเสียหาย (ถ้าไม่มีรอยขีดข่วน สามารถกดข้ามได้)
+                {% trans "ยังไม่มีรูปบันทึกความเสียหาย (ถ้าไม่มีรอยขีดข่วน สามารถกดข้ามได้)" %}
             </div>
             {% endfor %}
         </div>
 
         <div class="bg-white p-6 rounded-lg shadow mb-6">
-            <h3 class="font-bold mb-4">เพิ่มรูปจุดตำหนิ/รอยขีดข่วน</h3>
+            <h3 class="font-bold mb-4">{% trans "เพิ่มรูปจุดตำหนิ/รอยขีดข่วน" %}</h3>
             <form method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
                 {% csrf_token %}
                 {{ form.image }}
                 {{ form.description }}
                 <button type="submit" name="upload_image" class="bg-gray-600 hover:bg-gray-700 text-white py-2 rounded font-bold">
-                    <i class="fas fa-camera mr-2"></i> อัปโหลดรูป
+                    <i class="fas fa-camera mr-2"></i> {% trans "อัปโหลดรูป" %}
                 </button>
             </form>
         </div>
@@ -54,10 +63,10 @@
             {% csrf_token %}
             <div class="flex items-center gap-2 mb-4 text-yellow-700 bg-yellow-50 p-3 rounded">
                 <i class="fas fa-exclamation-triangle"></i>
-                <p class="text-sm">เมื่อกดส่งมอบแล้ว สถานะจะเปลี่ยนเป็น "รับรถแล้ว" ทันที</p>
+                <p class="text-sm">{% trans "เมื่อกดส่งมอบแล้ว สถานะจะเปลี่ยนเป็น 'รับรถแล้ว' ทันที" %}</p>
             </div>
             <button type="submit" name="confirm_delivery" class="w-full bg-[#47B3C4] hover:bg-[#3a9faa] text-white py-4 rounded-lg text-xl font-bold shadow-lg">
-                ✅ ยืนยันสภาพและส่งกุญแจรถ
+                {% trans "✅ ยืนยันสภาพและส่งกุญแจรถ" %}
             </button>
         </form>
 

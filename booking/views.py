@@ -28,7 +28,7 @@ from car_rental.models import (
 )
 from car_rental.forms import InspectionForm
 from booking.utils import generate_promptpay_payload
-
+from django.utils.translation import gettext as _
 # ✅ สร้างฟังก์ชันช่วยส่ง LINE (จะได้เรียกใช้ง่ายๆ)
 def send_line_push(user_line_id, message_text):
     if not user_line_id:
@@ -231,6 +231,7 @@ def checkout(request, car_id):
 
         )
         # =========================================================
+        # 
         # สั่งให้ระบบนับจำนวน +1 ตรงนี้ครับ
         # =========================================================
         if promo_instance:
@@ -795,7 +796,7 @@ def request_refund(request, booking_id):
     
     # เช็คสถานะการจ่ายเงิน
     if booking.status not in ['confirmed', 'waiting_verify']:
-        messages.error(request, "รายการนี้ไม่สามารถขอคืนเงินได้")
+        messages.error(request,_("รายการนี้ไม่สามารถขอคืนเงินได้"))
         return redirect('booking_history')
 
     # ==========================================
@@ -822,19 +823,19 @@ def request_refund(request, booking_id):
         # กรณี 1: ยกเลิกก่อน 24 ชม. -> คืน 100%
         refund_amount = paid_amount
         is_refundable = True
-        policy_message = "ยกเลิกก่อนกำหนด 24 ชม. ได้รับเงินคืนเต็มจำนวน"
+        policy_message =_("ยกเลิกก่อนกำหนด 24 ชม. ได้รับเงินคืนเต็มจำนวน")
         
     elif hours_until_pickup > 0:
         # กรณี 2: ยกเลิกกะทันหัน (น้อยกว่า 24 ชม.) -> ไม่คืน หรือคืน 50% แล้วแต่คุณ
         refund_amount = 0 # หรือ paid_amount * 0.5
         is_refundable = False # ถ้า false ปุ่มกดจะเปลี่ยนไป
-        policy_message = "เนื่องจากยกเลิกช้ากว่ากำหนด (น้อยกว่า 24 ชม.) จะไม่ได้รับเงินคืน"
+        policy_message = _("เนื่องจากยกเลิกช้ากว่ากำหนด (น้อยกว่า 24 ชม.) จะไม่ได้รับเงินคืน")
         
     else:
         # กรณี 3: เลยเวลารับรถไปแล้ว
         refund_amount = 0
         is_refundable = False
-        policy_message = "เลยเวลารับรถแล้ว ไม่สามารถขอเงินคืนได้"
+        policy_message = _("เลยเวลารับรถแล้ว ไม่สามารถขอเงินคืนได้")
 
     # ==========================================
 
@@ -846,7 +847,8 @@ def request_refund(request, booking_id):
             booking.save()
             
             # บันทึกยอดที่ระบบคำนวณได้ลง log หรือส่งไลน์บอกแอดมินก็ได้
-            messages.success(request, f"ส่งคำร้องเรียบร้อย ({policy_message})")
+            msg_success = _("ส่งคำร้องเรียบร้อย")
+            messages.success(request, f"{msg_success} ({policy_message})")
             return redirect('booking_history')
     else:
         form = RefundForm(instance=booking)

@@ -1,10 +1,10 @@
 {% load static %}
-<!DOCTYPE html>
+{% load i18n %} <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เริ่มต้นเป็นเจ้าของรถเช่า - WarpCar</title>
+    <title>{% trans "เริ่มต้นเป็นเจ้าของรถเช่า - WarpCar" %}</title>
     
     <link href="{% static 'dist/styles.css' %}?v=3" rel="stylesheet">
 </head>
@@ -14,49 +14,46 @@
 
         <div class="md:col-span-1">
             <h1 class="text-5xl font-bold text-gray-800 mb-8">
-                เริ่มต้นง่ายๆด้วย<br>WARPCAR
+                {% trans "เริ่มต้นง่ายๆด้วย" %}<br>WARPCAR
             </h1>
-            
         </div>
 
         <div class="md:col-span-2">
             
             <h1 class="text-3xl font-semibold mb-10 -mt-8">
-                ยินดีต้อนรับ คุณ {{ user.first_name }}
+                {% trans "ยินดีต้อนรับ คุณ" %} {{ user.first_name }}
             </h1>
             
             <div class="space-y-6">
                 <div>
-                    <h2 class="text-2xl font-bold mb-2">ทำให้รถของคุณโดดเด่น</h2>
+                    <h2 class="text-2xl font-bold mb-2">{% trans "ทำให้รถของคุณโดดเด่น" %}</h2>
                     <p class="text-gray-600 text-lg">
-                        เพิ่มรูปถ่ายอย่างน้อย 5 รูป พร้อมชื่อและคำบรรยาย เราจะช่วยคุณเอง
+                        {% trans "เพิ่มรูปถ่ายอย่างน้อย 5 รูป พร้อมชื่อและคำบรรยาย เราจะช่วยคุณเอง" %}
                     </p>
                 </div>
                 
                 <hr class="my-8 border-gray-200">
                 
                 <div>
-                    <h2 class="text-2xl font-bold mb-2">บอกรายละเอียดรถของคุณให้เรียบร้อย แล้วลงประกาศเลย</h2>
+                    <h2 class="text-2xl font-bold mb-2">{% trans "บอกรายละเอียดรถของคุณให้เรียบร้อย แล้วลงประกาศเลย" %}</h2>
                     <p class="text-gray-600 text-lg">
-                        เลือกราคาเริ่มต้น ยืนยันรายละเอียดบางประการ แล้วลงประกาศรถเช่า
+                        {% trans "เลือกราคาเริ่มต้น ยืนยันรายละเอียดบางประการ แล้วลงประกาศรถเช่า" %}
                     </p>
                 </div>
             </div>
 
-         
-        
+            <div class="fixed bottom-8 left-8">
+                <a href="{% url 'car_list' %}" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">
+                    {% trans "ถอยกลับ" %}
+                </a>
+            </div>
 
-<div class="fixed bottom-8 left-8">
-    <a href="{% url 'car_list' %}" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 text-lg">
-        ถอยกลับ
-    </a>
-</div>
-
-<div class="fixed bottom-8 right-8">
-    <a href="{% url 'add_car' %}" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">
-        ถัดไป
-    </a>
-</div>
+            <div class="fixed bottom-8 right-8">
+                <a href="{% url 'add_car' %}" class="bg-warp-blue text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-warp-blue-dark">
+                    {% trans "ถัดไป" %}
+                </a>
+            </div>
+        </div>
     </div>
 </body>
 </html>

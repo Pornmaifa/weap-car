@@ -1,6 +1,5 @@
-
-
-{% block content %}
+{% extends 'basereview.html' %} {% load static %}
+{% load i18n %} {% block content %}
 {% include 'car_rental/navbar_detail.html' %}
 
 <div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-sarabun">
@@ -8,10 +7,10 @@
         
         <div class="text-center">
             <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
-                ตรวจสอบสถานะการจอง
+                {% trans "ตรวจสอบสถานะการจอง" %}
             </h2>
             <p class="mt-2 text-sm text-gray-600">
-                สำหรับลูกค้าทั่วไป (Guest)
+                {% trans "สำหรับลูกค้าทั่วไป (Guest)" %}
             </p>
         </div>
 
@@ -26,17 +25,17 @@
             <div class="rounded-md shadow-sm -space-y-px">
                 
                 <div class="mb-4">
-                    <label for="booking_ref" class="block text-sm font-medium text-gray-700 mb-1">เลขที่ใบจอง (Booking Ref)</label>
+                    <label for="booking_ref" class="block text-sm font-medium text-gray-700 mb-1">{% trans "เลขที่ใบจอง (Booking Ref)" %}</label>
                     <input id="booking_ref" name="booking_ref" type="text" required 
                         class="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" 
-                        placeholder="เช่น BK-2025...">
+                        placeholder="{% trans 'เช่น BK-2025...' %}">
                 </div>
 
                 <div>
-                    <label for="email_or_phone" class="block text-sm font-medium text-gray-700 mb-1">อีเมล หรือ เบอร์โทรศัพท์</label>
+                    <label for="email_or_phone" class="block text-sm font-medium text-gray-700 mb-1">{% trans "อีเมล หรือ เบอร์โทรศัพท์" %}</label>
                     <input id="email_or_phone" name="email_or_phone" type="text" required 
                         class="appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" 
-                        placeholder="กรอกข้อมูลที่ใช้ตอนจอง">
+                        placeholder="{% trans 'กรอกข้อมูลที่ใช้ตอนจอง' %}">
                 </div>
             </div>
 
@@ -45,7 +44,7 @@
                     <span class="absolute left-0 inset-y-0 flex items-center pl-3">
                         <i class="fas fa-search"></i>
                     </span>
-                    ค้นหาการจอง
+                    {% trans "ค้นหาการจอง" %}
                 </button>
             </div>
         </form>
