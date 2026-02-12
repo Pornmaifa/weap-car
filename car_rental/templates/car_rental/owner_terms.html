@@ -1,0 +1,83 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "ข้อกำหนดสำหรับเจ้าของรถ - WarpCar" %}</title>
+    <link href="{% static 'dist/styles.css' %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a2d9d6a66a.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sarabun">
+
+    {% include 'users/navbar.html' %}
+
+    <div class="container mx-auto px-4 py-12 max-w-4xl">
+        <div class="bg-white rounded-xl shadow-lg p-8 md:p-12 border-t-4 border-warp-blue">
+            
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">{% trans "ข้อตกลงและเงื่อนไขสำหรับเจ้าของรถ" %}</h1>
+                <p class="text-gray-500">{% trans "โปรดทำความเข้าใจก่อนนำรถลงประกาศเช่า" %}</p>
+            </div>
+
+            <div class="space-y-8 text-gray-700 leading-relaxed">
+                
+                <section>
+                    <h2 class="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+                        <i class="fas fa-car text-warp-blue"></i> 1. {% trans "สภาพรถและเอกสาร" %}
+                    </h2>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li>{% trans "รถที่นำมาปล่อยเช่าต้องมีสภาพสมบูรณ์ สะอาด ปลอดภัย และแอร์เย็น" %}</li>
+                        <li>{% trans "ต้องต่อภาษีรถยนต์และ พ.ร.บ. ครบถ้วน ไม่ขาดอายุ" %}</li>
+                        <li>{% trans "เจ้าของรถต้องเป็นเจ้าของกรรมสิทธิ์ หรือได้รับความยินยอมอย่างถูกต้องตามกฎหมาย" %}</li>
+                        <li>{% trans "รูปถ่ายรถที่ใช้ลงประกาศ ต้องเป็นรูปรถคันจริงและเป็นปัจจุบัน" %}</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+                        <i class="fas fa-hand-holding-usd text-green-600"></i> 2. {% trans "รายได้และค่าธรรมเนียม" %}
+                    </h2>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li>{% trans "WarpCar จะหักค่าธรรมเนียมบริการ (Platform Fee) " %} <strong>15%</strong> {% trans "จากราคาค่าเช่ารายวัน" %}</li>
+                        <li>{% trans "เจ้าของรถจะได้รับเงินค่าเช่าส่วนที่เหลือ (85%) หลังจากจบงานเช่าเรียบร้อยแล้ว" %}</li>
+                        <li>{% trans "ค่ามัดจำประกันความเสียหาย (Deposit) เจ้าของรถเป็นผู้เก็บจากลูกค้าเอง ณ วันรับรถ และต้องคืนให้ลูกค้าเต็มจำนวนหากรถไม่มีความเสียหาย" %}</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+                        <i class="fas fa-calendar-check text-blue-500"></i> 3. {% trans "การอนุมัติและการส่งมอบรถ" %}
+                    </h2>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li>{% trans "เมื่อมีคำขอเช่า เจ้าของรถต้องตอบรับหรือปฏิเสธภายในเวลาที่กำหนด" %}</li>
+                        <li>{% trans "ต้องส่งมอบรถให้ตรงเวลาและสถานที่ตามที่ตกลงไว้" %}</li>
+                        <li>{% trans "ต้องตรวจสอบเอกสารใบขับขี่และบัตรประชาชนของผู้เช่าตัวจริงทุกครั้งก่อนส่งมอบกุญแจ" %}</li>
+                        <li>{% trans "แนะนำให้ถ่ายรูปรอบคันรถพร้อมกับผู้เช่าไว้เป็นหลักฐาน ณ จุดรับ-ส่งรถ" %}</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
+                        <i class="fas fa-exclamation-triangle text-red-500"></i> 4. {% trans "ความรับผิดชอบ" %}
+                    </h2>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li>{% trans "WarpCar เป็นเพียงตัวกลางในการจับคู่เท่านั้น ไม่มีส่วนรับผิดชอบต่อความเสียหาย สูญหาย หรืออุบัติเหตุที่เกิดขึ้นกับตัวรถ" %}</li>
+                        <li>{% trans "เจ้าของรถควรมีประกันภัยรถยนต์ภาคสมัครใจ (ชั้น 1 หรือ 2+) ที่ครอบคลุมรถเช่า หรือตกลงเรื่องค่าเสียหายส่วนแรกกับผู้เช่าให้ชัดเจน" %}</li>
+                    </ul>
+                </section>
+
+            </div>
+
+            <div class="mt-12 pt-8 border-t border-gray-200 text-center">
+                <button onclick="window.close()" class="bg-gray-800 text-white px-8 py-3 rounded-lg font-bold hover:bg-gray-700 transition shadow-md">
+                    {% trans "ปิดหน้าต่างนี้" %}
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

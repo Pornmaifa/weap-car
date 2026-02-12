@@ -353,7 +353,10 @@ def payment_page(request, booking_id):
         payment_obj.save()
         
         messages.error(request, "❌ หมดเวลาชำระเงินแล้ว รายการจองถูกยกเลิกอัตโนมัติ")
-        return redirect('booking_history') # เพื่อให้ลูกค้าเห็นว่ารายการนี้เปลี่ยนสถานะเป็น Cancelled/Expired แล้วในตาราง
+        if booking.user:
+            return redirect('booking_history')
+        else:
+            return redirect('booking_detail', booking_id=booking.id)
     # =========================================================
     # 📤 ส่วนจัดการอัปโหลดสลิป (POST Request)
     # =========================================================
@@ -370,7 +373,15 @@ def payment_page(request, booking_id):
         booking.save()
         
         messages.success(request, "แจ้งชำระเงินเรียบร้อย รอเจ้าของรถตรวจสอบ")
-        return redirect('booking_history')
+        if booking.user: 
+            # ถ้าใน Booking มีข้อมูล User ใส่ไว้ = "สมาชิก"
+            return redirect('booking_history')
+        
+    
+        else:
+            # ถ้าไม่มี User (แสดงว่าเป็น Guest) = "ลูกค้าทั่วไป"
+            # ให้ส่งกลับไปหน้าเดิม หรือหน้า Detail พร้อม ID
+            return redirect('booking_detail', booking_id=booking.id)
 
     # --- สร้าง QR Code (จากยอด platform_fee ที่ปัดเศษแล้ว) ---
     PROMPTPAY_ID = "0803508433" 
@@ -471,6 +482,14 @@ def manage_booking(request):
             return render(request, 'booking/manage_booking.html', {'error': error_message})
     # ถ้าเป็น GET (เปิดหน้าเว็บเฉยๆ)
     return render(request, 'booking/manage_booking.html')
+
+# views.py
+
+
+
+def booking_detail(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+    return render(request, 'booking/booking_detail.html', {'booking': booking})
 
 
 @login_required
@@ -750,14 +769,22 @@ def cancel_booking(request, booking_id):
 
     return redirect('booking_history')
 
-@login_required
+
 def request_refund(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
+    if request.user.is_authenticated:
+        # กรณีสมาชิก: ต้องเช็คว่าเป็นเจ้าของ booking นี้จริงๆ
+        booking = get_object_or_404(Booking, id=booking_id, user=request.user)
+    else:
+        # กรณี Guest: ดึงจาก ID อย่างเดียว (และต้องเป็น booking ที่ไม่มี user ผูก)
+        booking = get_object_or_404(Booking, id=booking_id, user__isnull=True)
     
     # เช็คสถานะการจ่ายเงิน
-    if booking.status not in ['confirmed', 'waiting_verify']:
+    if booking.status not in ['confirmed', 'waiting_verify', 'approved', 'pending']:
         messages.error(request,_("รายการนี้ไม่สามารถขอคืนเงินได้"))
-        return redirect('booking_history')
+        if request.user.is_authenticated:
+            return redirect('booking_history')
+        else:
+            return redirect('booking_detail', booking_id=booking.id)
 
     # ==========================================
     # 💰 LOGIC คำนวณเงินคืน (Cancellation Policy)
@@ -803,13 +830,24 @@ def request_refund(request, booking_id):
         # ถ้าลูกค้ากด "ยืนยัน" แม้ว่าจะไม่ได้เงินคืน (เช่น อยากยกเลิกเฉยๆ)
         form = RefundForm(request.POST, instance=booking)
         if form.is_valid():
-            booking.status = 'refund_requested'
+            if refund_amount > 0:
+                # กรณีได้เงินคืน: ส่งเรื่องให้แอดมิน (รอคืนเงิน)
+                booking.status = 'refund_requested'
+                msg_display = _("ส่งคำร้องขอคืนเงินเรียบร้อย เจ้าหน้าที่จะดำเนินการโอนเงินคืนให้ท่าน")
+            else:
+                # กรณีไม่ได้เงินคืน: ยกเลิกรายการทันที (ไม่ต้องรอแอดมิน)
+                booking.status = 'cancelled'
+                msg_display = _("ยกเลิกรายการจองเรียบร้อยแล้ว (รายการนี้ไม่เข้าเงื่อนไขการรับเงินคืน)")
+
             booking.save()
             
             # บันทึกยอดที่ระบบคำนวณได้ลง log หรือส่งไลน์บอกแอดมินก็ได้
             msg_success = _("ส่งคำร้องเรียบร้อย")
             messages.success(request, f"{msg_success} ({policy_message})")
-            return redirect('booking_history')
+            if request.user.is_authenticated:
+                return redirect('booking_history')
+            else:
+                return redirect('booking_detail', booking_id=booking.id)
     else:
         form = RefundForm(instance=booking)
 
@@ -831,5 +869,23 @@ def request_refund(request, booking_id):
 
     return render(request, 'booking/refund_request.html', context)
 
-# booking/views.py (ต่อท้ายไฟล์)
+def cancel_booking_immediately(request, booking_id):
+    # 1. ดึงข้อมูลแบบเดียวกับที่คุณทำ
+    if request.user.is_authenticated:
+        booking = get_object_or_404(Booking, id=booking_id, user=request.user)
+    else:
+        booking = get_object_or_404(Booking, id=booking_id, user__isnull=True)
 
+    # 2. เช็คว่าสถานะควรจะยกเลิกได้เลยไหม (เช่น ยังไม่จ่าย หรือ โดนปฏิเสธ)
+    if booking.status in ['pending', 'approved']:
+        booking.status = 'cancelled'
+        booking.save()
+        messages.success(request, _("ยกเลิกรายการจองเรียบร้อยแล้ว"))
+    else:
+        messages.error(request, _("ไม่สามารถยกเลิกรายการนี้ได้โดยตรง"))
+
+    # 3. Redirect กลับหน้าเดิม
+    if request.user.is_authenticated:
+        return redirect('booking_history')
+    else:
+        return redirect('booking_detail', booking_id=booking.id)

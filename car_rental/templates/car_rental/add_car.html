@@ -356,7 +356,17 @@
                     <div class="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
                         <label class="flex items-start gap-3 cursor-pointer">
                             <input type="checkbox" id="agree_terms" class="mt-1 w-5 h-5 text-warp-blue rounded border-gray-300 focus:ring-warp-blue">
-                            <span class="text-gray-700">{% trans "ข้าพเจ้ายืนยันว่าข้อมูลรถและเอกสารเป็นความจริง และยอมรับ" %} <a href="#" class="text-warp-blue underline">{% trans "ข้อกำหนดและเงื่อนไข" %}</a> {% trans "ของ WarpCar" %}</span>
+                            <span class="text-gray-700">
+                                {% trans "ข้าพเจ้ายืนยันว่าข้อมูลรถและเอกสารเป็นความจริง และยอมรับ" %} 
+                                
+                                <a href="{% url 'owner_terms' %}" 
+                                onclick="window.open(this.href, 'OwnerTerms', 'width=900,height=800,scrollbars=yes'); return false;" 
+                                class="text-warp-blue underline hover:text-blue-800 font-semibold">
+                                    {% trans "ข้อกำหนดสำหรับผู้ปล่อยเช่า" %}
+                                </a>
+    
+                                {% trans "ของ WarpCar" %}
+                            </span>
                         </label>
                     </div>
                 </div>

@@ -161,11 +161,15 @@ def approve_car_action(request, car_id):
 # 3. ฟังก์ชันกดลบ/ไม่อนุมัติ
 @staff_member_required(login_url='login')
 def reject_car_action(request, car_id):
-    car = get_object_or_404(Car, id=car_id)
-    # ลบรถออกจากระบบ หรือจะเปลี่ยน status เป็น 'rejected' ก็ได้
-    car.delete() 
-    messages.warning(request, f"ลบรายการรถเรียบร้อยแล้ว")
-    return redirect('approve_cars_list')
+    if request.method == "POST":
+        car = get_object_or_404(Car, id=car_id)
+        
+        # ✅ เปลี่ยนสถานะเป็น REJECTED (แทนการลบ car.delete())
+        car.status = 'REJECTED'
+        car.save()
+        
+        messages.success(request, f"ดำเนินการไม่อนุมัติรถทะเบียน {car.license_plate} เรียบร้อยแล้ว")
+        return redirect('approve_cars_list')
 
 # 1. หน้าแสดงรายการสลิปที่รอตรวจสอบ
 @staff_member_required(login_url='login')
@@ -230,13 +234,26 @@ def confirm_payment_action(request, payment_id):
 @staff_member_required(login_url='login')
 def reject_payment_action(request, payment_id):
     payment = get_object_or_404(Payment, id=payment_id)
+    booking = payment.booking # ดึง booking ที่เกี่ยวข้องมาด้วย
+
+    # ✅ 1. รับเหตุผล (ถ้าส่งมาจาก Form)
+    reason = request.POST.get('reject_reason', 'สลิปไม่ถูกต้อง')
     
-    # เปลี่ยนสถานะเป็น Failed หรือจะลบก็ได้ แล้วแต่ Flow งาน
-    payment.payment_status = 'FAILED'
+    # ✅ 2. Reset สถานะกลับไปจุดเริ่มต้น (เพื่อให้ลูกค้าอัปใหม่ได้)
+    payment.payment_status = 'PENDING'
+    
+    # ลบรูปสลิปเก่าทิ้ง (Optional)
+    # payment.slip_image.delete(save=False) 
+    # payment.slip_image = None
+    
     payment.save()
     
+    # ✅ 3. Reset สถานะ Booking กลับเป็น 'approved' (รอจ่ายเงิน)
+    booking.status = 'approved'
+    booking.save()
+    
     # แจ้งเตือน
-    messages.warning(request, f"ปฏิเสธรายการแจ้งโอนของ {payment.booking.booking_ref}")
+    messages.warning(request, f"ปฏิเสธรายการ {booking.booking_ref} เรียบร้อย: {reason}")
     return redirect('approve_payments_list')
 
 @staff_member_required(login_url='login')

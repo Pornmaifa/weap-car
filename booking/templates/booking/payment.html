@@ -147,7 +147,7 @@
 </div>
 <script>
     // 1. Countdown Timer
-    let timeLeft = {{ time_remaining }}; // รับค่าจาก Django View
+    let timeLeft = parseInt("{{ time_remaining|default:0 }}"); // รับค่าจาก Django View
     const timerElement = document.getElementById('timer');
     const expiredOverlay = document.getElementById('expired-overlay');
     const confirmBtn = document.getElementById('confirm-btn');

@@ -79,11 +79,11 @@
                <i class="fas fa-check mr-1"></i> อนุมัติ
             </a>
 
-            <form action="{% url 'reject_car_action' car.id %}" method="post" onsubmit="return confirm('ยืนยันที่จะลบรถคันนี้?');">
+            <form action="{% url 'reject_car_action' car.id %}" method="post" onsubmit="return confirm('ยืนยันที่จะไม่อนุมัติรถคันนี้?');">
                 {% csrf_token %}
                 <button type="submit" 
                         class="bg-white border border-red-200 text-red-500 hover:bg-red-50 px-6 py-2 rounded-lg font-bold shadow-sm hover:shadow-md transition-all w-full">
-                    <i class="fas fa-times mr-1"></i> ลบ
+                    <i class="fas fa-times mr-1"></i> ไม่อนุมัติ
                 </button>
             </form>
         </div>
@@ -135,7 +135,7 @@
                                 <div class="flex justify-between"><span>ปีจดทะเบียน:</span> <span>{{ car.year }}</span></div>
                                 <div class="flex justify-between"><span>ที่นั่ง / ประตู:</span> <span>{{ car.num_seats }} / {{ car.num_doors }}</span></div>
                                 <div class="flex justify-between"><span>สัมภาระ:</span> <span>{{ car.num_luggage }} ใบ</span></div>
-                                <div class="flex justify-between mt-2 pt-2 border-t"><span>อุปกรณ์เสริม (ที่นั่งเด็ก):</span> <span class="font-semibold">{% if car.has_child_seat %}มี (+{{ car.accessory_price }}){% else %}ไม่มี{% endif %}</span></div>
+                                
                             </div>
                         </div>
 
@@ -152,7 +152,7 @@
                             <div class="space-y-1 text-sm text-gray-700">
                                 <div class="flex justify-between"><span>เช่าขั้นต่ำ:</span> <span>{{ car.min_rental_days }} วัน</span></div>
                                 <div class="flex justify-between"><span>เช่าสูงสุด:</span> <span>{{ car.max_rental_days }} วัน</span></div>
-                                <div class="flex justify-between"><span>ส่วนลด:</span> <span class="text-green-600">{{ car.discount_option }}</span></div>
+                                
                             </div>
                         </div>
                     </div>

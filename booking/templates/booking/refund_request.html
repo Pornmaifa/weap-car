@@ -71,7 +71,16 @@
                 </button>
             {% endif %}
             
-            <a href="{% url 'booking_history' %}" class="block text-center text-gray-500 mt-4 text-sm hover:underline">{% trans "ย้อนกลับ" %}</a>
+           {% if user.is_authenticated %}
+                <a href="{% url 'booking_history' %}" class="block text-center text-gray-500 mt-4 text-sm hover:underline">
+                    <i class="fas fa-history mr-1"></i> {% trans "กลับสู่ประวัติการจอง" %}
+                </a>
+            {% else %}
+                <a href="{% url 'booking_detail' booking.id %}" class="block text-center text-gray-500 mt-4 text-sm hover:underline">
+                    <i class="fas fa-arrow-left mr-1"></i> {% trans "กลับสู่รายละเอียดการจอง" %}
+                </a>
+            {% endif %}
+            
         </form>
     </div>
 </div>

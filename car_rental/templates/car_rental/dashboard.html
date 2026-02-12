@@ -145,6 +145,13 @@
                                     <td class="p-4">
                                         {% if car.status == 'PENDING' %}
                                             <span class="px-2 py-1 rounded bg-yellow-100 text-yellow-700 text-xs font-bold flex items-center w-max"><i class="fas fa-clock mr-1"></i> {% trans "รออนุมัติ" %}</span>
+                                        {% elif car.status == 'REJECTED' %}
+                                            <div class="flex flex-col items-start gap-1">
+                                                <span class="px-2 py-1 rounded bg-red-100 text-red-700 text-xs font-bold flex items-center w-max">
+                                                    <i class="fas fa-times-circle mr-1"></i> {% trans "ไม่อนุมัติ" %}
+                                                </span>
+                                                
+                                            </div>
                                         {% elif car.status == 'MAINTENANCE' %}
                                             <span class="px-2 py-1 rounded bg-gray-200 text-gray-600 text-xs font-bold flex items-center w-max"><i class="fas fa-tools mr-1"></i> {% trans "ซ่อมบำรุง" %}</span>
                                         {% else %}
@@ -471,15 +478,31 @@
             
             const statusSelect = document.getElementById('modal_status');
             const status = button.dataset.status;
-            statusSelect.value = status;
+
+            statusSelect.innerHTML = '';
+
             if (status === 'PENDING') {
+                // กรณี 1: รอตรวจสอบ -> ห้ามแตะต้อง
+                statusSelect.innerHTML = `<option value="PENDING">⏳ {% trans "กำลังรอการตรวจสอบ" %}</option>`;
                 statusSelect.disabled = true;
-                statusSelect.classList.add('bg-gray-100', 'cursor-not-allowed');
-                statusSelect.title = "ต้องผ่านการอนุมัติก่อน";
+                statusSelect.className = 'w-full border border-gray-300 rounded p-2 bg-gray-100 cursor-not-allowed text-gray-500';
+            
+            } else if (status === 'REJECTED') {
+                // กรณี 2: โดนปฏิเสธ -> บังคับโชว์ว่าจะส่งใหม่
+                // (Backend จะเปลี่ยนเป็น PENDING ให้เองเมื่อกดบันทึก)
+                statusSelect.innerHTML = `<option value="PENDING">🔄 {% trans "บันทึกเพื่อส่งตรวจสอบใหม่" %}</option>`;
+                statusSelect.disabled = true; // ล็อกไว้ไม่ให้เลือกอย่างอื่น
+                statusSelect.className = 'w-full border border-orange-300 rounded p-2 bg-orange-50 text-orange-700 font-bold';
+            
             } else {
+                // กรณี 3: อนุมัติแล้ว -> เลือกสถานะได้ตามปกติ
+                statusSelect.innerHTML = `
+                    <option value="AVAILABLE">✅ {% trans "ว่าง (พร้อมใช้งาน)" %}</option>
+                    <option value="MAINTENANCE">🔧 {% trans "ไม่ว่าง (ซ่อมบำรุง)" %}</option>
+                `;
+                statusSelect.value = status; // เลือกค่าปัจจุบัน
                 statusSelect.disabled = false;
-                statusSelect.classList.remove('bg-gray-100', 'cursor-not-allowed');
-                statusSelect.title = "";
+                statusSelect.className = 'w-full border border-gray-300 rounded p-2 bg-white text-gray-800';
             }
             
             const imgContainer = document.getElementById('current_images_container');

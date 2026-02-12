@@ -44,8 +44,6 @@ msgstr "5"
 msgid "กฎและข้อห้าม"
 msgstr "Rules & Restrictions"
 
-msgid "กฎข้อห้าม / เงื่อนไข"
-msgstr "Rules / Conditions"
 
 msgid "กติกาและข้อห้าม"
 msgstr "Rules & Restrictions"
@@ -429,8 +427,6 @@ msgid "ใบขับขี่:"
 msgstr "License No.:"
 
 
-msgid "ปฏิเสธ"
-msgstr "Reject"
 
 msgid "ประเภทคนขับ"
 msgstr "Driver Type"
@@ -1281,8 +1277,6 @@ msgstr "Payment submitted. Verifying slip."
 msgid "จองสำเร็จ! เตรียมเอกสารรับรถได้เลย"
 msgstr "Booking Confirmed! Please prepare documents for pickup."
 
-msgid "การจองถูกปฏิเสธ"
-msgstr "Booking Rejected"
 
 msgid "หลักฐานสภาพรถ (ส่งโดยเจ้าของรถ)"
 msgstr "Car Condition Evidence (Uploaded by Owner)"
@@ -2278,3 +2272,92 @@ msgstr "Please use your booking reference number to check your booking status"
 
 msgid "ได้ที่หน้า \"ตรวจสอบสถานะการจอง\" เพื่อดำเนินการต่อ"
 msgstr "at the \"Check Booking Status\" page to proceed."
+
+msgid "ข้อตกลงและเงื่อนไขสำหรับเจ้าของรถ"
+msgstr "Owner Terms and Conditions"
+
+msgid "โปรดทำความเข้าใจก่อนนำรถลงประกาศเช่า"
+msgstr "Please understand before listing your car."
+
+msgid "สภาพรถและเอกสาร"
+msgstr "Car Condition and Documents"
+
+msgid "รถที่นำมาปล่อยเช่าต้องมีสภาพสมบูรณ์ สะอาด ปลอดภัย และแอร์เย็น"
+msgstr "The car must be in perfect condition, clean, safe, and have functioning air conditioning."
+
+msgid "ต้องต่อภาษีรถยนต์และ พ.ร.บ. ครบถ้วน ไม่ขาดอายุ"
+msgstr "Vehicle tax and compulsory insurance must be valid and up-to-date."
+
+msgid "เจ้าของรถต้องเป็นเจ้าของกรรมสิทธิ์ หรือได้รับความยินยอมอย่างถูกต้องตามกฎหมาย"
+msgstr "The owner must hold the title or have legal consent to rent out the vehicle."
+
+msgid "รูปถ่ายรถที่ใช้ลงประกาศ ต้องเป็นรูปรถคันจริงและเป็นปัจจุบัน"
+msgstr "Photos used in the listing must be of the actual car and current."
+
+msgid "รายได้และค่าธรรมเนียม"
+msgstr "Earnings and Fees"
+
+msgid "WarpCar จะหักค่าธรรมเนียมบริการ (Platform Fee) "
+msgstr "WarpCar will deduct a service fee (Platform Fee) of "
+
+msgid "จากราคาค่าเช่ารายวัน"
+msgstr "from the daily rental price."
+
+msgid "เจ้าของรถจะได้รับเงินค่าเช่าส่วนที่เหลือ (85%) หลังจากจบงานเช่าเรียบร้อยแล้ว"
+msgstr "The car owner will receive the remaining rental income (85%) after the rental is completed."
+
+msgid "ค่ามัดจำประกันความเสียหาย (Deposit) เจ้าของรถเป็นผู้เก็บจากลูกค้าเอง ณ วันรับรถ และต้องคืนให้ลูกค้าเต็มจำนวนหากรถไม่มีความเสียหาย"
+msgstr "The security deposit is collected by the owner directly from the customer on the pickup day and must be fully refunded if no damage occurs."
+
+msgid "การอนุมัติและการส่งมอบรถ"
+msgstr "Approval and Handover"
+
+msgid "เมื่อมีคำขอเช่า เจ้าของรถต้องตอบรับหรือปฏิเสธภายในเวลาที่กำหนด"
+msgstr "When a booking request is made, the owner must accept or reject it within the specified time."
+
+msgid "ต้องส่งมอบรถให้ตรงเวลาและสถานที่ตามที่ตกลงไว้"
+msgstr "The car must be delivered on time and at the agreed location."
+
+msgid "ต้องตรวจสอบเอกสารใบขับขี่และบัตรประชาชนของผู้เช่าตัวจริงทุกครั้งก่อนส่งมอบกุญแจ"
+msgstr "Must verify the renter's original driver's license and ID card before handing over the keys."
+
+msgid "แนะนำให้ถ่ายรูปรอบคันรถพร้อมกับผู้เช่าไว้เป็นหลักฐาน ณ จุดรับ-ส่งรถ"
+msgstr "It is recommended to take photos around the car with the renter as evidence at the pick-up/drop-off point."
+
+msgid "ความรับผิดชอบ"
+msgstr "Responsibility"
+
+msgid "WarpCar เป็นเพียงตัวกลางในการจับคู่เท่านั้น ไม่มีส่วนรับผิดชอบต่อความเสียหาย สูญหาย หรืออุบัติเหตุที่เกิดขึ้นกับตัวรถ"
+msgstr "WarpCar is only a matching platform and is not responsible for any damage, loss, or accidents involving the vehicle."
+
+msgid "เจ้าของรถควรมีประกันภัยรถยนต์ภาคสมัครใจ (ชั้น 1 หรือ 2+) ที่ครอบคลุมรถเช่า หรือตกลงเรื่องค่าเสียหายส่วนแรกกับผู้เช่าให้ชัดเจน"
+msgstr "Owners should have voluntary car insurance (Type 1 or 2+) that covers rentals or clearly agree on the deductible with the renter."
+
+msgid "ปิดหน้าต่างนี้"
+msgstr "Close this window"
+
+# --- สถานะการจอง (Booking Status) ---
+msgid "รายการถูกยกเลิก"
+msgstr "Booking Cancelled"
+
+msgid "รอการคืนเงิน"
+msgstr "Refund Pending"
+
+msgid "รายการถูกปฏิเสธ"
+msgstr "Booking Rejected"
+
+
+msgid "ให้คะแนนแล้ว"
+msgstr "Rated"
+
+# --- ปุ่มและการกระทำ (Actions) ---
+
+msgid "ปฏิเสธ"
+msgstr "Reject"
+
+# --- ข้อมูลทั่วไปและเงื่อนไข (General Info) ---
+msgid "กฎข้อห้าม / เงื่อนไข"
+msgstr "Rules / Conditions"
+
+msgid "หักค่าธรรมเนียมระบบ"
+msgstr "Platform Fee Deduction"

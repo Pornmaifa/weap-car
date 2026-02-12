@@ -3,7 +3,51 @@
 {% include 'car_rental/navbar_detail.html' %}
 
 <div class="max-w-4xl mx-auto px-4 py-10 font-sarabun">
-    
+    {% if booking.status == 'approved' and booking.payment.payment_status == 'PENDING' %}
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r shadow-sm flex items-start">
+            <div class="flex-shrink-0">
+                <i class="fas fa-exclamation-circle text-red-500 text-xl mt-1"></i>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-lg font-bold text-red-800">{% trans "การชำระเงินไม่ผ่านการตรวจสอบ" %}</h3>
+                <p class="text-red-700 mt-1">
+                    {% trans "กรุณาตรวจสอบยอดเงินและอัปโหลดหลักฐานการโอนเงินใหม่อีกครั้ง" %}
+                </p>
+                
+                <div class="mt-3">
+                    <a href="{% url 'payment_page' booking.id %}" class="text-lg font-bold text-red-800">
+                         {% trans "ส่งหลักฐานใหม่" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+
+    {% if booking.status == 'rejected' or booking.status == 'cancelled' %}
+        <div class="bg-gray-100 border-l-4 border-gray-500 p-4 mb-6 rounded-r">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-times-circle text-gray-500 text-xl"></i>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-lg font-medium text-gray-800">
+                        {% if booking.status == 'cancelled' %}
+                            {% trans "รายการนี้ถูกยกเลิกแล้ว" %}
+                            {% if booking.payment.payment_status != 'REFUNDED' %}
+                                <p class="text-sm text-gray-500 mt-1">{% trans "(ไม่มีการคืนเงิน)" %}</p>
+                            {% endif %}
+                    
+                        {% else %}
+                            {% trans "รายการจองถูกปฏิเสธ" %}
+                        {% endif %} {# ปิดเงื่อนไข status == 'cancelled' #}
+                        
+                    </h3>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
     <div class="bg-white shadow overflow-hidden sm:rounded-lg border border-gray-200">
         <div class="px-4 py-5 sm:px-6 flex justify-between items-center bg-gray-50">
             <div>
@@ -75,24 +119,48 @@
         <div class="px-4 py-4 bg-gray-100 border-t border-gray-200 flex justify-end items-center gap-3">
             
             {% if booking.status == 'pending' %}
-                <span class="text-yellow-600 text-sm flex items-center">
+                <span class="text-yellow-600 text-sm flex items-center mr-auto">
                     <i class="fas fa-hourglass-half mr-2"></i> {% trans "รอเจ้าของรถอนุมัติ..." %}
                 </span>
+                <a href="{% url 'cancel_now' booking.id %}" 
+                onclick="return confirm('{% trans 'ยืนยันการยกเลิกคำขอจองนี้?' %}');"
+                class="text-gray-500 hover:text-red-600 text-xs underline transition">
+                    {% trans "ยกเลิกคำขอจอง" %}
+                </a>
 
             {% elif booking.status == 'approved' %}
                 <span class="text-sm text-gray-500 mr-2">{% trans "เจ้าของรถอนุมัติแล้ว กรุณาชำระเงิน" %}</span>
+                
+                <a href="{% url 'cancel_now' booking.id %}" 
+                onclick="return confirm('{% trans 'คุณยังไม่ได้ชำระเงิน ยืนยันการยกเลิกรายการจองนี้?' %}');"
+                class="text-red-500 hover:text-red-700 text-xs underline mr-4 transition">
+                    {% trans "ยกเลิกรายการ" %}
+                </a>
+
                 <a href="{% url 'payment_page' booking.id %}" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
                     <i class="fas fa-file-invoice-dollar mr-2"></i> {% trans "แจ้งชำระเงิน" %}
                 </a>
 
             {% elif booking.status == 'waiting_verify' %}
                 <span class="text-orange-600 text-sm flex items-center">
-                    <i class="fas fa-search-dollar mr-2"></i> {% trans "แจ้งโอนแล้ว รอเจ้าของรถตรวจสอบสลิป" %}
+                    <i class="fas fa-search-dollar mr-2"></i> {% trans "แจ้งโอนแล้ว รอตรวจสอบสลิป" %}
                 </span>
 
             {% elif booking.status == 'confirmed' %}
-                <span class="text-green-600 text-sm flex items-center font-bold">
-                    <i class="fas fa-check-circle mr-2"></i> {% trans "จองสำเร็จ! เตรียมเอกสารรับรถได้เลย" %}
+                <div class="flex items-center gap-4">
+                    <span class="text-green-600 text-sm flex items-center font-bold">
+                        <i class="fas fa-check-circle mr-2"></i> {% trans "จองสำเร็จ! เตรียมเอกสารรับรถได้เลย" %}
+                    </span>
+                    
+                    <a href="{% url 'request_refund' booking.id %}" 
+                    class="text-red-500 hover:text-red-700 text-xs underline font-medium border border-red-200 hover:bg-red-50 px-2 py-1 rounded transition">
+                        {% trans "แจ้งยกเลิก/ขอคืนเงิน" %}
+                    </a>
+                </div>
+
+            {% elif booking.status == 'refund_requested' %}
+                <span class="text-purple-600 text-sm flex items-center font-bold">
+                    <i class="fas fa-undo-alt mr-2"></i> {% trans "กำลังดำเนินการคืนเงิน..." %}
                 </span>
 
             {% elif booking.status == 'rejected' %}
@@ -133,4 +201,6 @@
 
     </div>
 </div>
+
+
 {% endblock %}

@@ -128,20 +128,25 @@
                                     {% elif booking.status == 'pending' %}
                                         <span class="text-xs text-yellow-600">{% trans "กดที่ชื่อเพื่ออนุมัติ" %}</span>
                                     {% elif booking.status == 'completed' %}
-                                        {% if not booking.renter_review %}
-                                            <button onclick="openReviewModal('{{ booking.id }}', '{{ booking.user.first_name }} {{ booking.user.last_name }}', 'renter')" 
-                                                class="bg-blue-400 text-white px-3 py-1 rounded text-xs hover:bg-blue-500 ml-2 shadow transition">
-                                                <i class="fas fa-user-check mr-1"></i> {% trans "รีวิวลูกค้า" %}
-                                            </button>
+                                        {% if booking.user %}
+                                            {% if not booking.renter_review %}
+                                                <button onclick="openReviewModal('{{ booking.id }}', '{{ booking.user.first_name }} {{ booking.user.last_name }}', 'renter')" 
+                                                        class="bg-blue-400 text-white px-3 py-1 rounded text-xs hover:bg-blue-500 ml-2 shadow transition">
+                                                    <i class="fas fa-user-check mr-1"></i> {% trans "รีวิวลูกค้า" %}
+                                                </button>
+                                            {% else %}
+                                                <div class="text-xs text-green-600 font-bold mt-1">
+                                                    <i class="fas fa-check-circle mr-1"></i> {% trans "รีวิวลูกค้าแล้ว" %}
+                                                    <span class="text-gray-400 font-normal">({{ booking.renter_review.rating }}/5)</span>
+                                                </div>
+                                            {% endif %}
                                         {% else %}
-                                            <div class="text-xs text-green-600 font-bold mt-1">
-                                                <i class="fas fa-check-circle mr-1"></i> {% trans "รีวิวลูกค้าแล้ว" %}
-                                                <span class="text-gray-400 font-normal">({{ booking.renter_review.rating }}/5)</span>
-                                            </div>
+                                            <span class="text-xs text-gray-400 italic">{% trans "ไม่มีระบบรีวิวลูกค้าทั่วไป" %}</span>
                                         {% endif %}
-                                    {% else %}
-                                        <span class="text-xs text-gray-400">-</span>
-                                    {% endif %}
+
+                                        {% else %}
+                                            <span class="text-xs text-gray-400">-</span>
+                                        {% endif %}
                                 </td>
 
                             </tr>
@@ -171,9 +176,12 @@
                     <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
                         <div class="flex justify-between items-center border-b pb-2 mb-3">
                             <h4 class="text-gray-800 font-bold"><i class="fas fa-user mr-2 text-gray-400"></i>{% trans "ผู้เช่า" %}</h4>
+                            
+                            {% if booking.user %}
                             <a id="modal_profile_link" href="#" target="_blank" class="hidden text-xs bg-white border border-[#47B3C4] text-[#47B3C4] px-2 py-1 rounded hover:bg-[#47B3C4] hover:text-white transition shadow-sm">
                                 <i class="fas fa-star mr-1"></i> {% trans "ดูรีวิวลูกค้า" %}
                             </a>
+                            {% endif %}
                         </div>
                         <p class="text-sm">{% trans "ชื่อ:" %} <span id="modal_name" class="font-medium"></span></p>
                         <p class="text-sm mt-1">{% trans "เบอร์:" %} <span id="modal_phone" class="font-medium"></span></p>

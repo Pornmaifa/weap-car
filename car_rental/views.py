@@ -49,10 +49,23 @@ def dashboard(request):
             car.description = request.POST.get('description')
 
             new_status = request.POST.get('status')
-            # เปลี่ยนสถานะได้เฉพาะถ้ารถไม่ใช่ PENDING หรือถ้าเป็น ADMIN อนุมัติแล้ว
-            if car.status != 'PENDING': 
+
+            if car.status == 'REJECTED':
+                # กรณี 1: ถ้ารถเคยโดนปฏิเสธ -> บังคับเปลี่ยนเป็น "รอตรวจสอบ" เท่านั้น
+                car.status = 'PENDING'
+                # (Optional) ล้างเหตุผลการปฏิเสธเดิมออก (ถ้ามี field นี้)
+                if hasattr(car, 'rejection_reason'):
+                    car.rejection_reason = ""
+                messages.info(request, 'ส่งข้อมูลรถเพื่อรอการตรวจสอบใหม่อีกครั้ง')
+
+            elif car.status == 'PENDING':
+                # กรณี 2: ถ้ารอตรวจสอบอยู่ -> ห้ามเปลี่ยนสถานะ (คงค่าเดิมไว้)
+                car.status = 'PENDING'
+
+            else:
+                # กรณี 3: รถปกติ (AVAILABLE / MAINTENANCE) -> ยอมให้เจ้าของกดเปลี่ยนสถานะเองได้
                 if new_status in ['AVAILABLE', 'MAINTENANCE']:
-                    car.status = new_status 
+                    car.status = new_status
 
             # --- 🟢 (ใหม่) รับค่ามัดจำและกฎ ---
             deposit_val = request.POST.get('deposit')
@@ -250,7 +263,7 @@ def dashboard(request):
         recommendations.append("💡 เริ่มต้นได้ดี! ลองแชร์รูปรถลง Social Media เพื่อเพิ่มยอด")
     
     if any(c.booking_count == 0 for c in my_cars):
-        recommendations.append("⚠️ รถบางคันยังไม่มียอดจอง ลองเช็คราคาหรือเปลี่ยนรูปปกดูนะครับ")
+        recommendations.append("⚠️ รถบางคันยังไม่มียอดจอง ลองเช็คราคาหรือเปลี่ยนรูปปกดูนะ")
     
     # หาว่าเดือนไหนขายดีที่สุดในปีที่เลือก
     monthly_totals = {}
@@ -553,8 +566,6 @@ def search_cars(request):
 
     if not pickup:
             province = ""
-    # 2. ดึงรายการรถ
-    cars = Car.objects.filter(status='AVAILABLE', is_published=True)
 
     
     # 3. กรองตามประเภทบริการ
@@ -567,7 +578,6 @@ def search_cars(request):
         cars = cars.filter(state__exact=province.strip())
 
 
-
     # 5. กรองตามประเภทรถ
     if car_type_filter:
         cars = cars.filter(car_type=car_type_filter)
@@ -576,6 +586,18 @@ def search_cars(request):
             # แปลง format จาก d/m/Y H:i (เช่น 25/12/2025 10:00)
             pickup_dt = datetime.strptime(f"{s_date} {s_time}", "%d/%m/%Y %H:%M")
             dropoff_dt = datetime.strptime(f"{e_date} {e_time}", "%d/%m/%Y %H:%M")
+
+            # 1. หาจำนวนวันที่เช่า (เอาวันคืน - วันรับ)
+            rental_days = (dropoff_dt.date() - pickup_dt.date()).days
+            # ป้องกันเคสรับเช้าคืนเย็น (0 วัน) ให้ปัดเป็น 1 วัน
+            if rental_days < 1:
+                rental_days = 1
+
+            # 2. กรองรถ
+            cars = cars.filter(
+                min_rental_days__lte=rental_days, 
+                max_rental_days__gte=rental_days
+            )
 
             # สถานะที่ถือว่ารถไม่ว่าง
             busy_statuses = ['approved', 'waiting_verify', 'confirmed', 'picked_up']
@@ -711,5 +733,9 @@ def reply_to_owner_review(request, review_id):
     return redirect('public_profile', user_id=review.renter.id)
 
 
-
+# views.py
+@login_required
+def owner_terms_conditions(request):
+    """แสดงหน้าข้อกำหนดสำหรับเจ้าของรถ (ผู้ปล่อยเช่า)"""
+    return render(request, 'car_rental/owner_terms.html')
 

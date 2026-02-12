@@ -16,5 +16,5 @@ urlpatterns = [
     path("review/<int:review_id>/reply/", views.submit_reply, name="submit_reply"),
     path('review/<int:review_id>/reply/', views.reply_to_car_review, name='reply_to_car_review'),
     path('renter-review/<int:review_id>/reply/', views.reply_to_owner_review, name='reply_to_owner_review'),
-    
+    path('owner-terms/', views.owner_terms_conditions, name='owner_terms'),
 ]
