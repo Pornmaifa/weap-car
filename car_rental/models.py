@@ -15,15 +15,10 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='MEMBER')
-    status = models.CharField(max_length=50, default='active')
     # Fields for Member
-    address = models.TextField(blank=True, null=True)
+
     license_no = models.CharField(max_length=100, blank=True, null=True)
     join_date = models.DateField(auto_now_add=True)
-    # Fields for Owner
-    approved_status = models.CharField(max_length=20, default='pending')
-    approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_owners')
-    approved_date = models.DateField(null=True, blank=True)
     # เพิ่ม field ใหม่สำหรับรูปโปรไฟล์
     image = models.ImageField(upload_to='profile_pics', null=True, blank=True)
     #  (เอาไว้เก็บ LINE ID ของลูกค้า)
@@ -89,7 +84,6 @@ class Car(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cars')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     is_published = models.BooleanField(default=False) # True = แสดงหน้าร้าน, False = ซ่อน/Draft
-    published_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True) # ✅ เพิ่ม: วันที่สร้าง
     updated_at = models.DateTimeField(auto_now=True)     # ✅ เพิ่ม: วันที่แก้ไขล่าสุด
 
@@ -99,7 +93,7 @@ class Car(models.Model):
     brand = models.CharField(max_length=50, verbose_name="ยี่ห้อ") # เช่น Toyota
     model = models.CharField(max_length=50, verbose_name="รุ่น")   # เช่น Yaris Ativ
     year = models.PositiveIntegerField(null=True, blank=True, verbose_name="ปีจดทะเบียน")
-    description = models.TextField(max_length=500, null=True, blank=True, verbose_name="คำอธิบายรถ")
+    description = models.TextField(null=True, blank=True, verbose_name="คำอธิบายรถ")
     
     car_type = models.CharField(max_length=10, choices=CAR_TYPE_CHOICES, default='SEDAN')
     service_type = models.CharField(max_length=20, choices=SERVICE_TYPE_CHOICES, default='SELF_DRIVE')
@@ -158,7 +152,6 @@ class Car(models.Model):
 class CarImage(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='car_images/')
-    is_cover = models.BooleanField(default=False) # ✅ (Optional) เพิ่มเพื่อให้เจ้าของเลือกรูปปกได้
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -231,7 +224,6 @@ class Promotion(models.Model):
 class PromotionUsage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     promotion = models.ForeignKey('Promotion', on_delete=models.CASCADE)
-    used_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         # บรรทัดนี้สำคัญ: ห้าม User คนเดิม + Promo อันเดิม ซ้ำกันในตาราง

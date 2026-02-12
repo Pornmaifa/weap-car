@@ -197,9 +197,6 @@ msgstr "Return Date"
 msgid "โค้ดส่วนลดพิเศษ"
 msgstr "Special Promo Codes"
 
-msgid "ง"
-msgstr ""
-
 msgid "งาน"
 msgstr "Jobs"
 
@@ -356,9 +353,6 @@ msgstr "To"
 msgid "ถูกเช่าอยู่"
 msgstr "Rented"
 
-msgid "ท"
-msgstr ""
-
 msgid "ที่นั่ง"
 msgstr "seats"
 
@@ -374,47 +368,17 @@ msgstr "Do"
 msgid "ทำให้รถของคุณโดดเด่น"
 msgstr "Make your car stand out"
 
-msgid "ธ"
-msgstr ""
-
 msgid "ธรรมดา (Manual)"
 msgstr "Manual"
 
 msgid "น."
 msgstr "hrs"
 
-msgid "นครนายก"
-msgstr "Nakhon Nayok"
-
-msgid "นครปฐม"
-msgstr "Nakhon Pathom"
-
-msgid "นครพนม"
-msgstr "Nakhon Phanom"
-
-msgid "นครราชสีมา"
-msgstr "Nakhon Ratchasima"
-
-msgid "นครศรีธรรมราช"
-msgstr "Nakhon Si Thammarat"
-
-msgid "นครสวรรค์"
-msgstr "Nakhon Sawan"
-
-msgid "นนทบุรี"
-msgstr "Nonthaburi"
-
-msgid "นราธิวาส"
-msgstr "Narathiwat"
-
 msgid "นาที"
 msgstr "min"
 
 msgid "นามสกุล"
 msgstr "Last Name"
-
-msgid "น่าน"
-msgstr "Nan"
 
 msgid "นี่คือตัวอย่างหน้าประกาศของคุณ (ยังไม่แสดงต่อสาธารณะ)"
 msgstr "This is a preview of your listing (Not yet public)"
@@ -449,18 +413,6 @@ msgstr "Recorded by owner at:"
 msgid "บาท"
 msgstr "THB"
 
-msgid "บางแสน (ม.บูรพา)"
-msgstr "Bang Saen Beach"
-
-msgid "บึงกาฬ"
-msgstr "Bueng Kan"
-
-msgid "บึงฉวาก"
-msgstr "Bueng Chawak Aquarium"
-
-msgid "บุรีรัมย์"
-msgstr "Buri Ram"
-
 msgid "เบนซิน"
 msgstr "Gasoline"
 
@@ -476,17 +428,9 @@ msgstr "bags"
 msgid "ใบขับขี่:"
 msgstr "License No.:"
 
-msgid "ป"
-msgstr ""
 
 msgid "ปฏิเสธ"
 msgstr "Reject"
-
-msgid "ปทุมธานี"
-msgstr "Pathum Thani"
-
-msgid "ประจวบคีรีขันธ์"
-msgstr "Prachuap Khiri Khan"
 
 msgid "ประเภทคนขับ"
 msgstr "Driver Type"
@@ -526,15 +470,6 @@ msgstr "Country"
 
 msgid "ประเทศไทย"
 msgstr "Thailand"
-
-msgid "ปราจีนบุรี"
-msgstr "Prachin Buri"
-
-msgid "ประตูท่าแพ"
-msgstr "Tha Phae Gate"
-
-msgid "ปัตตานี"
-msgstr "Pattani"
 
 msgid "ป้ายทะเบียนรถ"
 msgstr "License Plate"
@@ -578,38 +513,8 @@ msgstr "Renter"
 msgid "ผู้เช่าสามารถเช่าได้นานเท่าใด"
 msgstr "Rental Duration Limits"
 
-msgid "แ"
-msgstr ""
-
 msgid "แผนที่"
 msgstr "Map"
-
-msgid "พ"
-msgstr ""
-
-msgid "พะเยา"
-msgstr "Phayao"
-
-msgid "พังงา"
-msgstr "Phangnga"
-
-msgid "พัทยากลาง (เซ็นทรัลเฟสติวัล)"
-msgstr "Central Festival Pattaya Beach"
-
-msgid "พัทลุง"
-msgstr "Phatthalung"
-
-msgid "พิจิตร"
-msgstr "Phichit"
-
-msgid "พิพิธภัณฑ์ช้างเอราวัณ"
-msgstr "Erawan Museum"
-
-msgid "พิพิธภัณฑ์สิรินธร (ไดโนเสาร์)"
-msgstr "Sirindhorn Museum (Dinosaur Park)"
-
-msgid "พิษณุโลก"
-msgstr "Phitsanulok"
 
 msgid "เพิ่ม"
 msgstr "Add"
@@ -635,56 +540,10 @@ msgstr "Add Photos & Documents"
 msgid "เพื่อ"
 msgstr "For"
 
-msgid "แพร่"
-msgstr "Phrae"
-
-msgid "ฟ"
-msgstr ""
-
-msgid "ฟิวเจอร์พาร์ค รังสิต"
-msgstr "Future Park Rangsit"
-
-msgid "ภ"
-msgstr ""
 
 msgid "ภาพ"
 msgstr "Image"
 
-msgid "ภูเก็ต"
-msgstr "Phuket"
-
-msgid "ภูทับเบิก"
-msgstr "Phu Thap Boek"
-
-msgid "ม"
-msgstr ""
-
-msgid "มหาวิทยาลัยขอนแก่น"
-msgstr "Khon Kaen University"
-
-msgid "มหาวิทยาลัยมหาสารคาม (มมส)"
-msgstr "Mahasarakham University (MSU)"
-
-msgid "มหาวิทยาลัยมหิดล (ศาลายา)"
-msgstr "Mahidol University (Salaya)"
-
-msgid "มหาสารคาม"
-msgstr "Maha Sarakham"
-
-msgid "มุกดาหาร"
-msgstr "Mukdahan"
-
-msgid "เมกาบางนา"
-msgstr "Mega Bangna"
-
-msgid "เมืองเก่าภูเก็ต"
-msgstr "Phuket Old Town"
-
-msgid "เมืองโบราณ"
-msgstr "Ancient City (Muang Boran)"
-
-msgid "แม่ฮ่องสอน"
-msgstr "Mae Hong Son"
 
 msgid "ไม่พบรถที่ค้นหา"
 msgstr "No cars found"
@@ -722,8 +581,6 @@ msgstr "No accessories available"
 msgid "ไม่ว่าง (ซ่อมบำรุง)"
 msgstr "Unavailable (Maintenance)"
 
-msgid "ย"
-msgstr ""
 
 msgid "ยกเลิก"
 msgstr "Cancel"
@@ -731,14 +588,8 @@ msgstr "Cancel"
 msgid "ยกเลิก/ปฏิเสธ"
 msgstr "Cancelled / Rejected"
 
-msgid "ยโสธร"
-msgstr "Yasothon"
-
 msgid "ยอดค่าเช่าหลังหักส่วนลด"
 msgstr "Net Rental Fee (After Discount)"
-
-msgid "ยะลา"
-msgstr "Yala"
 
 msgid "ยังไม่มีคำแนะนำเพิ่มเติมในขณะนี้"
 msgstr "No further recommendations at this time."
@@ -779,8 +630,6 @@ msgstr "Welcome,"
 msgid "ย้อนกลับ"
 msgstr "Back"
 
-msgid "ร"
-msgstr ""
 
 msgid "รถกระบะ"
 msgstr "Pickup Truck"
@@ -812,9 +661,6 @@ msgstr "Electric Vehicle (EV)"
 msgid "รถ:"
 msgstr "Car:"
 
-msgid "รพ.เจ้าพระยาอภัยภูเบศร"
-msgstr "Chaophraya Abhaibhubejhr Hospital"
-
 msgid "รอตรวจสอบยอดเงิน"
 msgstr "Verifying Payment"
 
@@ -827,9 +673,6 @@ msgstr "Waiting for Payment"
 msgid "รออนุมัติ"
 msgstr "Pending"
 
-msgid "ระนอง"
-msgstr "Ranong"
-
 msgid "ระบบเกียร์"
 msgstr "Transmission"
 
@@ -841,9 +684,6 @@ msgstr "Fuel System"
 
 msgid "ระบบเชื้อเพลิง:"
 msgstr "Fuel System:"
-
-msgid "ระยอง"
-msgstr "Rayong"
 
 msgid "รหัสผ่าน"
 msgstr "Password"
@@ -883,9 +723,6 @@ msgstr "Starting at"
 
 msgid "ราคารวมสุทธิ"
 msgstr "Net Total Price"
-
-msgid "ราชบุรี"
-msgstr "Ratchaburi"
 
 msgid "รายการนี้หมดอายุแล้ว"
 msgstr "This booking has expired."
@@ -956,17 +793,6 @@ msgstr "copied! Use it when booking."
 msgid "เรา"
 msgstr "We"
 
-msgid "โรง"
-msgstr ""
-
-msgid "โรบินสัน ชัยภูมิ"
-msgstr "Robinson Chaiyaphum"
-
-msgid "ร้อยเอ็ด"
-msgstr "Roi Et"
-
-msgid "ล"
-msgstr ""
 
 msgid "ลง"
 msgstr "Post"
@@ -976,18 +802,6 @@ msgstr "Discount"
 
 msgid "ลองเปลี่ยนจังหวัด หรือประเภทรถดูนะครับ"
 msgstr "Try changing province or car type."
-
-msgid "ลพบุรี"
-msgstr "Lopburi"
-
-msgid "ลานพญานาค (ริมโขง)"
-msgstr "Naga Monument (Mekong River)"
-
-msgid "ลำปาง"
-msgstr "Lampang"
-
-msgid "ลำพูน"
-msgstr "Lamphun"
 
 msgid "ลิง"
 msgstr "Link"
@@ -1003,9 +817,6 @@ msgstr "License Plate"
 
 msgid "เลขที่ใบขับขี่"
 msgstr "Driver's License No."
-
-msgid "เลย"
-msgstr "Loei"
 
 msgid "เลือกจังหวัด"
 msgstr "Select Province"
@@ -1037,47 +848,9 @@ msgstr "Exchange"
 msgid "และคุณต้องคืนให้ลูกค้าเมื่อจบการเช่า (ระบบจะไม่หักเปอร์เซ็นต์จากยอดนี้)"
 msgstr "and you must return it upon completion (no commission fee deducted)."
 
-msgid "ว"
-msgstr ""
-
-msgid "วง"
-msgstr ""
 
 msgid "ว/ด/ป"
 msgstr "DD/MM/YYYY"
-
-msgid "วัดจุฬามณี"
-msgstr "Wat Chulamanee"
-
-msgid "วัดท่าซุง (วิหารแก้ว)"
-msgstr "Wat Tha Sung (Crystal Temple)"
-
-msgid "วัดท่าหลวง (หลวงพ่อเพชร)"
-msgstr "Wat Tha Luang"
-
-msgid "วัดพระธาตุช่อแฮ"
-msgstr "Wat Phra That Cho Hae"
-
-msgid "วัดพระธาตุหริภุญชัย"
-msgstr "Wat Phra That Hariphunchai"
-
-msgid "วัดพระพุทธบาทราชวรมหาวิหาร"
-msgstr "Wat Phra Phutthabat"
-
-msgid "วัดพระสมุทรเจดีย์"
-msgstr "Phra Samut Chedi"
-
-msgid "วัดพิกุลทอง (พระพุทธรูปองค์ใหญ่)"
-msgstr "Wat Phikun Thong"
-
-msgid "วัดม่วง (หลวงพ่อใหญ่)"
-msgstr "Wat Muang (Big Buddha)"
-
-msgid "วัดป่าเลไลยก์วรวิหาร"
-msgstr "Wat Pa Lelai Worawihan"
-
-msgid "วัดโสธรวรารามวรวิหาร"
-msgstr "Wat Sothon Wararam Worawihan"
 
 msgid "วัน"
 msgstr "day"
@@ -1100,38 +873,11 @@ msgstr "Available (Ready)"
 msgid "วิเคราะห์รายได้ (1 ปีย้อนหลัง)"
 msgstr "Revenue Analysis (Last 1 Year)"
 
-msgid "วิมานพญาแถน (พญาคันคาก)"
-msgstr "Vimarn Phaya Tan (Toad Museum)"
-
 msgid "เวลา"
 msgstr "Time"
 
-msgid "ศ"
-msgstr ""
-
-msgid "ศาลพระกาฬ"
-msgstr "Phra Kan Shrine"
-
-msgid "ศาลพันท้ายนรสิงห์"
-msgstr "Phantai Norasing Shrine"
-
-msgid "ศาลสมเด็จพระนเรศวร"
-msgstr "Somdet Phra Naresuan Shrine"
-
-msgid "ศรีสะเกษ"
-msgstr "Si Sa Ket"
-
-msgid "ส"
-msgstr ""
-
 msgid "สกุล"
-msgstr ""
-
-msgid "สกลนคร"
-msgstr "Sakon Nakhon"
-
-msgid "สงขลา"
-msgstr "Songkhla"
+msgstr "Last name"
 
 msgid "ส่ง"
 msgstr "Send"
@@ -1141,9 +887,6 @@ msgstr "Submit Reply"
 
 msgid "ส่งรีวิว"
 msgstr "Submit Review"
-
-msgid "สตูล"
-msgstr "Satun"
 
 msgid "สถานะ"
 msgstr "Status"
@@ -1157,353 +900,8 @@ msgstr "Suggested Locations"
 msgid "สถานที่รับรถ"
 msgstr "Pickup Location"
 
-msgid "สถานตากอากาศบางปู"
-msgstr "Bang Pu Recreation Center"
-
-msgid "สถานีกลางกรุงเทพอภิวัฒน์ (บางซื่อ)"
-msgstr "Krung Thep Aphiwat Central Terminal"
-
-msgid "สถานีขนส่งกระบี่"
-msgstr "Krabi Bus Terminal"
-
-msgid "สถานีขนส่งกาญจนบุรี"
-msgstr "Kanchanaburi Bus Terminal"
-
-msgid "สถานีขนส่งกำแพงเพชร"
-msgstr "Kamphaeng Phet Bus Terminal"
-
-msgid "สถานีขนส่งขอนแก่น 3"
-msgstr "Khon Kaen Bus Terminal 3"
-
-msgid "สถานีขนส่งจันทบุรี"
-msgstr "Chanthaburi Bus Terminal"
-
-msgid "สถานีขนส่งฉะเชิงเทรา"
-msgstr "Chachoengsao Bus Terminal"
-
-msgid "สถานีขนส่งชัยนาท"
-msgstr "Chai Nat Bus Terminal"
-
-msgid "สถานีขนส่งชัยภูมิ"
-msgstr "Chaiyaphum Bus Terminal"
-
-msgid "สถานีขนส่งเชียงราย 1"
-msgstr "Chiang Rai Bus Terminal 1"
-
-msgid "สถานีขนส่งตราด"
-msgstr "Trat Bus Terminal"
-
-msgid "สถานีขนส่งนครนายก"
-msgstr "Nakhon Nayok Bus Terminal"
-
-msgid "สถานีขนส่งนครราชสีมา 2"
-msgstr "Nakhon ratchasima bus terminal 2 korat"
-
-msgid "สถานีขนส่งพัทยา (รุ่งเรือง)"
-msgstr "Pattaya Bus Terminal"
-
-msgid "สถานีขนส่งพิษณุโลก 2"
-msgstr "Phitsanulok bus terminal 2"
-
-msgid "สถานีขนส่งภูเก็ต 2"
-msgstr "Phuket bus terminal 2"
-
-msgid "สถานีขนส่งระยอง 2"
-msgstr "Rayong bus terminal 2"
-
-msgid "สถานีขนส่งสระแก้ว"
-msgstr "Sa Kaeo Bus Terminal"
-
-msgid "สถานีขนส่งสระบุรี"
-msgstr "Saraburi Bus Terminal"
-
-msgid "สถานีขนส่งสิงห์บุรี"
-msgstr "Sing Buri Bus Terminal"
-
-msgid "สถานีขนส่งสุพรรณบุรี"
-msgstr "Suphan Buri Bus Terminal"
-
-msgid "สถานีขนส่งสุราษฎร์ธานี"
-msgstr "Surat thani bus terminal"
-
-msgid "สถานีขนส่งหนองบัวลำภู"
-msgstr "Nong Bua Lam Phu Bus Terminal"
-
-msgid "สถานีขนส่งหล่มสัก"
-msgstr "Lom Sak Bus Terminal"
-
-msgid "สถานีขนส่งหมอชิต 2"
-msgstr "Mo Chit 2 Bus Terminal"
-
-msgid "สถานีขนส่งหัวหิน"
-msgstr "Hua Hin Bus Terminal"
-
-msgid "สถานีขนส่งหาดใหญ่"
-msgstr "Hat Yai Bus Terminal"
-
-msgid "สถานีขนส่งอ่างทอง"
-msgstr "Ang Thong Bus Terminal"
-
-msgid "สถานีขนส่งอาเขต เชียงใหม่ 2"
-msgstr "Chiang Mai Arcade Bus Terminal 2"
-
-msgid "สถานีขนส่งอาเขต เชียงใหม่ 3"
-msgstr "Chiang Mai Arcade Bus Terminal 3"
-
-msgid "สถานีขนส่งอำนาจเจริญ"
-msgstr "Amnat Charoen Bus Terminal"
-
-msgid "สถานีขนส่งอุดรธานี 1"
-msgstr "Udon thani bus terminal 1"
-
-msgid "สถานีขนส่งอุบลราชธานี"
-msgstr "Ubon ratchathani bus terminal"
-
-msgid "สถานีขนส่งเอกมัย"
-msgstr "Eastern Bus Terminal (Ekkamai)"
-
-msgid "สถานีขนส่งบึงกาฬ"
-msgstr "Bueng Kan Bus Terminal"
-
-msgid "สถานีขนส่งพะเยา"
-msgstr "Phayao Bus Terminal"
-
-msgid "สถานีขนส่งแพร่"
-msgstr "Phrae Bus Terminal"
-
-msgid "สถานีขนส่งมหาสารคาม"
-msgstr "Maha Sarakham Bus Terminal"
-
-msgid "สถานีขนส่งมุกดาหาร"
-msgstr "Mukdahan Bus Terminal"
-
-msgid "สถานีขนส่งยโสธร"
-msgstr "Yasothon Bus Terminal"
-
-msgid "สถานีขนส่งสายใต้ใหม่"
-msgstr "Southern Bus Terminal (Sai Tai Mai)"
-
-msgid "สถานีรถไฟกาญจนบุรี"
-msgstr "Kanchanaburi Railway Station"
-
-msgid "สถานีรถไฟขอนแก่น"
-msgstr "Khon kaen railway station"
-
-msgid "สถานีรถไฟชุมทางฉะเชิงเทรา"
-msgstr "Chachoengsao Junction Railway Station"
-
-msgid "สถานีรถไฟชุมทางหาดใหญ่"
-msgstr "Hat yai junction railway station"
-
-msgid "สถานีรถไฟชุมพร"
-msgstr "Chumphon railway station"
-
-msgid "สถานีรถไฟเชียงใหม่"
-msgstr "Chiang mai railway station"
-
-msgid "สถานีรถไฟด่านพรมแดนบ้านคลองลึก"
-msgstr "Ban Khlong Luk Border Railway Station"
-
-msgid "สถานีรถไฟตรัง"
-msgstr "Trang railway station"
-
-msgid "สถานีรถไฟนครปฐม"
-msgstr "Nakhon Pathom Railway Station"
-
-msgid "สถานีรถไฟนครราชสีมา"
-msgstr "Nakhon ratchasima railway station korat"
-
-msgid "สถานีรถไฟนครศรีธรรมราช"
-msgstr "Nakhon si thammarat railway station"
-
-msgid "สถานีรถไฟนครสวรรค์"
-msgstr "Nakhon sawan railway station"
-
-msgid "สถานีรถไฟบุรีรัมย์"
-msgstr "Buri ram railway station"
-
-msgid "สถานีรถไฟปราจีนบุรี"
-msgstr "Prachin Buri Railway Station"
-
-msgid "สถานีรถไฟพัทลุง"
-msgstr "Phatthalung Railway Station"
-
-msgid "สถานีรถไฟพิจิตร"
-msgstr "Phichit Railway Station"
-
-msgid "สถานีรถไฟพิษณุโลก"
-msgstr "Phitsanulok railway station"
-
-msgid "สถานีรถไฟเพชรบุรี"
-msgstr "Phetchaburi Railway Station"
-
-msgid "สถานีรถไฟมหาชัย"
-msgstr "Mahachai Railway Station"
-
-msgid "สถานีรถไฟยะลา"
-msgstr "Yala railway station"
-
-msgid "สถานีรถไฟราชบุรี"
-msgstr "Ratchaburi Railway Station"
-
-msgid "สถานีรถไฟลพบุรี"
-msgstr "Lopburi railway station"
-
-msgid "สถานีรถไฟลำพูน"
-msgstr "Lamphun Railway Station"
-
-msgid "สถานีรถไฟศรีสะเกษ"
-msgstr "Si sa ket railway station"
-
-msgid "สถานีรถไฟสุรินทร์"
-msgstr "Surin railway station"
-
-msgid "สถานีรถไฟสุราษฎร์ธานี"
-msgstr "Surat thani railway station phunphin"
-
-msgid "สถานีรถไฟหนองคาย"
-msgstr "Nong khai railway station"
-
-msgid "สถานีรถไฟหัวหิน"
-msgstr "Hua hin railway station"
-
-msgid "สถานีรถไฟอยุธยา"
-msgstr "Ayutthaya railway station"
-
-msgid "สถานีรถไฟอุดรธานี"
-msgstr "Udon thani railway station"
-
-msgid "สถานีรถไฟอุตรดิตถ์"
-msgstr "Uttaradit Railway Station"
-
-msgid "สถานีรถไฟอุบลราชธานี"
-msgstr "Ubon ratchathani railway station warin chamrap"
-
-msgid "สถานีรถไฟกรุงเทพ (หัวลำโพง)"
-msgstr "Bangkok Railway Station (Hua Lamphong)"
-
-msgid "สถานีรถไฟชะอำ"
-msgstr "Cha-am Railway Station"
-
-msgid "สนามบินกระบี่ (KBV)"
-msgstr "Krabi airport kbv"
-
-msgid "สนามบินขอนแก่น (KKC)"
-msgstr "Khon kaen airport kkc"
-
-msgid "สนามบินชุมพร (CJM)"
-msgstr "Chumphon airport cjm"
-
-msgid "สนามบินเชียงใหม่ (CNX)"
-msgstr "Chiang mai airport cnx"
-
-msgid "สนามบินดอนเมือง (DMK)"
-msgstr "Don Mueang Airport (DMK)"
-
-msgid "สนามบินตรัง (TST)"
-msgstr "Trang airport tst"
-
-msgid "สนามบินตราด (TDX)"
-msgstr "Trat airport tdx"
-
-msgid "สนามบินนครพนม (KOP)"
-msgstr "Nakhon phanom airport kop"
-
-msgid "สนามบินนครศรีธรรมราช (NST)"
-msgstr "Nakhon si thammarat airport nst"
-
-msgid "สนามบินนราธิวาส (NAW)"
-msgstr "Narathiwat airport naw"
-
-msgid "สนามบินน่านนคร (NNT)"
-msgstr "Nan nakhon airport nnt"
-
-msgid "สนามบินบุรีรัมย์ (BFV)"
-msgstr "Buri ram airport bfv"
-
-msgid "สนามบินเบตง (BTZ)"
-msgstr "Betong airport yala btz"
-
-msgid "สนามบินปาย (PYY)"
-msgstr "Pai airport mae hong son pyy"
-
-msgid "สนามบินพิษณุโลก (PHS)"
-msgstr "Phitsanulok airport phs"
-
-msgid "สนามบินแพร่ (PRH)"
-msgstr "Phrae Airport (PRH)"
-
-msgid "สนามบินภูเก็ต (HKT)"
-msgstr "Phuket airport hkt"
-
-msgid "สนามบินแม่ฟ้าหลวง เชียงราย (CEI)"
-msgstr "Chiang rai airport cei"
-
-msgid "สนามบินแม่สอด (MAQ)"
-msgstr "Mae sot airport tak maq"
-
-msgid "สนามบินแม่ฮ่องสอน (HGN)"
-msgstr "Mae hong son airport hgn"
-
-msgid "สนามบินร้อยเอ็ด (ROI)"
-msgstr "Roi et airport roi"
-
-msgid "สนามบินระนอง (UNN)"
-msgstr "Ranong airport unn"
-
-msgid "สนามบินลำปาง (LPT)"
-msgstr "Lampang airport lpt"
-
-msgid "สนามบินเลย (LOE)"
-msgstr "Loei airport loe"
-
-msgid "สนามบินสกลนคร (SNO)"
-msgstr "Sakon nakhon airport sno"
-
-msgid "สนามบินสมุย (USM)"
-msgstr "Samui airport surat thani usm"
-
-msgid "สนามบินสุโขทัย (THS)"
-msgstr "Sukhothai airport ths"
-
-msgid "สนามบินสุราษฎร์ธานี (URT)"
-msgstr "Surat thani airport urt"
-
-msgid "สนามบินสุวรรณภูมิ (BKK)"
-msgstr "Suvarnabhumi Airport (BKK)"
-
-msgid "สนามบินหาดใหญ่ (HDY)"
-msgstr "Hat yai airport songkhla hdy"
-
-msgid "สนามบินหัวหิน (HHQ)"
-msgstr "Hua hin airport prachuap hhq"
-
-msgid "สนามบินอุดรธานี (UTH)"
-msgstr "Udon thani airport uth"
-
-msgid "สนามบินอุบลราชธานี (UBP)"
-msgstr "Ubon ratchathani airport ubp"
-
-msgid "สนามบินอู่ตะเภา (UTP)"
-msgstr "U-tapao pattaya rayong utp"
-
-msgid "สมุทรปราการ"
-msgstr "Samut Prakan"
-
-msgid "สมุทรสงคราม"
-msgstr "Samut Songkhram"
-
-msgid "สมุทรสาคร"
-msgstr "Samut Sakhon"
-
 msgid "สมาชิกเมื่อ:"
 msgstr "Member since:"
-
-msgid "สระแก้ว"
-msgstr "Sa Kaeo"
-
-msgid "สระบุรี"
-msgstr "Saraburi"
 
 msgid "สรุปยอดที่ต้องชำระ"
 msgstr "Payment Summary"
@@ -1520,26 +918,8 @@ msgstr "Discount"
 msgid "ส่วนลดโปรโมชั่น"
 msgstr "Promotion Discount"
 
-msgid "สิงห์ปาร์ค (ไร่บุญรอด)"
-msgstr "Singha Park"
-
-msgid "สิงห์บุรี"
-msgstr "Sing Buri"
-
 msgid "สิ่งที่ผู้เช่าควรรู้"
 msgstr "Things renters should know"
-
-msgid "สุพรรณบุรี"
-msgstr "Suphan Buri"
-
-msgid "สุรินทร์"
-msgstr "Surin"
-
-msgid "สุราษฎร์ธานี"
-msgstr "Surat Thani"
-
-msgid "สุโขทัย"
-msgstr "Sukhothai"
 
 msgid "สแกนด้วยแอปธนาคารเพื่อชำระเงิน"
 msgstr "Scan with banking app to pay"
@@ -1549,15 +929,6 @@ msgstr "Stats"
 
 msgid "สถิติประจำปี"
 msgstr "Annual Statistics"
-
-msgid "สยามพารากอน"
-msgstr "Siam Paragon"
-
-msgid "สะพานข้ามแม่น้ำแคว"
-msgstr "River Kwai Bridge"
-
-msgid "สะพานมิตรภาพไทย-ลาว 2"
-msgstr "Thai-Lao Friendship Bridge 2"
 
 msgid "สัดส่วนรายได้รวม"
 msgstr "Revenue Distribution"
@@ -1571,11 +942,6 @@ msgstr "Car Registration Copy (Blue Book)"
 msgid "สูงสุด: วัน"
 msgstr "Max: Days"
 
-msgid "เสริมไทยคอมเพล็กซ์"
-msgstr "Sermthai Complex"
-
-msgid "ห"
-msgstr ""
 
 msgid "หมดเวลาชำระเงิน"
 msgstr "Payment Expired"
@@ -1583,35 +949,8 @@ msgstr "Payment Expired"
 msgid "หมดเขต"
 msgstr "Exp:"
 
-msgid "หอแก้วมุกดาหาร"
-msgstr "Ho Kaeo Mukdahan Tower"
-
-msgid "หอนาฬิกาเชียงราย"
-msgstr "Chiang Rai Clock Tower"
-
-msgid "หอนาฬิกาหัวหิน"
-msgstr "Hua Hin Clock Tower"
-
-msgid "หอนาฬิกาอำนาจเจริญ"
-msgstr "Amnat Charoen Clock Tower"
-
-msgid "หัวหิน"
-msgstr "Hua Hin"
-
 msgid "หักค่าธรรมเนียมระบบ (15%)"
 msgstr "System Fee Deduction (15%)"
-
-msgid "หาดจอมเทียน"
-msgstr "Jomtien Beach"
-
-msgid "หาดชะอำ"
-msgstr "Cha-am Beach"
-
-msgid "หาดป่าตอง"
-msgstr "Patong Beach"
-
-msgid "หาดเฉวง (สมุย)"
-msgstr "Chaweng Beach"
 
 msgid "เหลือเวลา"
 msgstr "Time Remaining"
@@ -1619,8 +958,6 @@ msgstr "Time Remaining"
 msgid "เหมาะสำหรับเด็กอายุ 1–3 ปี"
 msgstr "Suitable for ages 1–3"
 
-msgid "อ"
-msgstr ""
 
 msgid "อนุมัติ"
 msgstr "Approve"
@@ -1646,41 +983,8 @@ msgstr "What"
 msgid "อำเภอ / เขต"
 msgstr "District"
 
-msgid "อำนาจเจริญ"
-msgstr "Amnat Charoen"
-
-msgid "อ่างทอง"
-msgstr "Ang Thong"
-
-msgid "อ่าวนาง"
-msgstr "Ao Nang"
-
 msgid "อีเมล"
 msgstr "Email"
-
-msgid "อุดรธานี"
-msgstr "Udon Thani"
-
-msgid "อุทยานประวัติศาสตร์กำแพงเพชร"
-msgstr "Kamphaeng Phet Historical Park"
-
-msgid "อุทยานประวัติศาสตร์อยุธยา"
-msgstr "Ayutthaya Historical Park"
-
-msgid "อุทยานมังกรสวรรค์ (ศาลหลักเมือง)"
-msgstr "Dragon Descendants Museum"
-
-msgid "อุทยานแห่งชาติน้ำตกพลิ้ว"
-msgstr "Namtok Phlio National Park"
-
-msgid "อุตรดิตถ์"
-msgstr "Uttaradit"
-
-msgid "อุทัยธานี"
-msgstr "Uthai Thani"
-
-msgid "อุบลราชธานี"
-msgstr "Ubon Ratchathani"
 
 msgid "อุปกรณ์เสริม"
 msgstr "Accessories"
@@ -1688,17 +992,11 @@ msgstr "Accessories"
 msgid "เอกสารยืนยันรถ"
 msgstr "Verification Documents"
 
-msgid "เอราวัณ"
-msgstr "Erawan"
-
 msgid "แอป"
 msgstr "App"
 
 msgid "โอเค"
 msgstr "OK"
-
-msgid "ไอคอนสยาม"
-msgstr "ICONSIAM"
 
 msgid "ไฮบริด"
 msgstr "Hybrid"
@@ -2052,3 +1350,931 @@ msgstr "Dashboard"
 msgid "คำขอเช่ารถ"
 msgstr "Booking Requests"
 
+# =========================================
+# UI: NEW TERMS & FORM LABELS
+# =========================================
+
+msgid "จุดคืนรถ"
+msgstr "Return Location"
+
+
+msgid "วันที่และเวลา"
+msgstr "Date and Time"
+
+msgid "ตำแหน่งรับรถของคุณ"
+msgstr "Your Pick-up Location"
+
+
+msgid "กรมธรรม์ประกันภัย"
+msgstr "Insurance Policy"
+
+
+# =========================================
+# UI: NEW TERMS & FORM LABELS
+# =========================================
+msgid "จุดรับรถ"
+msgstr "Pick-up Location"
+
+
+msgid "โหมดโฮสต์"
+msgstr "Host Mode"
+
+
+msgid "คลิกดูรายละเอียด"
+msgstr "Click for details"
+
+
+msgid "จังหวัด"
+msgstr "Province"
+
+
+msgid "ชื่อรุ่น/ยี่ห้อรถ"
+msgstr "Car Model / Brand"
+
+# =========================================
+# LOCATIONS: PROVINCES & LANDMARKS
+# =========================================
+
+# --- ภาคกลาง & กทม ---
+msgid "กรุงเทพมหานคร"
+msgstr "Bangkok"
+
+msgid "สนามบินสุวรรณภูมิ (BKK)"
+msgstr "Suvarnabhumi Airport (BKK)"
+
+msgid "สนามบินดอนเมือง (DMK)"
+msgstr "Don Mueang Airport (DMK)"
+
+msgid "สถานีรถไฟกรุงเทพ (หัวลำโพง)"
+msgstr "Bangkok Railway Station (Hua Lamphong)"
+
+msgid "สถานีกลางกรุงเทพอภิวัฒน์ (บางซื่อ)"
+msgstr "Krung Thep Aphiwat Central Terminal"
+
+msgid "สถานีขนส่งหมอชิต 2"
+msgstr "Mo Chit 2 Bus Terminal"
+
+msgid "สถานีขนส่งสายใต้ใหม่"
+msgstr "Southern Bus Terminal (Sai Tai Mai)"
+
+msgid "สถานีขนส่งเอกมัย"
+msgstr "Eastern Bus Terminal (Ekkamai)"
+
+msgid "ไอคอนสยาม"
+msgstr "ICONSIAM"
+
+msgid "เซ็นทรัลเวิลด์ (ราชประสงค์)"
+msgstr "Central World (Ratchaprasong)"
+
+msgid "สยามพารากอน"
+msgstr "Siam Paragon"
+
+msgid "ถนนข้าวสาร"
+msgstr "Khaosan Road"
+
+msgid "สมุทรปราการ"
+msgstr "Samut Prakan"
+
+msgid "เมกาบางนา"
+msgstr "Mega Bangna"
+
+msgid "เมืองโบราณ"
+msgstr "Ancient City (Muang Boran)"
+
+msgid "พิพิธภัณฑ์ช้างเอราวัณ"
+msgstr "Erawan Museum"
+
+msgid "สถานตากอากาศบางปู"
+msgstr "Bang Pu Recreation Center"
+
+msgid "วัดพระสมุทรเจดีย์"
+msgstr "Phra Samut Chedi"
+
+msgid "นนทบุรี"
+msgstr "Nonthaburi"
+
+msgid "เซ็นทรัล เวสต์เกต"
+msgstr "Central Westgate"
+
+msgid "อิมแพ็ค เมืองทองธานี"
+msgstr "IMPACT Muang Thong Thani"
+
+msgid "ปทุมธานี"
+msgstr "Pathum Thani"
+
+msgid "ฟิวเจอร์พาร์ค รังสิต"
+msgstr "Future Park Rangsit"
+
+msgid "ดรีมเวิลด์"
+msgstr "Dream World"
+
+msgid "พระนครศรีอยุธยา"
+msgstr "Phra Nakhon Si Ayutthaya"
+
+msgid "สถานีรถไฟอยุธยา"
+msgstr "Ayutthaya Railway Station"
+
+msgid "อุทยานประวัติศาสตร์อยุธยา"
+msgstr "Ayutthaya Historical Park"
+
+msgid "ลพบุรี"
+msgstr "Lopburi"
+
+msgid "สถานีรถไฟลพบุรี"
+msgstr "Lopburi Railway Station"
+
+msgid "ศาลพระกาฬ"
+msgstr "Phra Kan Shrine"
+
+msgid "สระบุรี"
+msgstr "Saraburi"
+
+msgid "สถานีขนส่งสระบุรี"
+msgstr "Saraburi Bus Terminal"
+
+msgid "วัดพระพุทธบาทราชวรมหาวิหาร"
+msgstr "Wat Phra Phutthabat"
+
+msgid "น้ำตกเจ็ดสาวน้อย (มวกเหล็ก)"
+msgstr "Namtok Chet Sao Noi (Muak Lek)"
+
+msgid "สิงห์บุรี"
+msgstr "Sing Buri"
+
+msgid "สถานีขนส่งสิงห์บุรี"
+msgstr "Sing Buri Bus Terminal"
+
+msgid "วัดพิกุลทอง (พระพุทธรูปองค์ใหญ่)"
+msgstr "Wat Phikun Thong"
+
+msgid "ตลาดไทยย้อนยุคบ้านระจัน"
+msgstr "Ban Rachan Ancient Market"
+
+msgid "ชัยนาท"
+msgstr "Chai Nat"
+
+msgid "สถานีขนส่งชัยนาท"
+msgstr "Chai Nat Bus Terminal"
+
+msgid "สวนนกชัยนาท"
+msgstr "Chai Nat Bird Park"
+
+msgid "เขื่อนเจ้าพระยา"
+msgstr "Chao Phraya Dam"
+
+msgid "อ่างทอง"
+msgstr "Ang Thong"
+
+msgid "สถานีขนส่งอ่างทอง"
+msgstr "Ang Thong Bus Terminal"
+
+msgid "วัดม่วง (หลวงพ่อใหญ่)"
+msgstr "Wat Muang (Big Buddha)"
+
+msgid "นครนายก"
+msgstr "Nakhon Nayok"
+
+msgid "สถานีขนส่งนครนายก"
+msgstr "Nakhon Nayok Bus Terminal"
+
+msgid "เขื่อนขุนด่านปราการชล"
+msgstr "Khun Dan Prakarn Chon Dam"
+
+msgid "น้ำตกนางรอง / สาริกา"
+msgstr "Nang Rong / Sarika Waterfall"
+
+msgid "นครปฐม"
+msgstr "Nakhon Pathom"
+
+msgid "องค์พระปฐมเจดีย์"
+msgstr "Phra Pathom Chedi"
+
+msgid "มหาวิทยาลัยมหิดล (ศาลายา)"
+msgstr "Mahidol University (Salaya)"
+
+msgid "สถานีรถไฟนครปฐม"
+msgstr "Nakhon Pathom Railway Station"
+
+msgid "สมุทรสาคร"
+msgstr "Samut Sakhon"
+
+msgid "ตลาดมหาชัย"
+msgstr "Mahachai Market"
+
+msgid "ศาลพันท้ายนรสิงห์"
+msgstr "Phantai Norasing Shrine"
+
+msgid "สถานีรถไฟมหาชัย"
+msgstr "Mahachai Railway Station"
+
+msgid "สมุทรสงคราม"
+msgstr "Samut Songkhram"
+
+msgid "ตลาดน้ำอัมพวา"
+msgstr "Amphawa Floating Market"
+
+msgid "ตลาดร่มหุบ (สถานีรถไฟแม่กลอง)"
+msgstr "Maeklong Railway Market (Rom Hup)"
+
+msgid "วัดจุฬามณี"
+msgstr "Wat Chulamanee"
+
+msgid "สุพรรณบุรี"
+msgstr "Suphan Buri"
+
+msgid "สถานีขนส่งสุพรรณบุรี"
+msgstr "Suphan Buri Bus Terminal"
+
+msgid "อุทยานมังกรสวรรค์ (ศาลหลักเมือง)"
+msgstr "Dragon Descendants Museum"
+
+msgid "บึงฉวาก"
+msgstr "Bueng Chawak Aquarium"
+
+msgid "วัดป่าเลไลยก์วรวิหาร"
+msgstr "Wat Pa Lelai Worawihan"
+
+msgid "กาญจนบุรี"
+msgstr "Kanchanaburi"
+
+msgid "สถานีขนส่งกาญจนบุรี"
+msgstr "Kanchanaburi Bus Terminal"
+
+msgid "สถานีรถไฟกาญจนบุรี"
+msgstr "Kanchanaburi Railway Station"
+
+msgid "สะพานข้ามแม่น้ำแคว"
+msgstr "River Kwai Bridge"
+
+msgid "น้ำตกเอราวัณ"
+msgstr "Erawan Waterfall"
+
+msgid "ราชบุรี"
+msgstr "Ratchaburi"
+
+msgid "สถานีรถไฟราชบุรี"
+msgstr "Ratchaburi Railway Station"
+
+msgid "ตลาดน้ำดำเนินสะดวก"
+msgstr "Damnoen Saduak Floating Market"
+
+msgid "สวนผึ้ง"
+msgstr "Suan Phueng"
+
+msgid "เพชรบุรี"
+msgstr "Phetchaburi"
+
+msgid "สถานีรถไฟเพชรบุรี"
+msgstr "Phetchaburi Railway Station"
+
+msgid "หาดชะอำ"
+msgstr "Cha-am Beach"
+
+msgid "เขาวัง (อุทยานประวัติศาสตร์พระนครคีรี)"
+msgstr "Khao Wang (Phra Nakhon Khiri)"
+
+msgid "สถานีรถไฟชะอำ"
+msgstr "Cha-am Railway Station"
+
+msgid "ประจวบคีรีขันธ์"
+msgstr "Prachuap Khiri Khan"
+
+msgid "สนามบินหัวหิน (HHQ)"
+msgstr "Hua Hin Airport (HHQ)"
+
+msgid "สถานีรถไฟหัวหิน"
+msgstr "Hua Hin Railway Station"
+
+msgid "สถานีขนส่งหัวหิน"
+msgstr "Hua Hin Bus Terminal"
+
+msgid "หอนาฬิกาหัวหิน"
+msgstr "Hua Hin Clock Tower"
+
+# --- ภาคตะวันออก ---
+msgid "ชลบุรี"
+msgstr "Chon Buri"
+
+msgid "สถานีขนส่งพัทยา (รุ่งเรือง)"
+msgstr "Pattaya Bus Terminal"
+
+msgid "บางแสน (ม.บูรพา)"
+msgstr "Bang Saen (Burapha Univ.)"
+
+msgid "พัทยากลาง (เซ็นทรัลเฟสติวัล)"
+msgstr "Central Pattaya Beach"
+
+msgid "หาดจอมเทียน"
+msgstr "Jomtien Beach"
+
+msgid "ท่าเรือแหลมบาลีฮาย (พัทยา)"
+msgstr "Bali Hai Pier (Pattaya)"
+
+msgid "ระยอง"
+msgstr "Rayong"
+
+msgid "สนามบินอู่ตะเภา (UTP)"
+msgstr "U-Tapao Airport (UTP)"
+
+msgid "สถานีขนส่งระยอง 2"
+msgstr "Rayong Bus Terminal 2"
+
+msgid "นิคมอุตสาหกรรมอมตะซิตี้"
+msgstr "Amata City Industrial Estate"
+
+msgid "ท่าเรือบ้านเพ (ระยอง)"
+msgstr "Ban Phe Pier"
+
+msgid "จันทบุรี"
+msgstr "Chanthaburi"
+
+msgid "สถานีขนส่งจันทบุรี"
+msgstr "Chanthaburi Bus Terminal"
+
+msgid "ชุมชนริมน้ำจันทบูร"
+msgstr "Chantaboon Waterfront Community"
+
+msgid "อุทยานแห่งชาติน้ำตกพลิ้ว"
+msgstr "Namtok Phlio National Park"
+
+msgid "ตราด"
+msgstr "Trat"
+
+msgid "สนามบินตราด (TDX)"
+msgstr "Trat Airport (TDX)"
+
+msgid "ท่าเรืออ่าวธรรมชาติ (ตราด)"
+msgstr "Ao Thammachat Pier"
+
+msgid "ฉะเชิงเทรา"
+msgstr "Chachoengsao"
+
+msgid "วัดโสธรวรารามวรวิหาร"
+msgstr "Wat Sothon Wararam Worawihan"
+
+msgid "สถานีรถไฟชุมทางฉะเชิงเทรา"
+msgstr "Chachoengsao Junction Railway Station"
+
+msgid "สถานีขนส่งฉะเชิงเทรา"
+msgstr "Chachoengsao Bus Terminal"
+
+msgid "ปราจีนบุรี"
+msgstr "Prachin Buri"
+
+msgid "สถานีรถไฟปราจีนบุรี"
+msgstr "Prachin Buri Railway Station"
+
+msgid "นิคมอุตสาหกรรม 304"
+msgstr "304 Industrial Park"
+
+msgid "รพ.เจ้าพระยาอภัยภูเบศร"
+msgstr "Chaophraya Abhaibhubejhr Hospital"
+
+msgid "สระแก้ว"
+msgstr "Sa Kaeo"
+
+msgid "ตลาดโรงเกลือ (อรัญประเทศ)"
+msgstr "Rong Kluea Market (Aranyaprathet)"
+
+msgid "สถานีรถไฟด่านพรมแดนบ้านคลองลึก"
+msgstr "Ban Khlong Luk Border Railway Station"
+
+msgid "สถานีขนส่งสระแก้ว"
+msgstr "Sa Kaeo Bus Terminal"
+
+# --- ภาคเหนือ ---
+msgid "เชียงใหม่"
+msgstr "Chiang Mai"
+
+msgid "สนามบินเชียงใหม่ (CNX)"
+msgstr "Chiang Mai Airport (CNX)"
+
+msgid "สถานีรถไฟเชียงใหม่"
+msgstr "Chiang Mai Railway Station"
+
+msgid "สถานีขนส่งอาเขต เชียงใหม่ 2"
+msgstr "Chiang Mai Arcade Bus Terminal 2"
+
+msgid "สถานีขนส่งอาเขต เชียงใหม่ 3"
+msgstr "Chiang Mai Arcade Bus Terminal 3"
+
+msgid "ประตูท่าแพ"
+msgstr "Tha Phae Gate"
+
+msgid "ถนนนิมมานเหมินท์"
+msgstr "Nimmanhemin Road"
+
+msgid "เชียงราย"
+msgstr "Chiang Rai"
+
+msgid "สนามบินแม่ฟ้าหลวง เชียงราย (CEI)"
+msgstr "Chiang Rai Airport (CEI)"
+
+msgid "สถานีขนส่งเชียงราย 1"
+msgstr "Chiang Rai Bus Terminal 1"
+
+msgid "หอนาฬิกาเชียงราย"
+msgstr "Chiang Rai Clock Tower"
+
+msgid "สิงห์ปาร์ค (ไร่บุญรอด)"
+msgstr "Singha Park"
+
+msgid "แม่ฮ่องสอน"
+msgstr "Mae Hong Son"
+
+msgid "สนามบินแม่ฮ่องสอน (HGN)"
+msgstr "Mae Hong Son Airport (HGN)"
+
+msgid "สนามบินปาย (PYY)"
+msgstr "Pai Airport (PYY)"
+
+msgid "ลำปาง"
+msgstr "Lampang"
+
+msgid "สนามบินลำปาง (LPT)"
+msgstr "Lampang Airport (LPT)"
+
+msgid "พิษณุโลก"
+msgstr "Phitsanulok"
+
+msgid "สนามบินพิษณุโลก (PHS)"
+msgstr "Phitsanulok Airport (PHS)"
+
+msgid "สถานีรถไฟพิษณุโลก"
+msgstr "Phitsanulok Railway Station"
+
+msgid "สถานีขนส่งพิษณุโลก 2"
+msgstr "Phitsanulok Bus Terminal 2"
+
+msgid "นครสวรรค์"
+msgstr "Nakhon Sawan"
+
+msgid "สถานีรถไฟนครสวรรค์"
+msgstr "Nakhon Sawan Railway Station"
+
+msgid "น่าน"
+msgstr "Nan"
+
+msgid "สนามบินน่านนคร (NNT)"
+msgstr "Nan Nakhon Airport (NNT)"
+
+msgid "ตาก"
+msgstr "Tak"
+
+msgid "สนามบินแม่สอด (MAQ)"
+msgstr "Mae Sot Airport (MAQ)"
+
+msgid "สุโขทัย"
+msgstr "Sukhothai"
+
+msgid "สนามบินสุโขทัย (THS)"
+msgstr "Sukhothai Airport (THS)"
+
+msgid "แพร่"
+msgstr "Phrae"
+
+msgid "สนามบินแพร่ (PRH)"
+msgstr "Phrae Airport (PRH)"
+
+msgid "สถานีขนส่งแพร่"
+msgstr "Phrae Bus Terminal"
+
+msgid "วัดพระธาตุช่อแฮ"
+msgstr "Wat Phra That Cho Hae"
+
+msgid "พะเยา"
+msgstr "Phayao"
+
+msgid "สถานีขนส่งพะเยา"
+msgstr "Phayao Bus Terminal"
+
+msgid "กว๊านพะเยา"
+msgstr "Kwan Phayao Lake"
+
+msgid "มหาวิทยาลัยพะเยา"
+msgstr "University of Phayao"
+
+msgid "อุตรดิตถ์"
+msgstr "Uttaradit"
+
+msgid "สถานีรถไฟอุตรดิตถ์"
+msgstr "Uttaradit Railway Station"
+
+msgid "สถานีขนส่งอุตรดิตถ์"
+msgstr "Uttaradit Bus Terminal"
+
+msgid "ลำพูน"
+msgstr "Lamphun"
+
+msgid "สถานีรถไฟลำพูน"
+msgstr "Lamphun Railway Station"
+
+msgid "วัดพระธาตุหริภุญชัย"
+msgstr "Wat Phra That Hariphunchai"
+
+msgid "นิคมอุตสาหกรรมภาคเหนือ (ลำพูน)"
+msgstr "Northern Region Industrial Estate"
+
+msgid "อุทัยธานี"
+msgstr "Uthai Thani"
+
+msgid "สถานีขนส่งอุทัยธานี"
+msgstr "Uthai Thani Bus Terminal"
+
+msgid "วัดท่าซุง (วิหารแก้ว)"
+msgstr "Wat Tha Sung (Crystal Temple)"
+
+msgid "กำแพงเพชร"
+msgstr "Kamphaeng Phet"
+
+msgid "สถานีขนส่งกำแพงเพชร"
+msgstr "Kamphaeng Phet Bus Terminal"
+
+msgid "อุทยานประวัติศาสตร์กำแพงเพชร"
+msgstr "Kamphaeng Phet Historical Park"
+
+msgid "พิจิตร"
+msgstr "Phichit"
+
+msgid "สถานีรถไฟพิจิตร"
+msgstr "Phichit Railway Station"
+
+msgid "วัดท่าหลวง (หลวงพ่อเพชร)"
+msgstr "Wat Tha Luang"
+
+msgid "เพชรบูรณ์"
+msgstr "Phetchabun"
+
+msgid "เขาค้อ (จุดชมวิว)"
+msgstr "Khao Kho (Viewpoint)"
+
+msgid "ภูทับเบิก"
+msgstr "Phu Thap Boek"
+
+msgid "สถานีขนส่งหล่มสัก"
+msgstr "Lom Sak Bus Terminal"
+
+# --- ภาคตะวันออกเฉียงเหนือ (Isan) ---
+msgid "นครราชสีมา"
+msgstr "Nakhon Ratchasima"
+
+msgid "สถานีรถไฟนครราชสีมา"
+msgstr "Nakhon Ratchasima Railway Station"
+
+msgid "สถานีขนส่งนครราชสีมา 2"
+msgstr "Nakhon Ratchasima Bus Terminal 2"
+
+msgid "เขาใหญ่ (ปากช่อง)"
+msgstr "Khao Yai (Pak Chong)"
+
+msgid "เซ็นทรัล โคราช"
+msgstr "Central Korat"
+
+msgid "ขอนแก่น"
+msgstr "Khon Kaen"
+
+msgid "สนามบินขอนแก่น (KKC)"
+msgstr "Khon Kaen Airport (KKC)"
+
+msgid "สถานีรถไฟขอนแก่น"
+msgstr "Khon Kaen Railway Station"
+
+msgid "สถานีขนส่งขอนแก่น 3"
+msgstr "Khon Kaen Bus Terminal 3"
+
+msgid "มหาวิทยาลัยขอนแก่น"
+msgstr "Khon Kaen University (KKU)"
+
+msgid "อุดรธานี"
+msgstr "Udon Thani"
+
+msgid "สนามบินอุดรธานี (UTH)"
+msgstr "Udon Thani Airport (UTH)"
+
+msgid "สถานีรถไฟอุดรธานี"
+msgstr "Udon Thani Railway Station"
+
+msgid "สถานีขนส่งอุดรธานี 1"
+msgstr "Udon Thani Bus Terminal 1"
+
+msgid "เซ็นทรัล อุดรธานี"
+msgstr "Central Udon Thani"
+
+msgid "อุบลราชธานี"
+msgstr "Ubon Ratchathani"
+
+msgid "สนามบินอุบลราชธานี (UBP)"
+msgstr "Ubon Ratchathani Airport (UBP)"
+
+msgid "สถานีรถไฟอุบลราชธานี"
+msgstr "Ubon Ratchathani Railway Station"
+
+msgid "สถานีขนส่งอุบลราชธานี"
+msgstr "Ubon Ratchathani Bus Terminal"
+
+msgid "บุรีรัมย์"
+msgstr "Buri Ram"
+
+msgid "สนามบินบุรีรัมย์ (BFV)"
+msgstr "Buri Ram Airport (BFV)"
+
+msgid "สถานีรถไฟบุรีรัมย์"
+msgstr "Buri Ram Railway Station"
+
+msgid "สุรินทร์"
+msgstr "Surin"
+
+msgid "สถานีรถไฟสุรินทร์"
+msgstr "Surin Railway Station"
+
+msgid "ศรีสะเกษ"
+msgstr "Si Sa Ket"
+
+msgid "สถานีรถไฟศรีสะเกษ"
+msgstr "Si Sa Ket Railway Station"
+
+msgid "หนองคาย"
+msgstr "Nong Khai"
+
+msgid "สถานีรถไฟหนองคาย"
+msgstr "Nong Khai Railway Station"
+
+msgid "เลย"
+msgstr "Loei"
+
+msgid "สนามบินเลย (LOE)"
+msgstr "Loei Airport (LOE)"
+
+msgid "สกลนคร"
+msgstr "Sakon Nakhon"
+
+msgid "สนามบินสกลนคร (SNO)"
+msgstr "Sakon Nakhon Airport (SNO)"
+
+msgid "นครพนม"
+msgstr "Nakhon Phanom"
+
+msgid "สนามบินนครพนม (KOP)"
+msgstr "Nakhon Phanom Airport (KOP)"
+
+msgid "ร้อยเอ็ด"
+msgstr "Roi Et"
+
+msgid "สนามบินร้อยเอ็ด (ROI)"
+msgstr "Roi Et Airport (ROI)"
+
+msgid "ยโสธร"
+msgstr "Yasothon"
+
+msgid "สถานีขนส่งยโสธร"
+msgstr "Yasothon Bus Terminal"
+
+msgid "วิมานพญาแถน (พญาคันคาก)"
+msgstr "Vimarn Phaya Tan (Toad Museum)"
+
+msgid "ชัยภูมิ"
+msgstr "Chaiyaphum"
+
+msgid "สถานีขนส่งชัยภูมิ"
+msgstr "Chaiyaphum Bus Terminal"
+
+msgid "อนุสาวรีย์พระยาแล"
+msgstr "Phaya Lae Monument"
+
+msgid "โรบินสัน ชัยภูมิ"
+msgstr "Robinson Chaiyaphum"
+
+msgid "อำนาจเจริญ"
+msgstr "Amnat Charoen"
+
+msgid "สถานีขนส่งอำนาจเจริญ"
+msgstr "Amnat Charoen Bus Terminal"
+
+msgid "หอนาฬิกาอำนาจเจริญ"
+msgstr "Amnat Charoen Clock Tower"
+
+msgid "บึงกาฬ"
+msgstr "Bueng Kan"
+
+msgid "สถานีขนส่งบึงกาฬ"
+msgstr "Bueng Kan Bus Terminal"
+
+msgid "ลานพญานาค (ริมโขง)"
+msgstr "Naga Monument (Mekong River)"
+
+msgid "หนองบัวลำภู"
+msgstr "Nong Bua Lam Phu"
+
+msgid "สถานีขนส่งหนองบัวลำภู"
+msgstr "Nong Bua Lam Phu Bus Terminal"
+
+msgid "ศาลสมเด็จพระนเรศวร"
+msgstr "Somdet Phra Naresuan Shrine"
+
+msgid "มหาสารคาม"
+msgstr "Maha Sarakham"
+
+msgid "สถานีขนส่งมหาสารคาม"
+msgstr "Maha Sarakham Bus Terminal"
+
+msgid "มหาวิทยาลัยมหาสารคาม (มมส)"
+msgstr "Mahasarakham University (MSU)"
+
+msgid "เสริมไทยคอมเพล็กซ์"
+msgstr "Sermthai Complex"
+
+msgid "กาฬสินธุ์"
+msgstr "Kalasin"
+
+msgid "สถานีขนส่งกาฬสินธุ์"
+msgstr "Kalasin Bus Terminal"
+
+msgid "พิพิธภัณฑ์สิรินธร (ไดโนเสาร์)"
+msgstr "Sirindhorn Museum (Dinosaur Park)"
+
+msgid "มุกดาหาร"
+msgstr "Mukdahan"
+
+msgid "สถานีขนส่งมุกดาหาร"
+msgstr "Mukdahan Bus Terminal"
+
+msgid "หอแก้วมุกดาหาร"
+msgstr "Ho Kaeo Mukdahan Tower"
+
+msgid "ตลาดอินโดจีน"
+msgstr "Indochina Market"
+
+msgid "สะพานมิตรภาพไทย-ลาว 2"
+msgstr "Thai-Lao Friendship Bridge 2"
+
+# --- ภาคใต้ ---
+msgid "ภูเก็ต"
+msgstr "Phuket"
+
+msgid "สนามบินภูเก็ต (HKT)"
+msgstr "Phuket Airport (HKT)"
+
+msgid "สถานีขนส่งภูเก็ต 2"
+msgstr "Phuket Bus Terminal 2"
+
+msgid "หาดป่าตอง"
+msgstr "Patong Beach"
+
+msgid "เมืองเก่าภูเก็ต"
+msgstr "Phuket Old Town"
+
+msgid "ท่าเรือรัษฎา (ภูเก็ต)"
+msgstr "Rassada Pier"
+
+msgid "สุราษฎร์ธานี"
+msgstr "Surat Thani"
+
+msgid "สนามบินสุราษฎร์ธานี (URT)"
+msgstr "Surat Thani Airport (URT)"
+
+msgid "สนามบินสมุย (USM)"
+msgstr "Samui Airport (USM)"
+
+msgid "สถานีรถไฟสุราษฎร์ธานี"
+msgstr "Surat Thani Railway Station"
+
+msgid "สถานีขนส่งสุราษฎร์ธานี"
+msgstr "Surat Thani Bus Terminal"
+
+msgid "ท่าเรือดอนสัก (สุราษฎร์ธานี)"
+msgstr "Donsak Pier"
+
+msgid "หาดเฉวง (สมุย)"
+msgstr "Chaweng Beach"
+
+msgid "สงขลา"
+msgstr "Songkhla"
+
+msgid "สนามบินหาดใหญ่ (HDY)"
+msgstr "Hat Yai Airport (HDY)"
+
+msgid "สถานีรถไฟชุมทางหาดใหญ่"
+msgstr "Hat Yai Junction Railway Station"
+
+msgid "สถานีขนส่งหาดใหญ่"
+msgstr "Hat Yai Bus Terminal"
+
+msgid "ตลาดกิมหยง"
+msgstr "Gimyong Market"
+
+msgid "กระบี่"
+msgstr "Krabi"
+
+msgid "สนามบินกระบี่ (KBV)"
+msgstr "Krabi Airport (KBV)"
+
+msgid "สถานีขนส่งกระบี่"
+msgstr "Krabi Bus Terminal"
+
+msgid "อ่าวนาง"
+msgstr "Ao Nang"
+
+msgid "นครศรีธรรมราช"
+msgstr "Nakhon Si Thammarat"
+
+msgid "สนามบินนครศรีธรรมราช (NST)"
+msgstr "Nakhon Si Thammarat Airport (NST)"
+
+msgid "สถานีรถไฟนครศรีธรรมราช"
+msgstr "Nakhon Si Thammarat Railway Station"
+
+msgid "ตรัง"
+msgstr "Trang"
+
+msgid "สนามบินตรัง (TST)"
+msgstr "Trang Airport (TST)"
+
+msgid "สถานีรถไฟตรัง"
+msgstr "Trang Railway Station"
+
+msgid "ชุมพร"
+msgstr "Chumphon"
+
+msgid "สนามบินชุมพร (CJM)"
+msgstr "Chumphon Airport (CJM)"
+
+msgid "สถานีรถไฟชุมพร"
+msgstr "Chumphon Railway Station"
+
+msgid "ระนอง"
+msgstr "Ranong"
+
+msgid "สนามบินระนอง (UNN)"
+msgstr "Ranong Airport (UNN)"
+
+msgid "พังงา"
+msgstr "Phangnga"
+
+msgid "เขาหลัก"
+msgstr "Khao Lak"
+
+msgid "นราธิวาส"
+msgstr "Narathiwat"
+
+msgid "สนามบินนราธิวาส (NAW)"
+msgstr "Narathiwat Airport (NAW)"
+
+msgid "ยะลา"
+msgstr "Yala"
+
+msgid "สนามบินเบตง (BTZ)"
+msgstr "Betong Airport (BTZ)"
+
+msgid "สถานีรถไฟยะลา"
+msgstr "Yala Railway Station"
+
+msgid "สตูล"
+msgstr "Satun"
+
+msgid "ท่าเรือปากบารา (สตูล)"
+msgstr "Pak Bara Pier"
+
+msgid "พัทลุง"
+msgstr "Phatthalung"
+
+msgid "สถานีรถไฟพัทลุง"
+msgstr "Phatthalung Railway Station"
+
+msgid "ปัตตานี"
+msgstr "Pattani"
+
+msgid "มัสยิดกลางปัตตานี"
+msgstr "Pattani Central Mosque"
+
+msgid "ให้คะแนนความพึงพอใจ"
+msgstr "Rate your satisfaction"
+
+msgid "ให้คะแนนรถ"
+msgstr "Rate this car"
+
+msgid "ความคิดเห็นเพิ่มเติม"
+msgstr "Additional comments"
+
+msgid "รวมเช่า"
+msgstr "Total Rentals"
+
+msgid "ราคาสุทธิ"
+msgstr "Net Price"
+
+msgid "มี"
+msgstr "Have"
+
+msgid "แตะเพื่อคัดลอก"
+msgstr "Tap to copy"
+
+msgid "ส่งคำขอจองสำเร็จ!"
+msgstr "Booking Request Submitted Successfully!"
+
+msgid "เราได้รับข้อมูลการจองของคุณเรียบร้อยแล้ว (ยังไม่มีการเรียกเก็บค่าใช้จ่ายในขั้นตอนนี้)"
+msgstr "We have received your booking details. (No charges are applied at this stage.)"
+
+msgid "กรุณานำเลขที่การจองไปตรวจสอบสถานะการจอง"
+msgstr "Please use your booking reference number to check your booking status"
+
+msgid "ได้ที่หน้า \"ตรวจสอบสถานะการจอง\" เพื่อดำเนินการต่อ"
+msgstr "at the \"Check Booking Status\" page to proceed."

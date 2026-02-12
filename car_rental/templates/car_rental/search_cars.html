@@ -714,28 +714,40 @@
             }
         });
 
-        // --- ส่วน Datepicker / Flatpickr (เหมือนเดิม) ---
-        const now = new Date();
-        const pickupDate = new Date(now);
-        pickupDate.setDate(now.getDate() + 1);
-        
-        if (pickupDate.getMinutes() < 30) {
-            pickupDate.setMinutes(30);
-        } else {
-            pickupDate.setHours(pickupDate.getHours() + 1);
-            pickupDate.setMinutes(0);
-        }
+        // --- ส่วน Datepicker / Flatpickr (แก้ไขใหม่ให้เหมือนหน้า Home) ---
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-        flatpickr("#datepicker-start", { 
-            dateFormat: "d/m/Y", 
-            defaultDate: "{{ start_date|default:'' }}",
-            minDate: "today"
-        });
-        
-        flatpickr("#datepicker-end", { 
+        // 1. ตั้งค่า Flatpickr สำหรับวันคืนรถก่อน (เพื่อเก็บ instance ไว้ใช้)
+        const endPicker = flatpickr("#datepicker-end", { 
             dateFormat: "d/m/Y", 
             defaultDate: "{{ end_date|default:'' }}",
             minDate: "{{ start_date|default:'today' }}" 
+        });
+
+        // 2. ตั้งค่า Flatpickr สำหรับวันรับรถ และดักจับ Event onChange
+        const startPicker = flatpickr("#datepicker-start", { 
+            dateFormat: "d/m/Y", 
+            defaultDate: "{{ start_date|default:'' }}",
+            minDate: today, // ห้ามเลือกย้อนหลังกว่าวันนี้
+
+            onChange: function(selectedDates) {
+                if (!selectedDates.length) return;
+
+                const startDate = selectedDates[0];
+
+                // สร้างตัวแปร minDropoff ให้เท่ากับ วันรับรถ + 1 วัน
+                const minDropoff = new Date(startDate);
+                minDropoff.setDate(startDate.getDate() + 1);
+
+                // อัปเดตเงื่อนไขของ endPicker (วันคืนรถ) ไม่ให้เลือกน้อยกว่า minDropoff
+                endPicker.set("minDate", minDropoff);
+
+                // เช็คว่าถ้าวันคืนรถที่เลือกไว้มันเก่ากว่า minDropoff ให้เด้งไปวัน minDropoff อัตโนมัติ
+                if (!endPicker.selectedDates.length || endPicker.selectedDates[0] < minDropoff) {
+                    endPicker.setDate(minDropoff, true);
+                }
+            }
         });
         
         flatpickr("#timepicker-start", { 

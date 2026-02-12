@@ -8,7 +8,7 @@ urlpatterns = [
     
     # Flow การจ่ายเงิน
     path('payment/<int:booking_id>/', views.payment_page, name='payment_page'), # แก้ชื่อ view ให้ตรงกับที่ย้ายมา
-    path('payment/process/<int:booking_id>/', views.process_payment, name='process_payment'),
+   
     
     # หลังจองเสร็จ / ประวัติ / จัดการ
     path('success/<int:booking_id>/', views.booking_success, name='booking_success'),

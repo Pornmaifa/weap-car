@@ -1,5 +1,6 @@
 {% load static %}
-{% load i18n %} {% block content %}
+{% load i18n %} 
+{% block content %}
 {% include 'car_rental/navbar_detail.html' %}
 
 <div class="min-h-screen font-sarabun pt-24 pb-12 bg-gray-50 flex items-center justify-center">
@@ -11,10 +12,21 @@
             </svg>
         </div>
 
-        <h2 class="text-3xl font-bold text-gray-800 mb-2">{% trans "จองสำเร็จ!" %}</h2>
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">
+            {% if request.user.is_authenticated %}
+                {% trans "จองสำเร็จ!" %}
+            {% else %}
+                {% trans "ส่งคำขอจองสำเร็จ!" %}
+            {% endif %}
+        </h2>
+        
         <p class="text-gray-600 mb-8">
             {% trans "ขอบคุณที่ใช้บริการ WarpCar" %}<br>
-            {% trans "เราได้รับข้อมูลการจองและการชำระเงินมัดจำเรียบร้อยแล้ว" %}
+            {% if request.user.is_authenticated %}
+                {% trans "เราได้รับข้อมูลการจองและการชำระเงินมัดจำเรียบร้อยแล้ว" %}
+            {% else %}
+                {% trans "เราได้รับข้อมูลการจองของคุณเรียบร้อยแล้ว (ยังไม่มีการเรียกเก็บค่าใช้จ่ายในขั้นตอนนี้)" %}
+            {% endif %}
         </p>
 
         <div class="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-6">
@@ -26,7 +38,15 @@
 
         <div class="bg-blue-50 p-4 rounded-lg mb-8 text-sm text-blue-800">
             <p class="font-bold mb-1">{% trans "สิ่งที่ต้องทำต่อไป:" %}</p>
-            <p>{% trans "กรุณานำ \"ใบขับขี่\" และ \"บัตรประชาชน\" ตัวจริง" %}<br>{% trans "มายื่นในวันรับรถเพื่อชำระยอดคงเหลือ" %}</p>
+            <p>
+                {% if request.user.is_authenticated %}
+                    {% trans "กรุณานำ \"ใบขับขี่\" และ \"บัตรประชาชน\" ตัวจริง" %}<br>
+                    {% trans "มายื่นในวันรับรถเพื่อชำระยอดคงเหลือ" %}
+                {% else %}
+                    {% trans "กรุณานำเลขที่การจองไปตรวจสอบสถานะการจอง" %}<br>
+                    {% trans "ได้ที่หน้า \"ตรวจสอบสถานะการจอง\" เพื่อดำเนินการต่อ" %}
+                {% endif %}
+            </p>
         </div>
 
         <a href="/" class="block w-full bg-[#48a9b9] hover:bg-[#3ba0b0] text-white text-xl font-bold py-3 rounded-lg shadow-md transition">

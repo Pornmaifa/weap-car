@@ -403,62 +403,7 @@ def payment_page(request, booking_id):
     
     return render(request, 'booking/payment.html', context)
 
-def process_payment(request, booking_id): # 1. เปลี่ยนจาก car_id เป็น booking_id
-    # 2. ดึงข้อมูลการจองที่มีอยู่แล้วใน Database (ไม่ต้องดึงจาก Session)
-    booking = get_object_or_404(Booking, id=booking_id)
 
-    # Security Check: เช็คว่าเป็นคนจองจริงๆ และสถานะต้องเป็น 'approved' (รอจ่าย)
-    if request.user.is_authenticated:
-        if booking.user != request.user:
-            messages.error(request, "คุณไม่มีสิทธิ์ชำระเงินรายการนี้")
-            return redirect('booking_history')
-    else:
-        if booking.user is not None:
-            return redirect('car_list')
-    
-    # อนุญาตให้จ่ายถ้ารอจ่าย (approved) หรือ จ่ายไปแล้ว (confirmed - เผื่อกดซ้ำ)
-    if booking.status not in ['approved', 'waiting_payment', 'confirmed']: 
-        messages.error(request, "สถานะการจองไม่ถูกต้อง")
-        return redirect('booking_history')
-
-    if request.method == 'POST':
-        #payment_method = request.POST.get('payment_method') # รับค่าว่าจ่ายผ่านอะไร (Credit/QR)
-
-        # ---------------------------------------------------------
-        # (จำลองการตัดเงินสำเร็จ)
-        # ถ้ามีระบบตัดบัตรจริง (Omise/Stripe) จะใส่ Logic ตรงนี้
-        # ---------------------------------------------------------
-
-        # 3. เปลี่ยนสถานะเป็น "จองสำเร็จ" (Confirmed)
-        booking.status = 'confirmed'
-        
-        # (Optional) ถ้าจะบันทึกว่าจ่ายด้วยวิธีไหน
-        # booking.payment_method = payment_method 
-        
-        booking.save()
-
-        #  แจ้งเตือนลูกค้าว่าจองสำเร็จแล้ว
-        if booking.user and hasattr(booking.user, 'profile') and booking.user.profile.line_id:
-            msg = (
-                f"🎉 การชำระเงินสำเร็จ!\n"
-                f"ยืนยันการจอง: {booking.booking_ref}\n"
-                f"วันที่รับรถ: {booking.pickup_datetime.strftime('%d/%m/%Y %H:%M')}\n"
-                f"สถานที่: {booking.location}\n"
-                f"ขอบคุณที่ใช้บริการครับ"
-            )
-            send_line_push(booking.user.profile.line_id, msg)
-
-        # 4. แจ้งเตือนและกลับไปหน้าประวัติ
-        messages.success(request, f"ชำระเงินสำเร็จ! การจองรถ {booking.car.brand} ของคุณได้รับการยืนยันแล้ว")
-        if request.user.is_authenticated:
-            # สมาชิก -> ไปหน้าประวัติ
-            return redirect('booking_history')
-        else:
-            # Guest -> ไปหน้า Success (เพื่อดู Ref Code / ใบเสร็จ)
-            return redirect('booking_success', booking_id=booking.id)
-
-    # ถ้าไม่ใช่ POST ให้กลับไปหน้าเลือกวิธีชำระเงิน
-    return redirect('payment_page', booking_id=booking.id)
 
 def booking_success(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
@@ -489,23 +434,41 @@ def manage_booking(request):
         email_or_phone = request.POST.get('email_or_phone', '').strip()
 
         try:
-            # 🔍 ค้นหา Booking ที่ตรงกับรหัส AND (อีเมล OR เบอร์โทร)
-            # เราใช้ Q object เพื่อช่วยทำเงื่อนไข OR (ต้อง import Q ข้างบนก่อนนะครับ)
             from django.db.models import Q
             
             booking = Booking.objects.get(
                 Q(guest__email=email_or_phone) | Q(guest__phone_number=email_or_phone),
                 booking_ref=ref_code
             )
+
+            # 1. ดึงค่าเช่าตั้งต้น (จาก booking)
+            # 1. ดึงค่าเช่า "รายวัน" จากโมเดล Car โดยตรง
+            rental_price = float(booking.car.price_per_day)
             
-            # ถ้าเจอ -> ส่งไปหน้ารายละเอียด (หรือจะแสดงหน้านี้เลยก็ได้)
+            # 4. คำนวณมัดจำจอง 15% (คิดจากค่าเช่ารายวันตัวนี้)
+            deposit_to_pay = rental_price * 0.15
+            
+            # 5. ค่าเช่าส่วนที่เหลือ (ค่าเช่ารายวัน - มัดจำที่จ่ายไป)
+            remaining_rental = rental_price - deposit_to_pay
+            
+            # 6. ดึงค่ามัดจำรถ (เงินประกันที่จะคืนทีหลัง) จากโมเดล Car
+            car_security_deposit = float(booking.car.deposit) if hasattr(booking.car, 'deposit') and booking.car.deposit else 0.0
+            
+            # 7. ยอดที่ต้องจ่ายหน้างาน = (ค่าเช่าส่วนที่เหลือ) + (ค่ามัดจำรถ)
+            pay_on_arrival = remaining_rental + car_security_deposit
+            
+            # ======== นำค่าที่คำนวณไปยัดใส่ Object ========
+            booking.deposit_amount = deposit_to_pay
+            booking.remaining_balance = pay_on_arrival
+            # ===============================================
+            
+            # ส่งไปหน้ารายละเอียด
             return render(request, 'booking/booking_detail.html', {'booking': booking})
 
         except Booking.DoesNotExist:
             # ถ้าไม่เจอ -> แจ้งเตือน
             error_message = "ไม่พบข้อมูลการจอง หรือข้อมูลยืนยันตัวตนไม่ถูกต้อง"
             return render(request, 'booking/manage_booking.html', {'error': error_message})
-
     # ถ้าเป็น GET (เปิดหน้าเว็บเฉยๆ)
     return render(request, 'booking/manage_booking.html')
 
@@ -557,7 +520,7 @@ def update_booking_status(request, booking_id, action):
             msg = (
                 f"✅ การจอง {booking.booking_ref} ได้รับการอนุมัติแล้ว!\n"
                 f"รถ: {booking.car.brand} {booking.car.model}\n"
-                f"กรุณาชำระเงินมัดจำเพื่อยืนยันการจองครับ"
+                f"กรุณาชำระเงินมัดจำเพื่อยืนยันการจอง"
             )
             send_line_push(booking.user.profile.line_id, msg)
 
@@ -567,7 +530,7 @@ def update_booking_status(request, booking_id, action):
         messages.warning(request, f"ปฏิเสธการจอง {booking.booking_ref} แล้ว")
         #  แจ้งเตือนลูกค้าว่าถูกปฏิเสธ
         if booking.user and hasattr(booking.user, 'profile') and booking.user.profile.line_id:
-            msg = f"❌ ขออภัย การจอง {booking.booking_ref} ไม่ได้รับการอนุมัติจากเจ้าของรถครับ"
+            msg = f"❌ ขออภัย การจอง {booking.booking_ref} ไม่ได้รับการอนุมัติจากเจ้าของรถ"
             send_line_push(booking.user.profile.line_id, msg)
 
     # 3. กรณีเจ้าของกด "รับรถแล้ว" (ปกติจะผ่านหน้า Inspection มา แต่เผื่อไว้)
@@ -619,9 +582,6 @@ def inspection_page(request, booking_id):
         'form': form,
         'existing_inspections': existing_inspections
     })
-
-
-
 
 
 # 1. ฟังก์ชันลูกค้ารีวิวรถ
