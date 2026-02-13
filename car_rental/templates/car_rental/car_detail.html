@@ -208,10 +208,24 @@
 
                 
                     <div class="mt-6">
-                        <a href="{% url 'user_info' car.id %}?pickup_datetime={{ pickup_datetime|date:'c' }}&dropoff_datetime={{ dropoff_datetime|date:'c' }}&location={{ location|urlencode }}"
-                        class="block w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-lg shadow-lg transition transform hover:-translate-y-1 text-center text-xl">
-                            {% trans "จอง" %} {{ total_price|intcomma }} THB
-                        </a>
+                        {% if user.is_superuser %}
+                            <div class="bg-gray-100 p-4 rounded-lg text-center border border-gray-300">
+                                <div class="mb-2">
+                                    <i class="fas fa-user-shield text-3xl text-gray-400"></i>
+                                </div>
+                                <p class="text-gray-700 font-bold text-sm">{% trans "โหมดผู้ดูแลระบบ" %}</p>
+                                <p class="text-xs text-gray-500 mt-1">
+                                    {% trans "คุณกำลังดูหน้านี้ในฐานะ Admin" %}<br>
+                                    {% trans "(ไม่สามารถทำรายการเช่าได้)" %}
+                                </p>
+                            </div>
+
+                        {% else %}
+                            <a href="{% url 'user_info' car.id %}?pickup_datetime={{ pickup_datetime|date:'c' }}&dropoff_datetime={{ dropoff_datetime|date:'c' }}&location={{ location|urlencode }}"
+                            class="block w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-lg shadow-lg transition transform hover:-translate-y-1 text-center text-xl">
+                                {% trans "จอง" %} {{ total_price|intcomma }} THB
+                            </a>
+                        {% endif %}
                     </div>
 
                 </div>

@@ -177,11 +177,11 @@
                         <div class="flex justify-between items-center border-b pb-2 mb-3">
                             <h4 class="text-gray-800 font-bold"><i class="fas fa-user mr-2 text-gray-400"></i>{% trans "ผู้เช่า" %}</h4>
                             
-                            {% if booking.user %}
+                            
                             <a id="modal_profile_link" href="#" target="_blank" class="hidden text-xs bg-white border border-[#47B3C4] text-[#47B3C4] px-2 py-1 rounded hover:bg-[#47B3C4] hover:text-white transition shadow-sm">
                                 <i class="fas fa-star mr-1"></i> {% trans "ดูรีวิวลูกค้า" %}
                             </a>
-                            {% endif %}
+                            
                         </div>
                         <p class="text-sm">{% trans "ชื่อ:" %} <span id="modal_name" class="font-medium"></span></p>
                         <p class="text-sm mt-1">{% trans "เบอร์:" %} <span id="modal_phone" class="font-medium"></span></p>
@@ -264,7 +264,9 @@
                         profileLink.classList.remove('hidden');
                         profileLink.style.display = 'inline-flex';
                     } else {
+                        profileLink.href = '#';
                         profileLink.classList.add('hidden');
+                        profileLink.style.display = 'none';// เพื่อบังคับซ่อนทันที
                     }
                 }
 

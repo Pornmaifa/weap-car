@@ -122,7 +122,10 @@
                 {% for u in all_users %}
                 <tr class="hover:bg-gray-50 group">
                     <td class="p-3">
-                        <span class="font-bold text-[#17a2b8]">{{ u.username }}</span><br>
+                        <a href="{% url 'public_profile' u.id %}" target="_blank" class="font-bold text-[#17a2b8] hover:underline flex items-center gap-2">
+                            {{ u.username }} 
+                            <i class="fas fa-external-link-alt text-[10px] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </a>
                         <span class="text-xs text-gray-400">{{ u.email }}</span>
                     </td>
                     <td class="p-3">{{ u.first_name }} {{ u.last_name }}</td>
@@ -180,6 +183,10 @@
                         {% else %}
                             <span class="text-gray-400 italic">ระบบ (WarpCar)</span>
                         {% endif %}
+                        <a href="{% url 'car_detail' c.id %}" target="_blank" class="font-bold text-gray-800 hover:text-[#17a2b8] hover:underline flex items-center gap-2">
+                            {{ c.brand }} {{ c.model }}
+                            <i class="fas fa-eye text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </a>
                     </td>
                     <td class="p-3">{{ c.price_per_day|intcomma }}</td>
                     <td class="p-3">
