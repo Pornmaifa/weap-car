@@ -1,11 +1,7 @@
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
-
-# Import Models ของคุณ
 from car_rental.models import Booking, Profile
-
-# 👇 จุดสำคัญ! ต้อง import จาก 'linebot' (Library) เท่านั้น ห้ามใช้ line_app
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage

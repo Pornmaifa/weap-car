@@ -270,7 +270,7 @@
                     }
                 }
 
-                // 2. ข้อมูลรถ
+                // ข้อมูลรถ
                 document.getElementById('modal_car').innerText = d.car || '-';
                 document.getElementById('modal_plate').innerText = d.plate || '-';
                 
@@ -278,7 +278,7 @@
                 document.getElementById('modal_dropoff').innerText = d.dropoff || '-';
                 document.getElementById('modal_location').innerText = d.location || '-'; 
 
-                // 3. คำนวณเงิน
+                // คำนวณเงิน
                 const pricePerDay = parseFloat(d.pricePerDay || 0);
                 const days = parseInt(d.days || 0);
                 const discount = parseFloat(d.discount || 0);
@@ -309,7 +309,7 @@
                 if(document.getElementById('modal_deposit')) document.getElementById('modal_deposit').innerText = '+' + fmt(deposit);
                 if(document.getElementById('modal_net')) document.getElementById('modal_net').innerText = fmt(ownerRevenue);
 
-                // 5. จัดการปุ่มอนุมัติ
+                //จัดการปุ่มอนุมัติ
                 const actionDiv = document.getElementById('modal_actions');
                 if (d.status === 'pending') {
                     actionDiv.classList.remove('hidden');

@@ -117,7 +117,7 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Modal Logic
+            
             const openModalBtn = document.getElementById('open-password-modal');
             const closeModalBtn = document.getElementById('close-password-modal');
             const modal = document.getElementById('password-modal');
@@ -126,7 +126,7 @@
             if(closeModalBtn) closeModalBtn.addEventListener('click', () => { modal.classList.add('hidden'); });
             window.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
 
-            // Edit Profile Logic
+            
             const editBtn = document.getElementById("edit-button");
             const cancelBtn = document.getElementById("cancel-button");
             const saveBtn = document.getElementById("save-button");

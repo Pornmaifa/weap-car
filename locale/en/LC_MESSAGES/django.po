@@ -2359,5 +2359,6 @@ msgstr "Reject"
 msgid "กฎข้อห้าม / เงื่อนไข"
 msgstr "Rules / Conditions"
 
-msgid "หักค่าธรรมเนียมระบบ"
-msgstr "Platform Fee Deduction"
+msgid "รวม"
+msgstr "A total of"
+

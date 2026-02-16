@@ -263,7 +263,7 @@
 
 {% block extra_js %}
 <script>
-    // ฟังก์ชันเปิด-ปิด Modal แบบบ้านๆ (ไม่ต้องพึ่ง Library)
+    // ฟังก์ชันเปิด-ปิด 
     function openModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) {
@@ -278,17 +278,17 @@
         if (modal) {
             modal.classList.add('hidden');
             // คืนค่า scroll พื้นหลัง
-            document.body.style.overflow = 'auto';
+            document.body.style.overflow = 'auto'; // 2. คืนค่าให้หน้าเว็บไถขึ้นลงได้ตามปกติ
         }
     }
 
     // ปิด Modal เมื่อกดปุ่ม ESC
     document.addEventListener('keydown', function(event) {
-        if (event.key === "Escape") {
+        if (event.key === "Escape") { // ถ้าผู้ใช้กดปุ่ม Esc บนคีย์บอร์ด
             const modals = document.querySelectorAll('[id^="modal-"]');
             modals.forEach(modal => {
                 if (!modal.classList.contains('hidden')) {
-                    modal.classList.add('hidden');
+                    modal.classList.add('hidden'); // สั่งซ่อนให้หมด
                     document.body.style.overflow = 'auto';
                 }
             });

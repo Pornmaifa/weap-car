@@ -3,7 +3,6 @@ import json
 import base64
 import uuid
 from datetime import datetime, timedelta
-
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -11,10 +10,11 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.db.models import Count, Sum, Q, Value, DecimalField
 from django.db.models.functions import Coalesce, ExtractYear, TruncMonth
-from django.utils import timezone # ✅ ใช้ตัวนี้ตัวเดียวเพื่อจัดการเวลา
-
+from django.utils import timezone 
 from .models import Booking, Car, CarImage, Promotion, RenterReply, RenterReview, Review, ReviewReply
 from car_rental.utils import build_rental_context
+
+#หน้าสรุปก่อนลงประกาศรถ
 @login_required
 def add_car_preview(request):
     draft = request.session.get('car_draft')
@@ -28,12 +28,22 @@ def add_car_preview(request):
 
 @login_required
 def dashboard(request):
-    
+
     # --- จัดการ POST (ลบ/แก้ไข รถ) ---
     if request.method == "POST":
         if 'delete_car_id' in request.POST:
             car_id = request.POST.get("delete_car_id")
             car = get_object_or_404(Car, id=car_id, owner=request.user)
+            # เช็คว่ามี Booking ที่ยังดำเนินการไม่เสร็จสิ้นหรือไม่
+            has_active_bookings = Booking.objects.filter(
+                car=car,
+                status__in=['pending', 'approved', 'waiting_payment', 'confirmed', 'picked_up']
+            ).exists()
+
+            if has_active_bookings:
+                # ถ้ามีคนเช่าอยู่ หรือมีคิวจอง ห้ามลบ
+                messages.error(request, '❌ ไม่สามารถลบรถได้ เนื่องจากมีการจองค้างอยู่ในระบบ')
+                return redirect("dashboard")
             car.delete()
             messages.success(request, 'ลบรถเรียบร้อยแล้ว')
             return redirect("dashboard")
@@ -47,56 +57,56 @@ def dashboard(request):
             car.license_plate = request.POST.get('license_plate')
             car.price_per_day = request.POST.get('price')
             car.description = request.POST.get('description')
-
             new_status = request.POST.get('status')
 
+            # เช็คว่ามี Booking ค้างอยู่ไหม
+            has_active_bookings = Booking.objects.filter(
+                car=car,
+                status__in=['approved', 'waiting_payment', 'confirmed', 'picked_up']
+            ).exists()
+
             if car.status == 'REJECTED':
-                # กรณี 1: ถ้ารถเคยโดนปฏิเสธ -> บังคับเปลี่ยนเป็น "รอตรวจสอบ" เท่านั้น
+                # ถ้ารถเคยโดนปฏิเสธ บังคับเปลี่ยนเป็น รอตรวจสอบ
                 car.status = 'PENDING'
-                # (Optional) ล้างเหตุผลการปฏิเสธเดิมออก (ถ้ามี field นี้)
+
                 if hasattr(car, 'rejection_reason'):
                     car.rejection_reason = ""
                 messages.info(request, 'ส่งข้อมูลรถเพื่อรอการตรวจสอบใหม่อีกครั้ง')
 
             elif car.status == 'PENDING':
-                # กรณี 2: ถ้ารอตรวจสอบอยู่ -> ห้ามเปลี่ยนสถานะ (คงค่าเดิมไว้)
+                # ถ้ารอตรวจสอบอยู่ 
                 car.status = 'PENDING'
 
             else:
-                # กรณี 3: รถปกติ (AVAILABLE / MAINTENANCE) -> ยอมให้เจ้าของกดเปลี่ยนสถานะเองได้
-                if new_status in ['AVAILABLE', 'MAINTENANCE']:
-                    car.status = new_status
+                if has_active_bookings:
+                    pass 
+                else:
+                    # ถ้ารถว่าง
+                    if new_status in ['AVAILABLE', 'MAINTENANCE']:
+                        car.status = new_status
 
-            # --- 🟢 (ใหม่) รับค่ามัดจำและกฎ ---
+            #  รับค่ามัดจำ
             deposit_val = request.POST.get('deposit')
             car.deposit = deposit_val if deposit_val else 0  # ถ้าช่องว่างให้เป็น 0
             car.rules = request.POST.get('rules')
+            car.save()
 
-            car.save() # บันทึกข้อมูลรถก่อน
-            # --- 🟢 (ใหม่) จัดการรูปภาพ ---
-            
-            # A. ลบรูปเก่า (Delete Images)
+            # จัดการรูปภาพ 
             # รับ list ของ ID รูปที่ต้องการลบ
             delete_ids = request.POST.getlist('delete_images') 
             if delete_ids:
-                # ลบเฉพาะรูปที่เป็นของรถคันนี้จริงๆ (เพื่อความปลอดภัย)
                 CarImage.objects.filter(id__in=delete_ids, car=car).delete()
-
-            # B. เพิ่มรูปใหม่ (Add New Images)
-            # รับไฟล์หลายรูปจาก input name="new_images"
+            # รับไฟล์หลายรูป
             new_images = request.FILES.getlist('new_images') 
             for img_file in new_images:
                 CarImage.objects.create(car=car, image=img_file)
             messages.success(request, 'แก้ไขข้อมูลรถเรียบร้อยแล้ว')
             return redirect("dashboard")
         
-    # --- ส่วน GET ดึงข้อมูล ---
+    # ส่วน GET ดึงข้อมูล 
     user = request.user    
     now = timezone.now()
     
-    # =========================================================
-    # 🧹 1. (เพิ่มใหม่ตรงนี้) กวาดล้างรายการหมดอายุ (Auto Expire Check)
-    # =========================================================
     # หา Booking ของรถเรา ที่สถานะยังรอเงินอยู่
     pending_bookings = Booking.objects.filter(
         car__owner=user,
@@ -104,9 +114,8 @@ def dashboard(request):
     )
 
     for booking in pending_bookings:
-        # เช็คว่ามี Payment record และมี expire_at ไหม
+        # เช็คว่ามี Payment   
         if hasattr(booking, 'payment') and booking.payment.expire_at:
-            # ถ้าเวลาปัจจุบัน เลยเวลาหมดอายุแล้ว
             if now > booking.payment.expire_at:
                 # 1. ยกเลิก Booking
                 booking.status = 'cancelled'
@@ -115,11 +124,9 @@ def dashboard(request):
                 # 2. ปรับสถานะ Payment เป็น EXPIRED
                 booking.payment.payment_status = 'EXPIRED'
                 booking.payment.save()
-                
-                # (Optional) Print log เพื่อดูใน Terminal ว่ามีการยกเลิกจริงไหม
                 print(f"✅ Auto-cancelled booking {booking.id} due to expiry.")
 
-    # 1. ข้อมูลรถ
+    # ข้อมูลรถ
     my_cars = Car.objects.filter(owner=user).annotate(
         booking_count=Count('booking', filter=Q(booking__status__in=['confirmed', 'picked_up', 'completed'])),
         total_income=Coalesce(
@@ -133,14 +140,27 @@ def dashboard(request):
         )
     ).order_by('-id')
 
-    # 2. ข้อมูล Card สรุปยอด (นับรวมทั้งหมด)
+    # ข้อมูล Card สรุปยอด (นับรวมทั้งหมด)
     total_cars = my_cars.count()
+
+    # ดึง Booking
+    all_finished_bookings = Booking.objects.filter(
+        car__owner=user, 
+        status__in=['confirmed', 'picked_up', 'completed']
+    )
+
     total_bookings = Booking.objects.filter(car__owner=user).count()
     total_revenue = sum(c.total_income for c in my_cars)
     
-    # 3. ข้อมูลกราฟ (กรองตามปี)
-    
-    # 3.1 หาปีที่มีข้อมูลทั้งหมด
+    # คำนวณจำนวนวันรวมทั้งหมด 
+    total_days_booked = 0
+    for b in all_finished_bookings:
+        delta = b.dropoff_datetime - b.pickup_datetime
+        days = delta.days
+        if days < 1: days = 1 # ขั้นต่ำ 1 วัน
+        total_days_booked += days
+
+    #  ข้อมูลกราฟ (กรองตามปี)
     all_booking_dates = Booking.objects.filter(
         car__owner=user,
         pickup_datetime__isnull=False
@@ -150,20 +170,16 @@ def dashboard(request):
     found_years = set()
     for dt in all_booking_dates:
         if dt:
-            # ตรวจสอบว่าเป็น datetime หรือ date object
             if hasattr(dt, 'year'):
                 found_years.add(dt.year)
     
     # เรียงลำดับจากปีล่าสุดไปหาปีเก่า
     available_years = sorted(list(found_years), reverse=True)
-    
-    # ถ้าหาไม่เจอเลย ให้ใช้ปีปัจจุบันเป็นค่าเริ่มต้น
     if not available_years:
         available_years = [now.year]
 
-    # 3.2 ดูว่า User เลือกปีไหน
+    #ดูว่า User เลือกปีไหน
     selected_year = request.GET.get('year')
-    
     if selected_year:
         try:
             selected_year = int(selected_year)
@@ -172,16 +188,15 @@ def dashboard(request):
     else:
         selected_year = available_years[0]
 
-    # ✅ Safety Check: ป้องกัน Error NoneType + int
     if selected_year is None:
         selected_year = now.year
 
-    # 3.3 สร้างแกน X (เดือน 1-12)
+    # สร้างแกน X (เดือน 1-12)
     month_keys = []
     for m in range(1, 13):
         month_keys.append((selected_year, m))
 
-    # 3.4 ดึง Booking เฉพาะปีที่เลือก
+    #  ดึง Booking เฉพาะปีที่เลือก
     raw_bookings = Booking.objects.filter(
         car__owner=user, 
         status__in=['confirmed', 'picked_up', 'completed'],
@@ -217,7 +232,7 @@ def dashboard(request):
     for i, c_type in enumerate(sorted_types):
         color_map[c_type] = theme_colors[i % len(theme_colors)]
 
-    # --- สร้าง Datasets ---
+    # สร้าง Datasets 
     line_chart_data = []
     for c_type in sorted_types:
         type_counts_map = {}
@@ -238,7 +253,7 @@ def dashboard(request):
             'tension': 0.4
         })
 
-    stacked_revenue_datasets = []
+    stacked_revenue_datasets = [] # กราฟแท่ง (รายได้)
     for c_type in sorted_types:
         income_data = type_monthly_income.get(c_type, {})
         data_points = [income_data.get(k, 0) for k in month_keys]
@@ -249,7 +264,7 @@ def dashboard(request):
             'stack': 'Stack 0',
         })
         
-    pie_labels = sorted_types
+    pie_labels = sorted_types # กราฟวงกลม
     pie_data = []
     pie_colors = []
     for c_type in sorted_types:
@@ -257,7 +272,7 @@ def dashboard(request):
         pie_data.append(total_type_income)
         pie_colors.append(color_map[c_type])
 
-    # 5. ระบบแนะนำ
+    #ระบบแนะนำ
     recommendations = []
     if total_revenue < 5000:
         recommendations.append("💡 เริ่มต้นได้ดี! ลองแชร์รูปรถลง Social Media เพื่อเพิ่มยอด")
@@ -281,16 +296,14 @@ def dashboard(request):
         'cars': my_cars,
         'total_cars': total_cars,
         'total_bookings': total_bookings,
-        'total_days_booked': Booking.objects.filter(car__owner=user).count(),
+        'total_days_booked': total_days_booked,
         'total_revenue': total_revenue,
         'recommendations': recommendations,
         
-        # ตัวเลือกปี
         'available_years': available_years,
         'selected_year': selected_year,
         'thai_year_display': selected_year + 543,
 
-        # JSON Data
         'month_labels': chart_labels,
         'multi_line_data': line_chart_data,
         'stacked_revenue_data': stacked_revenue_datasets,
@@ -364,9 +377,6 @@ def publish_car(request):
     return redirect('add_car_preview')
 
 
-
-
-
 @login_required
 def cancel_add_car(request):
     if 'car_id' in request.session:
@@ -375,16 +385,14 @@ def cancel_add_car(request):
     return redirect('dashboard')
 
 
-    
-# View สำหรับแสดงรถทั้งหมด
 def car_list(request):
     # 1. รับค่าเดิม
     province = request.GET.get('province', '').strip()
     service_type = request.GET.get('service_type', 'SELF_DRIVE')
     car_type = request.GET.get('car_type', '')
 
-    # 2. ✅ (เพิ่ม) รับค่าวันที่จากช่องค้นหา
-    pickup_str = request.GET.get('pickup_date')   # ชื่อ name ใน input html ต้องตรงกัน
+    # รับค่าวันที่จากช่องค้นหา
+    pickup_str = request.GET.get('pickup_date')  
     dropoff_str = request.GET.get('dropoff_date') 
 
     start_date = request.GET.get('start_date', '').strip()
@@ -392,96 +400,84 @@ def car_list(request):
     end_date = request.GET.get('end_date', '').strip()
     end_time = request.GET.get('end_time', '').strip()
 
-    # 3. Query รถพื้นฐาน (เอารถที่สถานะว่าง และเปิดเผยแพร่)
+    # (เอารถที่สถานะว่าง และเปิดเผยแพร่)
     cars = Car.objects.filter(status='AVAILABLE', is_published=True)
-
     if service_type:
         cars = cars.filter(service_type=service_type)
-
     if province:
         cars = cars.filter(state__exact=province)
-
     if car_type:
         cars = cars.filter(car_type=car_type)
 
-    # 4. ✅ (เพิ่ม) Logic ตัดรถที่มีคนจองแล้วออก
+    # ตัดรถที่มีคนจองแล้วออก
     if pickup_str and dropoff_str and start_date and start_time and end_date and end_time:
         try:
-            # แปลง String เป็น Datetime (ปรับ format ตาม input ของคุณ)
-            # ถ้า input เป็น date (2024-01-01) ให้ระวังเรื่องเวลา
             pickup_date = datetime.fromisoformat(pickup_str)
             dropoff_date = datetime.fromisoformat(dropoff_str)
 
-            # ค้นหา Booking ที่ "ชน" กับช่วงเวลาที่ลูกค้าเลือก
             # สถานะเหล่านี้ถือว่ารถไม่ว่าง
             busy_statuses = ['approved', 'waiting_verify', 'confirmed', 'picked_up']
             
-            # Logic: (Booking เริ่ม < วันคืนที่เลือก) AND (Booking จบ > วันรับที่เลือก)
+            # Booking เริ่ม < วันคืนที่เลือก AND Booking จบ  วันรับที่เลือก
             unavailable_car_ids = Booking.objects.filter(
                 status__in=busy_statuses,
                 pickup_datetime__lt=dropoff_date,
                 dropoff_datetime__gt=pickup_date
             ).values_list('car_id', flat=True)
 
-            # สั่ง Exclude (เอาออก) จากรายการรถ
+            #  Exclude เอาออก จากรายการรถ
             cars = cars.exclude(id__in=unavailable_car_ids)
 
         except ValueError:
-            pass # กรณีลูกค้ากรอกวันที่ผิด format ก็ปล่อยผ่านไป (โชว์รถทั้งหมด)
+            pass #(โชว์รถทั้งหมด)
 
-    now = timezone.now().date()
+    now = timezone.localdate()
     active_promotions = Promotion.objects.filter(
         is_active=True,
         start_date__lte=now,  # เริ่มแล้ว
         end_date__gte=now     # ยังไม่หมดอายุ
     ).order_by('-id')
 
-    # หาตัวล่าสุดมา 1 อัน (สำหรับแสดงใน Banner ถ้ามี)
     latest_promo = active_promotions.first() if active_promotions.exists() else None
     context = {
         'cars': cars,
         'province': province,
         'search_service': service_type,
         'search_category': car_type,
-        # ส่งค่ากลับไปเติมในฟอร์ม (เพื่อให้ User เห็นค่าเดิมที่เลือกไว้)
+
         'start_date': start_date,
         'start_time': start_time,
         'end_date': end_date,
         'end_time': end_time,
-        # ส่งค่าวันที่กลับไปเติมในฟอร์มด้วย ลูกค้าจะได้ไม่ต้องกรอกใหม่
+
         'pickup_date': pickup_str,
         'dropoff_date': dropoff_str,
-        # ✅ ส่งตัวแปรโปรโมชั่นไปให้หน้าเว็บ
         'promotions': active_promotions, 
         'latest_promo': latest_promo,
     }
     return render(request, 'car_rental/car_list.html', context)
-
-# car_rental/views.py
-
 
 
 @login_required
 def add_car(request):
     if request.method == "POST":
         data = request.POST
-        files = request.FILES  # ✅ รับไฟล์เอกสารจากตรงนี้
+        files = request.FILES  
 
-        # 1) สร้าง Car Object
         try:
             car = Car.objects.create(
                 owner=request.user,
                 brand=data.get("brand", ""),
                 model=data.get("model", ""),
-                year=data.get("year"), # ✅ เพิ่มปีรถ
+                year=data.get("year"), 
                 car_type=data.get("car_type", "SEDAN"),
                 service_type=data.get("service_type", "SELF_DRIVE"),
 
-                # Address
+                
                 country=data.get("country") or "ประเทศไทย",
                 street_address=data.get("street_address") or "",
                 city=data.get("city") or "",
-                state=data.get("state") or "", # หรือ province=data.get("state") เช็คชื่อ field ใน model ดีๆ
+                state=data.get("state") or "", 
                 zip_code=data.get("zip_code") or "",
                 
                 # รายละเอียด
@@ -489,32 +485,27 @@ def add_car(request):
                 num_doors=data.get("num_doors") or 4,
                 num_luggage=data.get("num_luggage") or 2,
                 fuel_system=data.get("fuel_system") or "GASOLINE",
-                transmission=data.get("transmission") or "AUTO", # ✅ เพิ่มเกียร์ (ถ้ามีใน model)
+                transmission=data.get("transmission") or "AUTO",
                 
                 description=data.get("description", ""),
                 rules=data.get("rules", ""),
                 license_plate=data.get("license_plate", ""),
-                
-                # Options & Price
-                
                 
                 min_rental_days=data.get("min_rental_days") or 1,
                 max_rental_days=data.get("max_rental_days") or 30,
                 price_per_day=data.get("price") or 0,                
                 deposit=data.get("deposit") or 0,
 
-                # ✅ ส่วนสำคัญ: รับไฟล์เอกสาร (ไม่ใช่ Base64)
+                #  รับไฟล์เอกสาร 
                 doc_registration=files.get("doc_registration"),
                 doc_insurance=files.get("doc_insurance"),
-                doc_id_card=files.get("doc_id_card"),           # บัตรประชาชน
+                doc_id_card=files.get("doc_id_card"),         
                 
                 status="PENDING",
                 is_published=True,
             )
-
-            # 2) รูปภาพรถ (Images) - อันนี้รับเป็น Base64 ถูกแล้ว
+            # รูปภาพรถ 
             images = request.POST.getlist("images_base64[]")
-
             for index, img64 in enumerate(images):
                 if not img64:
                     continue
@@ -533,22 +524,18 @@ def add_car(request):
                         continue
             
             messages.success(request, "ลงประกาศรถของคุณสำเร็จแล้ว! กรุณารอการตรวจสอบจากแอดมิน")
-            return redirect("dashboard") # หรือหน้าอื่นที่ต้องการ
+            return redirect("dashboard")
 
         except Exception as e:
-            # กรณีบันทึกไม่สำเร็จ ให้แจ้งเตือนและ print error ดูใน terminal
             print(f"Error creating car: {e}")
             messages.error(request, "เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง")
-            return redirect("add_car") # กลับมาหน้าเดิม
+            return redirect("add_car")
 
-    # GET Request
     return render(request, "car_rental/add_car.html")
 
 
-
-
 def search_cars(request):
-    # 1. รับค่าจากหน้าแรก (ชื่อฟิลด์ตรงตามฟอร์ม)
+    # รับค่าจากหน้าแรก
     pickup = request.GET.get('pickup', '').strip()
     dropoff = request.GET.get('dropoff', '').strip()
     province = request.GET.get('province', '').strip()
@@ -561,39 +548,32 @@ def search_cars(request):
     service_type = request.GET.get('service_type', 'SELF_DRIVE')
     car_type_filter = request.GET.get('car_type', '')
 
-    # 2. เริ่มต้น Query (เอารถที่สถานะว่าง และเปิดเผยแพร่)
+    # เอารถที่สถานะว่าง
     cars = Car.objects.filter(status='AVAILABLE', is_published=True)
-
     if not pickup:
             province = ""
-
-    
-    # 3. กรองตามประเภทบริการ
+    # กรองตามประเภทบริการ
     if service_type:
         cars = cars.filter(service_type=service_type)
-
-    # 4. กรองตามสถานที่ pickup
-    
+    #กรองตามสถานที่ pickup
     if province:
         cars = cars.filter(state__exact=province.strip())
-
-
-    # 5. กรองตามประเภทรถ
+    # กรองตามประเภทรถ
     if car_type_filter:
         cars = cars.filter(car_type=car_type_filter)
+
     if s_date and s_time and e_date and e_time:
         try:
-            # แปลง format จาก d/m/Y H:i (เช่น 25/12/2025 10:00)
             pickup_dt = datetime.strptime(f"{s_date} {s_time}", "%d/%m/%Y %H:%M")
             dropoff_dt = datetime.strptime(f"{e_date} {e_time}", "%d/%m/%Y %H:%M")
 
-            # 1. หาจำนวนวันที่เช่า (เอาวันคืน - วันรับ)
+            #หาจำนวนวันที่เช่า (เอาวันคืน - วันรับ)
             rental_days = (dropoff_dt.date() - pickup_dt.date()).days
-            # ป้องกันเคสรับเช้าคืนเย็น (0 วัน) ให้ปัดเป็น 1 วัน
+            # (0 วัน) ให้ปัดเป็น 1 วัน
             if rental_days < 1:
                 rental_days = 1
 
-            # 2. กรองรถ
+            #  กรองรถ
             cars = cars.filter(
                 min_rental_days__lte=rental_days, 
                 max_rental_days__gte=rental_days
@@ -605,21 +585,20 @@ def search_cars(request):
             # ค้นหารถที่ชนช่วงเวลานี้
             unavailable_ids = Booking.objects.filter(
                 status__in=busy_statuses,
-                pickup_datetime__lt=dropoff_dt,  # จองใหม่เริ่มก่อนจองเก่าจบ
-                dropoff_datetime__gt=pickup_dt   # จองใหม่จบหลังจองเก่าเริ่ม
+                pickup_datetime__lt=dropoff_dt,  
+                dropoff_datetime__gt=pickup_dt   
             ).values_list('car_id', flat=True)
 
-            # เอา ID รถที่ไม่ว่างออก
+            # รถที่ไม่ว่างออก
             cars = cars.exclude(id__in=unavailable_ids)
 
         except ValueError as e:
             print(f"Date Error: {e}")
             pass
-    # 6. ส่งค่ากลับไปหน้า search_cars.html เพื่อใส่ค่ากลับลง input
+
     context = {
         'cars': cars,
         "province": province,
-        # คืนค่าเดิมกลับไปให้ form จำค่าได้
         'search_location': pickup,
         'pickup': pickup,
         'dropoff': dropoff,
@@ -632,15 +611,12 @@ def search_cars(request):
     }
     return render(request, 'car_rental/search_cars.html', context)
 
-from datetime import datetime, timedelta
 
 def car_detail(request, car_id):
     car = get_object_or_404(Car, id=car_id)
 
-    # ⭐ ดึงรีวิวทั้งหมดของรถคันนี้
     reviews = car.reviews.prefetch_related("replies").all()
-
-    # รับค่าจาก Query Params
+    # รับค่าสถานที่ มาจากหน้าค้นหา
     location = request.GET.get("location", "-")
     date_from = (request.GET.get("date_from") or "").strip()
     time_from = (request.GET.get("time_from") or "10:00").strip()
@@ -654,11 +630,9 @@ def car_detail(request, car_id):
         date_to = datetime.now().strftime("%d/%m/%Y")
 
     try:    
-    # รวมเป็น datetime
         pickup_datetime = datetime.strptime(f"{date_from} {time_from}", "%d/%m/%Y %H:%M")
         dropoff_datetime = datetime.strptime(f"{date_to} {time_to}", "%d/%m/%Y %H:%M")
     except Exception as e:
-        # ป้องกันเว็บพัง ถ้า format เพี้ยน
         print("DATE PARSE ERROR:", e)
         pickup_datetime = datetime.now()
         dropoff_datetime = datetime.now()
@@ -679,7 +653,7 @@ def car_detail(request, car_id):
         
     })
 
-
+# ฟังก์ชันนี้เป็นตัวอย่างการรับ POST จากฟอร์มตอบกลับรีวิว 
 def submit_reply(request, review_id):
     if request.method == "POST":
         ReviewReply.objects.create(
@@ -689,11 +663,12 @@ def submit_reply(request, review_id):
         )
     return redirect(request.META.get("HTTP_REFERER"))
 
+#ระบบตอบกลับรีวิวสำหรับเจ้าของรถ
 @login_required
 def reply_to_car_review(request, review_id):
     review = get_object_or_404(Review, id=review_id)
     
-    # ✅ Security Check: คนตอบต้องเป็น "เจ้าของรถ" เท่านั้น
+    # คนตอบต้องเป็น "เจ้าของรถ" เท่านั้น
     if request.user != review.car.owner:
         messages.error(request, "คุณไม่มีสิทธิ์ตอบกลับรีวิวนี้")
         return redirect('car_detail', car_id=review.car.id)
@@ -706,17 +681,14 @@ def reply_to_car_review(request, review_id):
             comment=comment
         )
         messages.success(request, "ตอบกลับรีวิวเรียบร้อย")
-
     return redirect('car_detail', car_id=review.car.id)
 
-# car_rental/views.py หรือ users/views.py
-
+#ระบบโต้ตอบรีวิวฝั่งผู้เช่า
 @login_required
 def reply_to_owner_review(request, review_id):
-    # ดึงรีวิวที่เจ้าของเขียนด่าเรา
     review = get_object_or_404(RenterReview, id=review_id)
     
-    # ✅ Security Check: คนตอบต้องเป็น "ผู้เช่า (คนถูกรีวิว)" เท่านั้น
+    # คนตอบต้องเป็น "ผู้เช่า (คนถูกรีวิว)" เท่านั้น
     if request.user != review.renter:
         messages.error(request, "คุณไม่มีสิทธิ์ตอบกลับ")
         return redirect('public_profile', user_id=review.renter.id)
@@ -729,13 +701,10 @@ def reply_to_owner_review(request, review_id):
             comment=comment
         )
         messages.success(request, "บันทึกคำตอบกลับแล้ว")
-
     return redirect('public_profile', user_id=review.renter.id)
 
-
-# views.py
+#หน้าข้อกำหนดสำหรับเจ้าของรถ
 @login_required
 def owner_terms_conditions(request):
     """แสดงหน้าข้อกำหนดสำหรับเจ้าของรถ (ผู้ปล่อยเช่า)"""
     return render(request, 'car_rental/owner_terms.html')
-

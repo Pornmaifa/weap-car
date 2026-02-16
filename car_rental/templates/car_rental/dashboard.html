@@ -179,24 +179,29 @@
                                                 data-model="{{ car.model }}" 
                                                 data-license="{{ car.license_plate }}" 
                                                 data-price="{{ car.price_per_day|floatformat:0 }}" 
-                                                
+                                                data-status="{{ car.status }}"
+        
+                                                data-active-count="{{ car.active_booking_count }}"
                                                 data-deposit="{{ car.deposit|default:'0'|floatformat:0 }}" 
-                                                data-rules="{{ car.rules }}" 
-                                                
-                                                data-desc="{{ car.description }}" 
-                                                data-status="{{ car.status }}" 
+                                                data-rules="{{ car.rules|default:''|escape }}"  data-desc="{{ car.description|default:''|escape }}" data-status="{{ car.status }}" 
                                                 class="text-blue-500 hover:bg-blue-50 p-2 rounded transition" title="{% trans 'แก้ไข' %}">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         {% trans "⚠️ ยืนยันลบรถคันนี้?\nข้อมูลรายได้และสถิติรถคันนี้จะหายไปจากระบบ" as delete_msg %}
-                                        <form method="POST" action="{% url 'dashboard' %}" class="inline-block" 
-                                              onsubmit="return confirm('{{ delete_msg|escapejs }}');">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="delete_car_id" value="{{ car.id }}">
-                                            <button type="submit" class="text-red-500 hover:bg-red-50 p-2 rounded transition" title="{% trans 'ลบ' %}">
+                                        {% if car.active_booking_count > 0 %}
+                                            <button type="button" disabled class="text-gray-300 cursor-not-allowed p-2" title="{% trans 'รถถูกใช้งานอยู่ ลบไม่ได้' %}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
-                                        </form>
+                                        {% else %}
+                                            <form method="POST" action="{% url 'dashboard' %}" class="inline-block" 
+                                                onsubmit="return confirm('{{ delete_msg|escapejs }}');">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="delete_car_id" value="{{ car.id }}">
+                                                <button type="submit" class="text-red-500 hover:bg-red-50 p-2 rounded transition" title="{% trans 'ลบ' %}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% empty %}
@@ -479,6 +484,9 @@
             const statusSelect = document.getElementById('modal_status');
             const status = button.dataset.status;
 
+            // 🔥 รับค่าจำนวนการจองที่ค้างอยู่
+            const activeCount = parseInt(button.dataset.activeCount || 0);
+
             statusSelect.innerHTML = '';
 
             if (status === 'PENDING') {
@@ -495,14 +503,23 @@
                 statusSelect.className = 'w-full border border-orange-300 rounded p-2 bg-orange-50 text-orange-700 font-bold';
             
             } else {
-                // กรณี 3: อนุมัติแล้ว -> เลือกสถานะได้ตามปกติ
-                statusSelect.innerHTML = `
-                    <option value="AVAILABLE">✅ {% trans "ว่าง (พร้อมใช้งาน)" %}</option>
-                    <option value="MAINTENANCE">🔧 {% trans "ไม่ว่าง (ซ่อมบำรุง)" %}</option>
-                `;
-                statusSelect.value = status; // เลือกค่าปัจจุบัน
-                statusSelect.disabled = false;
-                statusSelect.className = 'w-full border border-gray-300 rounded p-2 bg-white text-gray-800';
+                // ✅ กรณี 3: (AVAILABLE / MAINTENANCE)
+                
+                if (activeCount > 0) {
+                    // 🔒 ถ้ารถไม่ว่าง (มี Booking ค้าง) -> ล็อกห้ามเปลี่ยนสถานะ
+                    statusSelect.innerHTML = `<option value="${status}">🚫 {% trans "รถถูกใช้งานอยู่ (เปลี่ยนสถานะไม่ได้)" %}</option>`;
+                    statusSelect.disabled = true;
+                    statusSelect.className = 'w-full border border-red-300 rounded p-2 bg-red-50 text-red-700 font-bold cursor-not-allowed';
+                } else {
+                    // 🔓 ถ้ารถว่างจริงๆ -> ให้เลือกได้ปกติ
+                    statusSelect.innerHTML = `
+                        <option value="AVAILABLE">✅ {% trans "ว่าง (พร้อมใช้งาน)" %}</option>
+                        <option value="MAINTENANCE">🔧 {% trans "ไม่ว่าง (ซ่อมบำรุง)" %}</option>
+                    `;
+                    statusSelect.value = status;
+                    statusSelect.disabled = false;
+                    statusSelect.className = 'w-full border border-gray-300 rounded p-2 bg-white text-gray-800';
+                }
             }
             
             const imgContainer = document.getElementById('current_images_container');

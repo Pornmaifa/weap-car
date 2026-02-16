@@ -381,7 +381,7 @@
         </form>
     </div>
 
-    <script>
+<script>
     let currentStep = 1;
     const totalSteps = 8;
     let imageList = [];
@@ -406,7 +406,7 @@
             }
         }
     });
-
+    //  ระบบเปลี่ยนหน้า 
     function showStep(n) {
         document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
         const step = document.getElementById(`step-${n}`);
@@ -414,23 +414,21 @@
         currentStep = n;
         window.scrollTo(0, 0);
     }
-
+    // ไปข้างหน้า + ตรวจสอบข้อมูล
     function goNextStep(step) {
-        // ✅ แปลข้อความ Alert
+        //แปลข้อความ 
         if (step === 1 && !document.querySelector('input[name="car_type"]:checked')) { alert("{% trans 'กรุณาเลือกประเภทรถ' %}"); return; }
         if (step === 2 && !document.querySelector('input[name="service_type"]:checked')) { alert("{% trans 'กรุณาเลือกประเภทบริการ' %}"); return; }
         if (step === 4 && imageList.length < 5) { alert("{% trans 'กรุณาอัปโหลดรูปอย่างน้อย 5 รูป' %}"); return; }
         saveDraft();
         if (step < totalSteps) showStep(step + 1);
     }
-
+    // ย้อนกลับ
     function goPrevStep(step) {
         saveDraft();
         if (step > 1) showStep(step - 1);
     }
-
-    // ... (ส่วน saveDraft, loadDraft, setupNumberButtons, setupDescriptionCounter, setupImageUpload เหมือนเดิม) ...
-    // ... (ผมละไว้เพื่อความกระชับ ถ้าคุณต้องการให้แปะเต็มๆ บอกได้ครับ) ...
+    // ระบบบันทึกร่างอัตโนมัติ 
     function saveDraft() {
         const form = document.getElementById("carForm");
         const data = {};
@@ -447,7 +445,7 @@
         data["_images"] = imageList;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
-
+    // ดึงข้อมูลกลับมาใส่ฟอร์ม
     function loadDraft() {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return;
@@ -478,7 +476,7 @@
             }
         } catch (e) { console.log("loadDraft error", e); }
     }
-
+    //  ระบบปุ่มกดเพิ่ม/ลดตัวเลข
     function setupNumberButtons() {
         document.querySelectorAll(".increment-btn").forEach(btn => {
             btn.addEventListener("click", () => {
@@ -503,7 +501,7 @@
             });
         });
     }
-
+    //ระบบนับตัวอักษรในคำอธิบายรถ
     function setupDescriptionCounter() {
         const textarea = document.getElementById("car_description");
         const counter = document.getElementById("char-counter");
@@ -513,7 +511,7 @@
             saveDraft();
         });
     }
-
+    // ระบบจัดการรูปภาพ (อัปโหลด/พรีวิว/ลบ)
     function renderImagePreview() {
         const grid = document.getElementById("image-grid");
         const hiddenContainer = document.getElementById("hidden-images-container");
@@ -563,7 +561,7 @@
             input.value = "";
         });
     }
-
+    // ตัดแบ่งแบรนด์/รุ่นรถ
     function goPreview() {
         const fullName = document.querySelector('input[name="name"]').value || "";
         let brand = fullName; let model = "";
@@ -579,7 +577,7 @@
         saveDraft();
         showStep(8);
     }
-
+    // แสดงข้อมูลสรุปในหน้าสุดท้าย
     function buildPreviewUI() {
         const getVal = n => (document.querySelector(`[name="${n}"]`)?.value || "").trim();
         const getRadio = n => document.querySelector(`input[name="${n}"]:checked`)?.value || "-";
@@ -592,7 +590,7 @@
 
         document.getElementById("preview-title").innerText = (getVal("brand") + " " + getVal("model"));
         document.getElementById("preview-description").innerText = getVal("description");
-        // ✅ ใส่ trans ใน JS string
+        
         document.getElementById("preview-rules").innerText = getVal("rules") || "{% trans 'ไม่มีข้อห้ามเพิ่มเติม' %}";
         document.getElementById("preview-seats").innerText = getVal("num_seats");
 
@@ -617,7 +615,7 @@
                 const depositDiv = document.createElement("div");
                 depositDiv.id = "preview-deposit-display";
                 depositDiv.className = "mt-3 pt-3 border-t border-gray-100";
-                // ✅ ใส่ trans ใน JS innerHTML
+                
                 depositDiv.innerHTML = `
                     <div class="flex justify-between items-center text-sm text-gray-600">
                         <span><i class="fas fa-money-bill-wave text-yellow-500 mr-1"></i> {% trans "มัดจำ (จ่ายวันรับรถ)" %}:</span>
@@ -628,7 +626,7 @@
             }
         }
     }
-
+    // ระบบส่งฟอร์มไปที่ Server
     function submitCarForm() {
         if (imageList.length < 5) { alert("{% trans 'กรุณาอัปโหลดรูปอย่างน้อย 5 รูป' %}"); showStep(4); return; }
         if (!document.getElementById("agree_terms").checked) { alert("{% trans 'กรุณายอมรับข้อกำหนดและเงื่อนไขก่อน' %}"); return; }
@@ -636,7 +634,7 @@
         document.getElementById("carForm").submit();
     }
     
-    // ... (ส่วน thai_provinces.js) ...
+   // 10. ระบบช่วยกรอกชื่อจังหวัด
     document.addEventListener("DOMContentLoaded", () => {
         const input = document.getElementById("province-input-display");
         const hiddenInput = document.getElementById("province-input");

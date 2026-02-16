@@ -206,7 +206,7 @@
         try {
             const d = btn.dataset;
 
-            // --- 1. ข้อมูลพื้นฐาน (เหมือนเดิม) ---
+            // ข้อมูลพื้นฐาน 
             if(document.getElementById('modal_ref')) document.getElementById('modal_ref').innerText = '#' + (d.ref || '-');
             if(document.getElementById('modal_name')) document.getElementById('modal_name').innerText = d.name || '-';
             if(document.getElementById('modal_phone')) document.getElementById('modal_phone').innerText = d.phone || '-';
@@ -226,7 +226,7 @@
                 }
             }
 
-            // --- 2. ข้อมูลรถ (เหมือนเดิม) ---
+            // ข้อมูลรถ 
             if(document.getElementById('modal_car')) document.getElementById('modal_car').innerText = d.car || '-';
             if(document.getElementById('modal_plate')) document.getElementById('modal_plate').innerText = d.plate || '-';
             if(document.getElementById('modal_pickup')) document.getElementById('modal_pickup').innerText = d.pickup || '-';
@@ -235,39 +235,33 @@
                 document.getElementById('modal_location').innerText = d.location || '-'; 
             }
 
-            // =========================================================
-            // 💰 3. คำนวณเงิน (Logic ใหม่: คิดจากรายวัน)
-            // =========================================================
             
+            //  คำนวณเงิน 
             // รับค่ารายวันและจำนวนวันที่ส่งมาจากปุ่ม
             const pricePerDay = parseFloat(d.pricePerDay || 0);
             const days = parseInt(d.days || 0);
             const discount = parseFloat(d.discount || 0);
             const deposit = parseFloat(d.deposit || 0);
 
-            // 1. คำนวณค่าเช่ารวม (Gross Rent)
+            //  คำนวณค่าเช่ารวม (Gross Rent)
             const fullRent = pricePerDay * days;
 
-            // 2. คำนวณค่าเช่าหลังหักส่วนลด (Net Rent)
-            // ยอดนี้จะถูกนำไปแสดงที่บรรทัด "ยอดชำระจากลูกค้า"
+            //  คำนวณค่าเช่าหลังหักส่วนลด (Net Rent)
             let rentAfterDiscount = fullRent - discount;
             if (rentAfterDiscount < 0) rentAfterDiscount = 0;
 
-            // 3. คำนวณค่าคอมมิชชั่น 15% (คิดจากยอดค่าเช่าหลังหักส่วนลด)
+            //  คำนวณค่าคอมมิชชั่น 15% (คิดจากยอดค่าเช่าหลังหักส่วนลด)
             const fee = rentAfterDiscount * 0.15;
 
-            // 4. คำนวณรายได้สุทธิเจ้าของ (Owner Revenue)
-            // สูตร: (ค่าเช่าหลังลด - ค่าคอมฯ) + มัดจำ
+            // คำนวณรายได้สุทธิเจ้าของ (Owner Revenue)
+            // (ค่าเช่าหลังลด - ค่าคอมฯ) + มัดจำ
             const ownerRevenue = (rentAfterDiscount - fee) + deposit;
-
-
-            // --- 4. แสดงผลตัวเลข ---
             const fmt = (num) => '฿' + num.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
             // แสดงยอดเช่าที่ลูกค้าจ่าย (หลังหักส่วนลดแล้ว)
             if(document.getElementById('modal_total')) document.getElementById('modal_total').innerText = fmt(rentAfterDiscount);
             
-            // แสดงส่วนลด (ถ้ามี)
+            // แสดงส่วนลด 
             const discountRow = document.getElementById('row_discount');
             const discountVal = document.getElementById('modal_discount');
             if (discountRow && discountVal) {
@@ -281,7 +275,6 @@
 
             // แสดงค่าคอมมิชชั่น
             if(document.getElementById('modal_fee')) document.getElementById('modal_fee').innerText = '-' + fmt(fee);
-            
             // แสดงยอดมัดจำ
             if(document.getElementById('modal_deposit')) document.getElementById('modal_deposit').innerText = '+' + fmt(deposit);
             
@@ -289,11 +282,10 @@
             if(document.getElementById('modal_net')) document.getElementById('modal_net').innerText = fmt(ownerRevenue);
 
 
-            // --- 5. อัปเดตลิงก์ปุ่ม ---
+            // อัปเดตลิงก์ปุ่ม
             if(document.getElementById('btn_approve')) document.getElementById('btn_approve').href = d.approveUrl;
             if(document.getElementById('btn_reject')) document.getElementById('btn_reject').href = d.rejectUrl;
 
-            // เปิด Modal
             const modal = document.getElementById('detailModal');
             const content = document.getElementById('detailModalContent');
             if(modal && content) {

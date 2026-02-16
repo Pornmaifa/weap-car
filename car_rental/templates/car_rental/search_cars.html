@@ -196,7 +196,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
 
-        // 1. ข้อมูลสถานที่ (Database จำลอง) - เหมือนเดิม
+        // 1. ข้อมูลสถานที่ (Database จำลอง)
         const locations = [
             // --- จังหวัด (Provinces) ---
             { name: "{% trans 'กรุงเทพมหานคร' %}", type: "province", keywords: "bangkok krung thep maha nakhon bkk กรุงเทพ กทม", province: "กรุงเทพมหานคร" },
@@ -601,7 +601,6 @@
             return ""; // หาไม่เจอ
         }
 
-        // 4. สร้าง HTML สำหรับ 1 บรรทัด (Refactored)
         function createItemElement(loc, isSubItem = false) {
             const div = document.createElement('div');
             // ถ้าเป็น sub-item ให้เยื้องซ้าย (pl-8)
@@ -620,7 +619,6 @@
             return div;
         }
 
-        // 5. Event Listener หลัก
         input.addEventListener('input', function() {
             const val = this.value.toLowerCase().trim();
             box.innerHTML = ''; 
@@ -629,19 +627,19 @@
                 if(clearBtn) clearBtn.classList.remove('hidden');
                 box.classList.remove('hidden');
 
-                // 5.1 กรองข้อมูลทั้งหมดที่ตรงกับคำค้นหาก่อน
+                //  กรองข้อมูลทั้งหมดที่ตรงกับคำค้นหาก่อน
                 const allMatches = locations.filter(l => 
                     l.name.includes(val) || (l.keywords && l.keywords.includes(val))
                 );
 
-                // 5.2 แยกประเภท: จังหวัดที่เจอ และ สถานที่อื่นๆ ที่ไม่ใช่จังหวัด
+                // แยกประเภท: จังหวัดที่เจอ และ สถานที่อื่นๆ ที่ไม่ใช่จังหวัด
                 const matchedProvinces = allMatches.filter(l => l.type === 'province');
                 const matchedPlaces = allMatches.filter(l => l.type !== 'province');
 
-                // 5.3 Logic การแสดงผล (หัวใจสำคัญของการแก้ไขครั้งนี้)
+                //  Logic การแสดงผล (หัวใจสำคัญของการแก้ไขครั้งนี้)
                 let hasResults = false;
 
-                // --- กรณี A: เจอจังหวัด (Group Mode) ---
+                // เจอจังหวัด (Group Mode) 
                 if (matchedProvinces.length > 0) {
                     hasResults = true;
                     
@@ -653,17 +651,16 @@
                         box.appendChild(header);
 
                         // หาสถานที่ย่อยที่อยู่ในจังหวัดนี้
-                        // (ใช้ Logic เดียวกับ extractProvince แต่ทำแบบกลับกัน)
                         const subLocations = matchedPlaces.filter(place => {
                             return place.name.includes(prov.name) || (place.keywords && place.keywords.includes(prov.name));
                         });
 
                         if (subLocations.length > 0) {
                             subLocations.forEach(sub => {
-                                box.appendChild(createItemElement(sub, true)); // true = เป็น sub item
+                                box.appendChild(createItemElement(sub, true)); 
                             });
                         } else {
-                            // ถ้าจังหวัดนั้นไม่มีสถานที่ใน DB (เช่น บึงกาฬ อาจจะยังไม่มีสนามบินใน List)
+                            // ถ้าจังหวัดนั้นไม่มีสถานที่ใน DB (เช่น บึงกาฬ อาจจะยังไม่มีสนามบินใน)
                             const emptyMsg = document.createElement('div');
                             emptyMsg.className = 'px-8 py-2 text-xs text-gray-400 italic';
                             emptyMsg.innerText = 'ไม่มีจุดรับรถในโซนนี้';
@@ -672,11 +669,10 @@
                     });
                 } 
                 
-                // --- กรณี B: ไม่ใช่การค้นหาจังหวัดโดยตรง หรือ มีสถานที่หลงเหลือ (Fallback/Mixed Mode) ---
                 // ถ้าค้นหา "ดอนเมือง" (ไม่เจอจังหวัด แต่เจอสนามบิน) ก็ให้แสดงแบบปกติ
                 else if (matchedPlaces.length > 0) {
                     hasResults = true;
-                    // ใส่ Header ปกติ
+                 
                     const header = document.createElement('div');
                     header.className = 'px-4 py-2 text-xs text-gray-400 font-semibold bg-gray-50 border-b';
                     header.innerText = 'ผลการค้นหา';
@@ -698,7 +694,6 @@
             }
         });
 
-        // 6. Event: ปุ่ม Clear & คลิกข้างนอก (เหมือนเดิม)
         if(clearBtn) {
             clearBtn.addEventListener('click', () => {
                 input.value = '';
@@ -714,18 +709,18 @@
             }
         });
 
-        // --- ส่วน Datepicker / Flatpickr (แก้ไขใหม่ให้เหมือนหน้า Home) ---
+        // (แก้ไขใหม่ให้เหมือนหน้า )
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        // 1. ตั้งค่า Flatpickr สำหรับวันคืนรถก่อน (เพื่อเก็บ instance ไว้ใช้)
+        //  สำหรับวันคืนรถก่อน 
         const endPicker = flatpickr("#datepicker-end", { 
             dateFormat: "d/m/Y", 
             defaultDate: "{{ end_date|default:'' }}",
             minDate: "{{ start_date|default:'today' }}" 
         });
 
-        // 2. ตั้งค่า Flatpickr สำหรับวันรับรถ และดักจับ Event onChange
+        //  สำหรับวันรับรถ 
         const startPicker = flatpickr("#datepicker-start", { 
             dateFormat: "d/m/Y", 
             defaultDate: "{{ start_date|default:'' }}",
@@ -736,14 +731,14 @@
 
                 const startDate = selectedDates[0];
 
-                // สร้างตัวแปร minDropoff ให้เท่ากับ วันรับรถ + 1 วัน
+                // ให้เท่ากับ วันรับรถ + 1 วัน
                 const minDropoff = new Date(startDate);
                 minDropoff.setDate(startDate.getDate() + 1);
 
-                // อัปเดตเงื่อนไขของ endPicker (วันคืนรถ) ไม่ให้เลือกน้อยกว่า minDropoff
+                //  (วันคืนรถ) ไม่ให้เลือกน้อยกว่า 
                 endPicker.set("minDate", minDropoff);
 
-                // เช็คว่าถ้าวันคืนรถที่เลือกไว้มันเก่ากว่า minDropoff ให้เด้งไปวัน minDropoff อัตโนมัติ
+                // เช็คว่าถ้าวันคืนรถที่เลือกไว้มันเก่ากว่าวันรับรถ + 1 วัน ให้รีเซ็ตเป็น วันรับรถ + 1 วัน
                 if (!endPicker.selectedDates.length || endPicker.selectedDates[0] < minDropoff) {
                     endPicker.setDate(minDropoff, true);
                 }

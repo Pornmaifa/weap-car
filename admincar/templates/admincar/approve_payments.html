@@ -100,14 +100,6 @@
 
                 <form action="{% url 'reject_payment_action' payment.id %}" method="post">
                     {% csrf_token %}
-                    <div class="p-6 bg-gray-50">
-                        <label class="block text-gray-700 font-bold mb-2">ระบุสาเหตุที่ปฏิเสธ:</label>
-                        <textarea name="reject_reason" rows="3" required
-                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
-                                placeholder="เช่น ยอดเงินไม่ครบ, สลิปซ้ำ, ไม่พบยอดเงิน"></textarea>
-                        <p class="text-xs text-gray-500 mt-2">* ระบบจะแจ้งเตือนลูกค้าและเปลี่ยนสถานะกลับเป็น 'รอชำระเงิน' เพื่อให้ลูกค้าส่งหลักฐานใหม่</p>
-                    </div>
-
                     <div class="bg-white px-4 py-3 flex justify-end gap-3 border-t">
                         <button type="button" 
                                 class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium transition" 

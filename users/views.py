@@ -1,5 +1,3 @@
-# users/views.py
-
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import UserRegisterForm, ProfileUpdateForm, UserUpdateForm  # เราจะต้องสร้างไฟล์ forms.py ด้วย
@@ -7,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from car_rental.models import Profile
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
-from car_rental.models import RenterReview # อย่าลืม import
+from car_rental.models import RenterReview 
 from django.db.models import Avg
 from django.shortcuts import redirect
 from django.contrib.auth import update_session_auth_hash
@@ -22,16 +20,14 @@ def custom_login_redirect(request):
         return redirect('car_list')
     
 def become_owner(request):
-    # นี่คือหน้าเปล่าๆ สำหรับให้ลิงก์ทำงานได้ก่อน
     return render(request, 'users/become_owner.html')
 
 # ฟังก์ชันสมัครสมาชิกที่หายไป
 def register(request):
     if request.method == 'POST':
-        # **สำคัญ** ต้องรับ request.FILES ด้วย
         form = UserRegisterForm(request.POST, request.FILES)
         if form.is_valid():
-            user = form.save() # บันทึก User ก่อน
+            user = form.save()
 
             phone = request.POST.get('phone')
             license_no = request.POST.get('license_no')
@@ -50,12 +46,6 @@ def register(request):
     else:
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})
-
-# ฟังก์ชันแสดงโปรไฟล์
-# users/views.py
-# ... (import เหมือนเดิม)
-
-# ในไฟล์ users/views.py
 
 @login_required
 def profile(request):
@@ -78,11 +68,6 @@ def profile(request):
         'p_form': p_form
     }
     return render(request, 'users/profile.html', context)
-
-# (คุณต้องสร้าง View นี้เพิ่ม สำหรับ Modal เปลี่ยนรหัสผ่าน)
-# @login_required
-# def change_password(request):
-#    ... (Logic การเปลี่ยนรหัสผ่าน) ...
 
 # --- ฟังก์ชันเปลี่ยนรหัสผ่าน  ---
 @login_required

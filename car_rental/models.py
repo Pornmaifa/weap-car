@@ -1,11 +1,14 @@
-# car_rental/models.py
-
 from django.db import models
-from django.contrib.auth.models import User # ดึงโมเดล User ของ Django มาใช้
+from django.contrib.auth.models import User 
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 import datetime
+from django.db import models
+from django.contrib.auth.models import User
+from django.db import models
+from django.contrib.auth.models import User 
+
 # ตาราง Profile ที่รวม Owner และ Member เข้าด้วยกัน
 class Profile(models.Model):
     ROLE_CHOICES = (
@@ -15,23 +18,16 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='MEMBER')
-    # Fields for Member
 
     license_no = models.CharField(max_length=100, blank=True, null=True)
     join_date = models.DateField(auto_now_add=True)
-    # เพิ่ม field ใหม่สำหรับรูปโปรไฟล์
+   
     image = models.ImageField(upload_to='profile_pics', null=True, blank=True)
     #  (เอาไว้เก็บ LINE ID ของลูกค้า)
     line_id = models.CharField(max_length=100, blank=True, null=True)
     def __str__(self):
         return f'{self.user.username} Profile'
 
-# ตาราง Car
-from django.db import models
-from django.contrib.auth.models import User
-
-from django.db import models
-from django.contrib.auth.models import User # หรือ get_user_model() ถ้าใช้ Custom User
 
 class Car(models.Model):
     # ==========================
@@ -45,11 +41,11 @@ class Car(models.Model):
     ]
 
     STATUS_CHOICES = [
-        ('PENDING', 'รอดำเนินการตรวจสอบ'), # Default ควรเป็นอันนี้
+        ('PENDING', 'รอดำเนินการตรวจสอบ'), 
         ('AVAILABLE', 'พร้อมใช้งาน'),
         ('BOOKED', 'ถูกจองแล้ว'),
         ('MAINTENANCE', 'ซ่อมบำรุง'),
-        ('REJECTED', 'ไม่อนุมัติ'), # เผื่อ Admin ปฏิเสธ
+        ('REJECTED', 'ไม่อนุมัติ'), 
     ]
 
     SERVICE_TYPE_CHOICES = [
@@ -72,7 +68,6 @@ class Car(models.Model):
         ('HYBRID', 'ไฮบริด'),
     ]
 
-    # ✅ เพิ่มใหม่: ระบบเกียร์
     TRANSMISSION_CHOICES = [
         ('AUTO', 'เกียร์อัตโนมัติ'),
         ('MANUAL', 'เกียร์ธรรมดา'),
@@ -83,9 +78,9 @@ class Car(models.Model):
     # ==========================
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cars')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
-    is_published = models.BooleanField(default=False) # True = แสดงหน้าร้าน, False = ซ่อน/Draft
-    created_at = models.DateTimeField(auto_now_add=True) # ✅ เพิ่ม: วันที่สร้าง
-    updated_at = models.DateTimeField(auto_now=True)     # ✅ เพิ่ม: วันที่แก้ไขล่าสุด
+    is_published = models.BooleanField(default=False) 
+    created_at = models.DateTimeField(auto_now_add=True) 
+    updated_at = models.DateTimeField(auto_now=True)     
 
     # ==========================
     # 3. CAR DETAILS (ข้อมูลรถ)
@@ -100,14 +95,13 @@ class Car(models.Model):
     license_plate = models.CharField(max_length=100, default='', help_text="ทะเบียนรถ (Admin only)")
 
     # ==========================
-    # 4. SPECS & FEATURES (สเปค)
+    # 4.  (สเปค)
     # ==========================
-    transmission = models.CharField(max_length=10, choices=TRANSMISSION_CHOICES, default='AUTO', verbose_name="ระบบเกียร์") # ✅ เพิ่ม
+    transmission = models.CharField(max_length=10, choices=TRANSMISSION_CHOICES, default='AUTO', verbose_name="ระบบเกียร์") 
     fuel_system = models.CharField(max_length=20, choices=FUEL_CHOICES, default='GASOLINE')
     num_doors = models.PositiveIntegerField(default=4, verbose_name="จำนวนประตู")
     num_luggage = models.PositiveIntegerField(default=2, verbose_name="จำนวนสัมภาระ")
     doc_id_card = models.ImageField(upload_to='car_documents/', null=True, blank=True, verbose_name="สำเนาบัตรประชาชน")
-    # Accessories
 
     # ==========================
     # 5. LOCATION (สถานที่รับรถ)
@@ -117,10 +111,6 @@ class Car(models.Model):
     city = models.CharField(max_length=100, null=True, blank=True) # เขต/อำเภอ
     state = models.CharField(max_length=100, null=True, blank=True) # จังหวัด
     zip_code = models.CharField(max_length=10, null=True, blank=True)
-    
-    # (Optional) ถ้าอนาคตจะทำ Map แนะนำให้เพิ่ม lat/long
-    # latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
-    # longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
 
     # ==========================
     # 6. PRICING & RULES (ราคา & กฎ)
@@ -130,9 +120,6 @@ class Car(models.Model):
     min_rental_days = models.PositiveIntegerField(default=1)
     max_rental_days = models.PositiveIntegerField(default=30)
     deposit = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="ค่ามัดจำ (จ่ายหน้างาน)")
-    # ==========================
-    # 7. DOCUMENTS (เอกสารยืนยัน - Admin Only)
-    # ==========================
     #  เอกสารสำคัญ (ใช้ FileField เผื่อเป็น PDF)
     doc_registration = models.FileField(upload_to='car_docs/registration/', null=True, blank=True, verbose_name="เล่มทะเบียน")
     doc_insurance = models.FileField(upload_to='car_docs/insurance/', null=True, blank=True, verbose_name="กรมธรรม์")
@@ -157,8 +144,6 @@ class CarImage(models.Model):
     def __str__(self):
         return f"Image for {self.car.brand} {self.car.model}"
 
-
-# ตาราง Booking
 class Booking(models.Model):
     STATUS_CHOICES = [
         ('pending', 'รออนุมัติจากเจ้าของรถ'),    # 1. จองมา
@@ -188,7 +173,7 @@ class Booking(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     booking_ref = models.CharField(max_length=20, unique=True, null=True, blank=True) # เลขที่ใบจอง เช่น BK-20251214-XXXX
     discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    # เพิ่ม Field สำหรับการคืนเงิน
+    # สำหรับการคืนเงิน
     refund_bank_name = models.CharField(max_length=100, blank=True, null=True, verbose_name="ธนาคารที่ขอรับเงินคืน")
     refund_account_no = models.CharField(max_length=50, blank=True, null=True, verbose_name="เลขบัญชี")
     refund_account_name = models.CharField(max_length=200, blank=True, null=True, verbose_name="ชื่อบัญชี")
@@ -206,8 +191,6 @@ class Booking(models.Model):
             days += 1
         return max(1, days) # อย่างน้อยต้อง 1 วัน
 
-
-# ตาราง Promotion
 class Promotion(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
@@ -225,8 +208,7 @@ class PromotionUsage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     promotion = models.ForeignKey('Promotion', on_delete=models.CASCADE)
     
-    class Meta:
-        # บรรทัดนี้สำคัญ: ห้าม User คนเดิม + Promo อันเดิม ซ้ำกันในตาราง
+    class Meta: #ห้ามให้ผู้ใช้คนเดียวกันใช้โปรโมชั่นเดียวกันซ้ำ
         unique_together = ('user', 'promotion') 
 
     def __str__(self):
@@ -264,7 +246,7 @@ class Payment(models.Model):
     def __str__(self):
         return f'Payment for Booking #{self.booking.id}'
 
-# ส่วนที่ 1: ผู้เช่า รีวิว รถ (และเจ้าของตอบกลับ)
+#  ผู้เช่า รีวิว รถ (และเจ้าของตอบกลับ)
 class Review(models.Model):
     booking = models.OneToOneField('Booking', on_delete=models.CASCADE, related_name='review', null=True)
     car = models.ForeignKey(Car, related_name="reviews", on_delete=models.CASCADE)
@@ -288,7 +270,7 @@ class ReviewReply(models.Model):
     def __str__(self):
         return f"Reply by {self.user.username}"
     
-# 2.  RenterReview (สำหรับเจ้าของรีวิวลูกค้า)
+#  (สำหรับเจ้าของรีวิวลูกค้า)
 class RenterReview(models.Model):
     booking = models.OneToOneField('Booking', on_delete=models.CASCADE, related_name='renter_review')
     renter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_reviews') # ผู้เช่า
@@ -312,6 +294,7 @@ class RenterReply(models.Model):
 
     def __str__(self):
         return f"Renter Reply by {self.user.username}"
+    
 #ลูกค้าทั่วไป
 class GuestCustomer(models.Model):
     first_name = models.CharField(max_length=100)
@@ -326,10 +309,8 @@ class GuestCustomer(models.Model):
         return f"{self.first_name} {self.last_name}"
     
 
-# car_rental/models.py
-
 class PlatformSetting(models.Model):
-    # เราจะเก็บเป็นทศนิยม เช่น 0.15, 0.20, 0.30
+    # เก็บเป็นทศนิยม เช่น 0.15, 0.20, 0.30
     commission_rate = models.DecimalField(
         max_digits=4, 
         decimal_places=2, 
@@ -343,16 +324,11 @@ class PlatformSetting(models.Model):
         return f"การตั้งค่าระบบ (ค่าคอม {self.commission_rate * 100}%)"
 
     def save(self, *args, **kwargs):
-        # ป้องกันไม่ให้สร้างหลายอัน (Singleton Pattern แบบบ้านๆ)
-        # ถ้ามีอยู่แล้ว ให้แก้ของเดิมแทนการสร้างใหม่
         if not self.pk and PlatformSetting.objects.exists():
-            # ถ้าพยายาม create ใหม่ แต่มีของเก่าอยู่แล้ว ให้ไปแก้ตัวแรกสุดแทน
             self.pk = PlatformSetting.objects.first().pk
         super().save(*args, **kwargs)
 
-
-# car_rental/models.py
-
+#สภาพรถก่อนคืน (เจ้าของถ่ายรูปเก็บไว้)
 class BookingInspection(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name='inspections')
     image = models.ImageField(upload_to='inspection_photos/')

@@ -61,4 +61,30 @@
         </table>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // หาวันที่ปัจจุบัน (Today) ในรูปแบบ YYYY-MM-DD
+        const today = new Date().toISOString().split('T')[0];
+
+        // เลือก input วันที่ทั้งสองตัว
+        const startDateInput = document.querySelector('input[name="start_date"]');
+        const endDateInput = document.querySelector('input[name="end_date"]');
+
+        // ตั้งค่า min ให้เป็นวันนี้ (ห้ามเลือกวันย้อนหลัง)
+        startDateInput.setAttribute('min', today);
+        endDateInput.setAttribute('min', today);
+
+        //ถ้าเลือกวันเริ่มแล้ว วันสิ้นสุดต้องห้ามเก่ากว่าวันเริ่ม
+        startDateInput.addEventListener('change', function() {
+            // เมื่อเปลี่ยนวันเริ่ม  เอาค่าไปใส่เป็น min ของวันสิ้นสุดทันที
+            endDateInput.setAttribute('min', this.value);
+            
+            // ถ้าวันสิ้นสุดที่เลือกไว้ ดันเก่ากว่าวันเริ่มใหม่ -> ล้างค่าวันสิ้นสุดทิ้ง
+            if (endDateInput.value && endDateInput.value < this.value) {
+                endDateInput.value = this.value;
+            }
+        });
+    });
+</script>
 {% endblock %}

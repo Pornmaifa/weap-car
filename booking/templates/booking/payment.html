@@ -146,7 +146,6 @@
     </div>
 </div>
 <script>
-    // 1. Countdown Timer
     let timeLeft = parseInt("{{ time_remaining|default:0 }}"); // รับค่าจาก Django View
     const timerElement = document.getElementById('timer');
     const expiredOverlay = document.getElementById('expired-overlay');
@@ -181,7 +180,6 @@
         }
     }
 
-    // 2. Image Preview Script
     function previewImage(input) {
         const placeholder = document.getElementById('upload-placeholder');
         const preview = document.getElementById('image-preview');

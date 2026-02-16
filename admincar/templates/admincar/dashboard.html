@@ -250,12 +250,12 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-function toggleChart(containerId) {
+function toggleChart(containerId) { // ฟังก์ชันสำหรับสลับการแสดง/ซ่อนกราฟ
     const el = document.getElementById(containerId);
     el.classList.toggle('hidden');
 }
 
-function showSection(section, card) {
+function showSection(section, card) { // ฟังก์ชันสำหรับแสดงเนื้อหาของแต่ละแท็บและไฮไลท์การ์ดที่เลือก
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
     document.getElementById('section-' + section).classList.remove('hidden');
     document.querySelectorAll('[id^="card-"]').forEach(el => {
@@ -283,14 +283,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }, options: { responsive: true, maintainAspectRatio: false }
     });
 
-    // Chart 2: Users (✅ แก้ไขสีตรงนี้)
+    // Chart 2: Users ( แก้ไขสีตรงนี้)
     new Chart(document.getElementById('usersChart'), {
         type: 'doughnut',
         data: {
             labels: ['Admin', 'สมาชิก', 'ลูกค้าทั่วไป'], 
             datasets: [{ 
                 data: userData, 
-                // 🟣 ม่วง (Admin), 🟢 เขียว (Member), 🟠 ส้ม (Guest)
+                //  ม่วง (Admin),  เขียว (Member),  ส้ม (Guest)
                 backgroundColor: ['#9333ea', '#22c55e', '#f97316'] 
             }]
         }, options: { responsive: true, maintainAspectRatio: false }

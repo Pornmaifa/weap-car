@@ -1,46 +1,63 @@
 # ========================
-# 1. Node.js & Tailwind CSS
+# 1. Security & Environment (สำคัญที่สุด)
 # ========================
-# โฟลเดอร์ Dependencies ที่ติดตั้งผ่าน npm
-node_modules/
+.env
+.env.local
+local_settings.py
 
-# ไฟล์ Output ของการ Build Tailwind/PostCSS (ไม่ควร Commit)
-# โปรดตรวจสอบว่า Path นี้ตรงกับที่คุณใช้ในคำสั่ง Build:
-# ตัวอย่าง: npx tailwindcss -i ./input.css -o ./static/dist/styles.css
-/static/dist/
-/static/css/styles.css 
-
-# ไฟล์ Log และ Configuration ของ Node
-npm-debug.log*
-yarn-error.log
+# Database
+db.sqlite3
+*.sqlite3
+*.sqlite3-journal
+.db.sqlite3
 
 # ========================
-# 2. Django / Python
+# 2. Django & Python
 # ========================
-# Python Virtual Environment
+# Virtual Environment
 venv/
 .venv/
+env/
 
-# ไฟล์ฐานข้อมูลและไฟล์ที่อัปโหลดโดยผู้ใช้
-db.sqlite3
-media/
-/static/src/  # ถ้าโฟลเดอร์นี้ใช้เก็บไฟล์ชั่วคราว/ต้นฉบับที่ไม่ต้องการ Commit
-
-# ไฟล์ Compiled (Generated Files)
+# Python Cache & Logs
 __pycache__/
 *.pyc
-*.egg-info/
-*.sqlite3-journal
+*.pyo
+*.pyd
+*.log
+
+# Media & Static
+media/
+!media/.gitkeep
+/static/src/
+/static/dist/
+/static/css/styles.css
+
+# Translations (เก็บ source .po ไว้ แต่ไม่เอา compiled .mo)
+*.mo
+*.pot
 
 # ========================
-# 3. โฟลเดอร์ชั่วคราว/เฉพาะระบบ
+# 3. Node.js & Frontend
 # ========================
-# โฟลเดอร์ 'scr' ที่ปรากฏในโครงสร้าง (น่าจะเป็นไฟล์ชั่วคราว)
-scr/
+node_modules/
+npm-debug.log*
+yarn-error.log
+yarn-debug.log*
 
-# ไฟล์เฉพาะระบบปฏิบัติการ
+# ========================
+# 4. System, IDE & Temp
+# ========================
+# OS
 .DS_Store
 Thumbs.db
 
-# ไฟล์ IDE (ตัวอย่าง Visual Studio Code)
+# IDE
 .vscode/
+.idea/
+
+# Temp / Executables
+scr/
+ngrok
+ngrok.exe
+*.exe
