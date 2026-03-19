@@ -91,10 +91,10 @@ WSGI_APPLICATION = 'car.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'car',        # ชื่อฐานข้อมูลของคุณ
-        'USER': 'root',        # ชื่อผู้ใช้ฐานข้อมูล
-        'PASSWORD': 'Wsmai47',  # รหัสผ่าน
-        'HOST': 'localhost',             # หรือ IP ของเซิร์ฟเวอร์ฐานข้อมูล
+        'NAME': 'car',        
+        'USER': 'root',        
+        'PASSWORD': 'Wsmai47',  
+        'HOST': 'localhost',             
         'PORT': '3306',
     }
 }
@@ -154,11 +154,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
-# เอา Access Token 
-LINE_CHANNEL_ACCESS_TOKEN = 'G8mr54humwhQ4IJqoHMSCEFk2aofJ9PCySZHsAtbm9XpM9ERF+jI21o4tPClDODP5/EVBdwk9iL/FxLThfoR0LDBgTp7U6lHns2IP9tFW0VicEHGkR6+D2sDFEfDb+dB7NuwICrwxBXtcYokEoPg6AdB04t89/1O/w1cDnyilFU='
 
-# เอา Channel Secret 
-LINE_CHANNEL_SECRET = '23053c393af3575a8edaa7d86a394df0'
 
 # เพิ่มขนาดที่ยอมรับได้สำหรับ POST Data (เช่น 10MB หรือ 20MB)
 # หน่วยเป็น Byte: 10 * 1024 * 1024 = 10485760
