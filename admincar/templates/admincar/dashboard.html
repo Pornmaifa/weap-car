@@ -29,19 +29,11 @@
     </div>
 </div>
 
-<div class="bg-white rounded-lg shadow p-6 ">
+<div class="bg-white rounded-lg shadow p-6">
 
     <div id="section-bookings" class="tab-content">
         <div class="flex justify-between items-center mb-4 border-l-4 border-[#17a2b8] pl-3">
             <h2 class="text-xl font-bold">รายการจองล่าสุด</h2>
-            <button onclick="toggleChart('chart-container-bookings')" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1 rounded transition">
-                <i class="fas fa-chart-line mr-1"></i> ดูแนวโน้ม
-            </button>
-        </div>
-
-        <div id="chart-container-bookings" class="hidden mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <h3 class="text-sm font-bold text-gray-500 mb-2">สถิติการจอง 6 เดือนล่าสุด</h3>
-            <div class="h-64"><canvas id="bookingsChart"></canvas></div>
         </div>
 
         <div class="overflow-x-auto">
@@ -59,7 +51,6 @@
                     {% for b in all_bookings %}
                     <tr class="hover:bg-gray-50 align-top">
                         <td class="p-3 font-mono text-gray-500 pt-4">{{ b.booking_ref }}</td>
-                        
                         <td class="p-3">
                             <div class="flex flex-col">
                                 <span class="font-bold text-gray-800 text-base">
@@ -78,7 +69,6 @@
                                 </span>
                             </div>
                         </td>
-
                         <td class="p-3 pt-4">{{ b.car.brand }} {{ b.car.model }}<br><span class="text-xs text-gray-400">{{ b.car.license_plate }}</span></td>
                         <td class="p-3 pt-4">{{ b.created_at|date:"d/m/Y" }}</td>
                         <td class="p-3 pt-4">
@@ -101,13 +91,6 @@
     <div id="section-users" class="tab-content hidden">
         <div class="flex justify-between items-center mb-4 border-l-4 border-[#17a2b8] pl-3">
             <h2 class="text-xl font-bold">ผู้ใช้งานทั้งหมด</h2>
-            <button onclick="toggleChart('chart-container-users')" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1 rounded transition">
-                <i class="fas fa-chart-pie mr-1"></i> ดูสัดส่วน
-            </button>
-        </div>
-
-        <div id="chart-container-users" class="hidden mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200 flex justify-center">
-            <div class="w-64 h-64"><canvas id="usersChart"></canvas></div>
         </div>
 
         <table class="w-full text-sm">
@@ -116,7 +99,8 @@
                     <th class="p-3 text-left">Username</th>
                     <th class="p-3 text-left">ชื่อ-นามสกุล</th>
                     <th class="p-3 text-left">สถานะ</th>
-                    <th class="p-3 text-right">จัดการ</th> </tr>
+                    <th class="p-3 text-right">จัดการ</th>
+                </tr>
             </thead>
             <tbody class="divide-y">
                 {% for u in all_users %}
@@ -138,12 +122,11 @@
                             <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">สมาชิก</span>
                         {% endif %}
                     </td>
-                    
                     <td class="p-3 text-right">
                         {% if not u.is_superuser and u != request.user %} 
-                            <form action="{% url 'delete_user' u.id %}" method="POST" onsubmit="return confirm('⚠️ คำเตือน: คุณต้องการลบบัญชี {{ u.username }} ใช่หรือไม่? \nข้อมูลการจองที่เกี่ยวข้องอาจได้รับผลกระทบ');" class="inline-block">
+                            <form action="{% url 'delete_user' u.id %}" method="POST" onsubmit="return confirm('⚠️ คุณต้องการลบบัญชีนี้ใช่หรือไม่?');" class="inline-block">
                                 {% csrf_token %}
-                                <button type="submit" class="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-full transition" title="ลบบัญชี">
+                                <button type="submit" class="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-full transition">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </form>
@@ -160,12 +143,6 @@
     <div id="section-cars" class="tab-content hidden">
         <div class="flex justify-between items-center mb-4 border-l-4 border-[#17a2b8] pl-3">
             <h2 class="text-xl font-bold">รถทั้งหมดในระบบ</h2>
-            <button onclick="toggleChart('chart-container-cars')" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1 rounded transition">
-                <i class="fas fa-chart-bar mr-1"></i> ดูสถานะ
-            </button>
-        </div>
-        <div id="chart-container-cars" class="hidden mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-             <div class="h-64"><canvas id="carsChart"></canvas></div>
         </div>
         <table class="w-full text-sm">
             <thead class="bg-gray-50 text-gray-600 uppercase">
@@ -183,24 +160,14 @@
                         {% else %}
                             <span class="text-gray-400 italic">ระบบ (WarpCar)</span>
                         {% endif %}
-                        <a href="{% url 'car_detail' c.id %}" target="_blank" class="font-bold text-gray-800 hover:text-[#17a2b8] hover:underline flex items-center gap-2">
-                            {{ c.brand }} {{ c.model }}
-                            <i class="fas fa-eye text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                        </a>
                     </td>
                     <td class="p-3">{{ c.price_per_day|intcomma }}</td>
                     <td class="p-3">
                         <span class="text-xs px-2 py-1 rounded 
                             {% if c.status == 'AVAILABLE' or c.status == 'available' %}bg-green-100 text-green-700
                             {% elif c.status == 'MAINTENANCE' or c.status == 'maintenance' %}bg-yellow-100 text-yellow-800
-                            {% elif c.status == 'PENDING' or c.status == 'pending' %}bg-orange-100 text-orange-800
                             {% else %}bg-red-100 text-red-700{% endif %}">
-                            
-                            {% if c.status == 'AVAILABLE' or c.status == 'available' %}พร้อมใช้งาน
-                            {% elif c.status == 'MAINTENANCE' or c.status == 'maintenance' %}ซ่อมบำรุง
-                            {% elif c.status == 'PENDING' or c.status == 'pending' %}รออนุมัติ
-                            {% elif c.status == 'BOOKED' or c.status == 'booked' %}ถูกจองแล้ว
-                            {% else %}{{ c.get_status_display }}{% endif %}
+                            {{ c.get_status_display }}
                         </span>
                     </td>
                 </tr>
@@ -212,13 +179,6 @@
     <div id="section-revenue" class="tab-content hidden">
         <div class="flex justify-between items-center mb-4 border-l-4 border-[#17a2b8] pl-3">
             <h2 class="text-xl font-bold">รายได้ที่สำเร็จแล้ว</h2>
-            <button onclick="toggleChart('chart-container-revenue')" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1 rounded transition">
-                <i class="fas fa-chart-area mr-1"></i> ดูรายได้
-            </button>
-        </div>
-        <div id="chart-container-revenue" class="hidden mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <h3 class="text-sm font-bold text-gray-500 mb-2">รายได้รายเดือน</h3>
-            <div class="h-64"><canvas id="revenueChart"></canvas></div>
         </div>
         <table class="w-full text-sm">
             <thead class="bg-gray-50 text-gray-600 uppercase">
@@ -242,77 +202,21 @@
 {% endblock %}
 
 {% block extra_js %}
-{{ month_labels|json_script:"month_labels_data" }}
-{{ booking_data|json_script:"booking_data_data" }}
-{{ revenue_data|json_script:"revenue_data_data" }}
-{{ user_pie_data|json_script:"user_pie_data_data" }}
-{{ car_status_data|json_script:"car_status_data_data" }}
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-function toggleChart(containerId) { // ฟังก์ชันสำหรับสลับการแสดง/ซ่อนกราฟ
-    const el = document.getElementById(containerId);
-    el.classList.toggle('hidden');
-}
-
-function showSection(section, card) { // ฟังก์ชันสำหรับแสดงเนื้อหาของแต่ละแท็บและไฮไลท์การ์ดที่เลือก
+// ฟังก์ชันสำหรับสลับแท็บเนื้อหา
+function showSection(section, card) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
     document.getElementById('section-' + section).classList.remove('hidden');
+    
+    // รีเซ็ตสไตล์ของการ์ดทั้งหมด
     document.querySelectorAll('[id^="card-"]').forEach(el => {
         el.classList.remove('border-[#17a2b8]', 'ring-2', 'ring-[#17a2b8]', 'ring-opacity-40');
         el.classList.add('border-transparent');
     });
+    
+    // ไฮไลท์การ์ดที่ถูกเลือก
     card.classList.remove('border-transparent');
     card.classList.add('border-[#17a2b8]', 'ring-2', 'ring-[#17a2b8]', 'ring-opacity-40');
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    // รับค่าจาก Django View
-    const monthLabels = JSON.parse(document.getElementById('month_labels_data').textContent);
-    const bookingData = JSON.parse(document.getElementById('booking_data_data').textContent);
-    const revenueData = JSON.parse(document.getElementById('revenue_data_data').textContent);
-    const userData = JSON.parse(document.getElementById('user_pie_data_data').textContent);
-    const carData = JSON.parse(document.getElementById('car_status_data_data').textContent);
-
-    // Chart 1: Bookings
-    new Chart(document.getElementById('bookingsChart'), {
-        type: 'line',
-        data: {
-            labels: monthLabels,
-            datasets: [{ label: 'จำนวนการจอง', data: bookingData, borderColor: '#17a2b8', backgroundColor: 'rgba(23, 162, 184, 0.2)', fill: true, tension: 0.4 }]
-        }, options: { responsive: true, maintainAspectRatio: false }
-    });
-
-    // Chart 2: Users ( แก้ไขสีตรงนี้)
-    new Chart(document.getElementById('usersChart'), {
-        type: 'doughnut',
-        data: {
-            labels: ['Admin', 'สมาชิก', 'ลูกค้าทั่วไป'], 
-            datasets: [{ 
-                data: userData, 
-                //  ม่วง (Admin),  เขียว (Member),  ส้ม (Guest)
-                backgroundColor: ['#9333ea', '#22c55e', '#f97316'] 
-            }]
-        }, options: { responsive: true, maintainAspectRatio: false }
-    });
-
-    // Chart 3: Cars
-    new Chart(document.getElementById('carsChart'), {
-        type: 'bar',
-        data: {
-            labels: ['พร้อมใช้งาน', 'ไม่ว่าง', 'ซ่อมบำรุง'],
-            datasets: [{ label: 'จำนวนรถ', data: carData, backgroundColor: ['#22c55e', '#ef4444', '#f59e0b'] }]
-        }, options: { responsive: true, maintainAspectRatio: false }
-    });
-
-    // Chart 4: Revenue
-    new Chart(document.getElementById('revenueChart'), {
-        type: 'line',
-        data: {
-            labels: monthLabels,
-            datasets: [{ label: 'รายได้', data: revenueData, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.2)', fill: true, tension: 0.3 }]
-        }, options: { responsive: true, maintainAspectRatio: false }
-    });
-});
 </script>
 {% endblock %}

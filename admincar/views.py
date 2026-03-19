@@ -12,83 +12,32 @@ from linebot.models import TextSendMessage
 
 @staff_member_required(login_url='login')
 def dashboard(request):
-    # (ตัวเลข)
+    #  ตัวเลขสรุปด้านบน 
     total_revenue = Payment.objects.filter(payment_status='COMPLETED').aggregate(Sum('amount'))['amount__sum'] or 0
     total_bookings_count = Booking.objects.count()
     total_cars_count = Car.objects.count()
     total_users_count = User.objects.count()
 
-    # กราฟรายเดือน (Bookings & Revenue) - ย้อนหลัง 6 เดือน
-    today = timezone.now()
-    month_labels = []
-    booking_data = []
-    revenue_data = []
-
-    for i in range(5, -1, -1): # วนลูป 6 รอบ (0-5)
-        # หาวันที่ของเดือนนั้นๆ
-        date_cursor = today - timedelta(days=i*30) 
-        month_name = date_cursor.strftime('%b') # เช่น Jan, Feb
-        year = date_cursor.year
-        month = date_cursor.month
-
-        # เก็บชื่อเดือนไว้ในแกน X
-        month_labels.append(month_name)
-
-        # นับยอดจองในเดือนนั้น
-        b_count = Booking.objects.filter(created_at__year=year, created_at__month=month).count()
-        booking_data.append(b_count)
-
-        # รวมรายได้ในเดือนนั้น (เฉพาะที่จ่ายสำเร็จ)
-        r_sum = Payment.objects.filter(
-            payment_status='COMPLETED', 
-            payment_date__year=year, 
-            payment_date__month=month
-        ).aggregate(Sum('amount'))['amount__sum'] or 0
-        revenue_data.append(int(r_sum)) # แปลงเป็น int
-
-    # กราฟสัดส่วนผู้ใช้ (Users Pie Chart)
-    admin_count = User.objects.filter(is_staff=True).count()
-    user_count = User.objects.filter(is_staff=False).count()
-    guest_count = GuestCustomer.objects.count()
-    user_pie_data = [admin_count, user_count, guest_count]
-
-    # กราฟสถานะรถ (Cars Bar Chart)
-    # ว่าง vs ไม่ว่าง (ถูกจอง/ซ่อม)
-    car_available = Car.objects.filter(status='available').count()
-    car_busy = Car.objects.exclude(status='available').count()
-    car_maintenace = Car.objects.filter(status='maintenance').count()
-    
-    car_status_data = [car_available, car_busy, car_maintenace]
-    # (รายชื่อสำหรับตารางข้างล่าง)
+    #  ข้อมูลสำหรับตาราง 
     all_bookings = Booking.objects.select_related('user', 'car').order_by('-created_at')
     all_users = User.objects.all().order_by('-date_joined')
     all_cars = Car.objects.all().order_by('status')
     all_payments = Payment.objects.filter(payment_status='COMPLETED').order_by('-payment_date')
 
-    # รายการรอตรวจสอบ (สำหรับ Sidebar)
+    #  รายการรอตรวจสอบสำหรับ Sidebar
     pending_payments = Payment.objects.filter(payment_status='WAITING_VERIFY')
 
     context = {
-        # Counts
         'total_revenue': total_revenue,
         'total_bookings': total_bookings_count,
         'total_cars': total_cars_count,
         'total_users': total_users_count,
         
-        # Lists
         'all_bookings': all_bookings,
         'all_users': all_users,
         'all_cars': all_cars,
         'all_payments': all_payments,
-        
-        # Charts Data (ส่งไปเป็น List)
-        'month_labels': month_labels,   # แกน X (ชื่อเดือน)
-        'booking_data': booking_data,   # แกน Y (ยอดจอง)
-        'revenue_data': revenue_data,   # แกน Y (รายได้)
-        'user_pie_data': user_pie_data, # [Admin, User, Guest]
-        'car_status_data': car_status_data, # [ว่าง, ไม่ว่าง, ซ่อม]
-
-        'pending_payments': pending_payments, # เอาไว้โชว์ตัวเลขแดงๆ ที่ sidebar
+        'pending_payments': pending_payments,
     }
     return render(request, 'admincar/dashboard.html', context)
 
