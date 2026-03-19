@@ -22,11 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-zpgsbaa@xx+&1cg-r)4u^d(_6)!r-nt54ih@r9uee+ohn9t64-'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 # settings.py
@@ -85,8 +81,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'car.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 
 
@@ -143,7 +137,6 @@ LOGIN_REDIRECT_URL = 'login_redirect'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-
 
 
 # เพิ่มขนาดที่ยอมรับได้สำหรับ POST Data (เช่น 10MB หรือ 20MB)
