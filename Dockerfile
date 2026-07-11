@@ -16,4 +16,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 3. ก๊อปปี้โค้ดทั้งหมดที่เหลือ
 COPY . /app/
 
-CMD python manage.py migrate && gunicorn car.wsgi:application --bind 0.0.0.0:8000
+CMD python manage.py collectstatic --noinput && python manage.py migrate && gunicorn car.wsgi:application --bind 0.0.0.0:8000
