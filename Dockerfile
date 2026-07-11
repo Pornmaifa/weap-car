@@ -1,25 +1,17 @@
 FROM python:3.11-slim
 
-# ตั้งค่าพื้นที่ทำงานใน Container
 WORKDIR /app
 
-# ป้องกันไม่ให้ Python สร้างไฟล์ขยะ (.pyc) และล็อกการแสดงผล Log
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-# ก๊อปปี้ไฟล์รายชื่อไลบรารีเข้ามาติดตั้งก่อน
-COPY requirements.txt /app/
-RUN pip install --no-cache-dir -r requirements.txt
-
-# สั่งอัปเดตระบบปฏิบัติการจำลองเพื่อให้คอมไพล์ mysqlclient บนคลาวด์ได้
+# 1. ต้องสั่งติดตั้งเครื่องมือเสริมของ MySQL ตรงนี้ก่อนเลย (ห้ามไปอยู่ข้างล่าง)
 RUN apt-get update && apt-get install -y \
     gcc \
     default-libmysqlclient-dev \
     pkg-config \
     && rm -rf /var/lib/apt/lists/*
-    
-# ก๊อปปี้โค้ดทั้งหมดในโปรเจกต์ตามเข้ามา
-COPY . /app/
 
-# คำสั่งรัน Server จริงผ่าน Gunicorn (พอร์ต 8000)
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "car.wsgi:application"]
+# 2. จากนั้นค่อยก๊อปปี้ไฟล์และสั่งติดตั้งไลบรารี Python
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 3. ก๊อปปี้โค้ดทั้งหมดที่เหลือ
+COPY . /app/
