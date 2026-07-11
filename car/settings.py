@@ -91,10 +91,10 @@ WSGI_APPLICATION = 'car.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'car',        
-        'USER': 'root',        
-        'PASSWORD': 'Wsmai47',  
-        'HOST': 'localhost',             
+        'NAME': 'bowoactlv1ttvnlavo7d',        
+        'USER': 'uqs6xcmosgkoojnh',        
+        'PASSWORD': 'WHXy02OmcM8RUCfQeklt',  
+        'HOST': 'bowoactlv1ttvnlavo7d-mysql.services.clever-cloud.com',             
         'PORT': '3306',
     }
 }

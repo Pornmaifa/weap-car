@@ -11,6 +11,13 @@ ENV PYTHONUNBUFFERED 1
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
+# สั่งอัปเดตระบบปฏิบัติการจำลองเพื่อให้คอมไพล์ mysqlclient บนคลาวด์ได้
+RUN apt-get update && apt-get install -y \
+    gcc \
+    default-libmysqlclient-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+    
 # ก๊อปปี้โค้ดทั้งหมดในโปรเจกต์ตามเข้ามา
 COPY . /app/
 
