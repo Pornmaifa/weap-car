@@ -15,3 +15,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # 3. ก๊อปปี้โค้ดทั้งหมดที่เหลือ
 COPY . /app/
+# บรรทัดล่างสุดต้องมีคำสั่งรัน เช่น...
+CMD ["gunicorn", "car.wsgi:application", "--bind", "0.0.0.0:8000"]
